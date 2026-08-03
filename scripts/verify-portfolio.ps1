@@ -34,6 +34,7 @@ Require-Text 'README.md' 'illustrative' 'README must disclose illustrative data.
 Require-Text 'README.md' 'dashboards/company-x-ghg/' 'README must link to the featured dashboard.'
 Require-Text 'README.md' 'https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/company-x-ghg/' 'README must provide a direct live-dashboard link.'
 Require-Text 'index.html' 'View dashboard' 'Landing page must provide a clear dashboard action.'
+Require-Text 'index.html' 'https://github.com/rcc-tech30/RCC-Sustainability-Portfolio/tree/main/dashboards/company-x-ghg' 'Landing page help action must open the rendered project README on GitHub.'
 Require-AbsentText 'index.html' 'http-equiv="refresh"' 'Landing page must not automatically redirect visitors.'
 Require-Text 'dashboards/company-x-ghg/index.html' 'Illustrative portfolio data' 'Dashboard must show its illustrative-data badge.'
 Require-Text 'dashboards/company-x-ghg/README.md' 'View the live dashboard' 'Project README must explain how to view the live sample.'
