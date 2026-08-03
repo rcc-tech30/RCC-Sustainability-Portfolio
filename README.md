@@ -6,7 +6,11 @@ Each project is intended to show how I structure information, turn technical top
 
 ## Featured project
 
-### [Company X GHG Dashboard](dashboards/company-x-ghg/)
+### Company X GHG Dashboard
+
+**[View the live interactive dashboard](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/company-x-ghg/)**
+
+[Read the project notes and viewing instructions](dashboards/company-x-ghg/)
 
 An interactive greenhouse-gas reporting dashboard built as a self-contained HTML application. It presents an executive overview alongside detailed Scope 1, Scope 2, Scope 3, data-quality, and net-zero pathway views.
 
@@ -17,7 +21,7 @@ Capabilities demonstrated:
 - Market- and location-based Scope 2 presentation
 - Data coverage and calculation-method quality indicators
 - Interactive filters, reset controls, presentation mode, and dashboard download
-- Accessible labels and responsive presentation without external dependencies
+- Accessible labels and a self-contained presentation without external dependencies
 
 ## Portfolio areas
 

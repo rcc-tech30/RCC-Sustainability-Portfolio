@@ -16,15 +16,27 @@ function Require-Text([string]$RelativePath, [string]$Pattern, [string]$Message)
     }
 }
 
+function Require-AbsentText([string]$RelativePath, [string]$Pattern, [string]$Message) {
+    $path = Join-Path $repoRoot $RelativePath
+    if ((Test-Path -LiteralPath $path -PathType Leaf) -and
+        (Select-String -LiteralPath $path -Pattern $Pattern -Quiet)) {
+        $failures.Add($Message)
+    }
+}
+
 Require-File 'README.md'
 Require-File '.gitignore'
 Require-File 'index.html'
 Require-File 'dashboards/company-x-ghg/index.html'
+Require-File 'dashboards/company-x-ghg/README.md'
 Require-Text 'README.md' 'fictional' 'README must disclose fictional content.'
 Require-Text 'README.md' 'illustrative' 'README must disclose illustrative data.'
 Require-Text 'README.md' 'dashboards/company-x-ghg/' 'README must link to the featured dashboard.'
-Require-Text 'index.html' 'dashboards/company-x-ghg/' 'Root page must route to the featured dashboard.'
+Require-Text 'README.md' 'https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/company-x-ghg/' 'README must provide a direct live-dashboard link.'
+Require-Text 'index.html' 'View dashboard' 'Landing page must provide a clear dashboard action.'
+Require-AbsentText 'index.html' 'http-equiv="refresh"' 'Landing page must not automatically redirect visitors.'
 Require-Text 'dashboards/company-x-ghg/index.html' 'Illustrative portfolio data' 'Dashboard must show its illustrative-data badge.'
+Require-Text 'dashboards/company-x-ghg/README.md' 'View the live dashboard' 'Project README must explain how to view the live sample.'
 Require-Text '.gitignore' '^\.env\*$' '.gitignore must exclude environment files.'
 
 $licenseFiles = Get-ChildItem -LiteralPath $repoRoot -File | Where-Object Name -Match '^LICENSE(?:\..+)?$'
