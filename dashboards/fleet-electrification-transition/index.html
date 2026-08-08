@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fleet Electrification Transition Assessment</title>
+</head>
+<body>
+  <main><h1>Fleet Electrification Transition Assessment</h1></main>
+  <script data-fleet-model>
+    const DEFAULT_SCENARIO = Object.freeze({
+      companyName: "Company X by You",
+      baselineYear: "FY2025",
+      targetYear: "FY2030",
+      currencyCode: "AUD",
+      dataStatus: "Sample Data",
+      bevMethod: "Distance-based",
+      totalIceVehicles: 10,
+      vehiclesTransitioning: 10,
+      dieselLitres: 12000,
+      petrolLitres: 6000,
+      otherFuelGj: 0,
+      annualDistanceKm: 18000,
+      currentAnnualFuelCost: 30000,
+      otherScope1: 0,
+      bevKwhPerKm: 0.2,
+      chargingLossPct: 0.1,
+      fuelToBevPct: 0.25,
+      bevPurchaseCost: 40000,
+      iceReplacementCost: 28000,
+      resaleProceeds: 3000,
+      currentElectricityKwh: 200000,
+      electricityRate: 0.2,
+      gridEmissionFactor: 0.62,
+      currentCertificateCoverage: 0,
+      targetCertificateCoverage: 1,
+      certificateType: "EAC",
+      certificateCostPerKwh: 0.055,
+      petrolEnergyGjPerKl: 34.2,
+      petrolScope1KgPerGj: 67.62,
+      dieselEnergyGjPerKl: 38.6,
+      dieselScope1KgPerGj: 70.41,
+      otherFuelScope1KgPerGj: 69.015,
+      gjToKwh: 277.7778
+    });
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
+    const safeDivide = (numerator, denominator) => denominator > 0 ? numerator / denominator : null;
+    const toTco2e = kilograms => kilograms / 1000;
+
+    function calculateScenario(input) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
+      const transitionPct = s.totalIceVehicles > 0
+        ? clamp(s.vehiclesTransitioning / s.totalIceVehicles, 0, 1)
+        : 0;
+      const vehiclesTransitioning = Math.min(Math.max(0, s.vehiclesTransitioning), Math.max(0, s.totalIceVehicles));
+      const dieselEnergyGj = (s.dieselLitres / 1000) * s.dieselEnergyGjPerKl;
+      const petrolEnergyGj = (s.petrolLitres / 1000) * s.petrolEnergyGjPerKl;
+      const totalFuelEnergyGj = dieselEnergyGj + petrolEnergyGj + s.otherFuelGj;
+      const dieselScope1 = toTco2e(dieselEnergyGj * s.dieselScope1KgPerGj);
+      const petrolScope1 = toTco2e(petrolEnergyGj * s.petrolScope1KgPerGj);
+      const otherFuelScope1 = toTco2e(s.otherFuelGj * s.otherFuelScope1KgPerGj);
+      const baselineMobileScope1 = dieselScope1 + petrolScope1 + otherFuelScope1;
+      const scope1Avoided = baselineMobileScope1 * transitionPct;
+      const remainingScope1 = baselineMobileScope1 - scope1Avoided + s.otherScope1;
+      const distanceBasedBev = vehiclesTransitioning * s.annualDistanceKm * s.bevKwhPerKm * (1 + s.chargingLossPct);
+      const fuelBasedBev = totalFuelEnergyGj * s.gjToKwh * transitionPct * s.fuelToBevPct * (1 + s.chargingLossPct);
+      const bevElectricityAdded = s.bevMethod === "Fallback" ? fuelBasedBev : distanceBasedBev;
+      const totalPostTransitionElectricity = s.currentElectricityKwh + bevElectricityAdded;
+      const baselineGridScope2 = toTco2e(s.currentElectricityKwh * s.gridEmissionFactor);
+      const postTransitionGridScope2 = toTco2e(totalPostTransitionElectricity * s.gridEmissionFactor);
+      const scope2AfterEac = postTransitionGridScope2 * (1 - clamp(s.targetCertificateCoverage, 0, 1));
+      const currentCertificateCost = s.currentElectricityKwh * clamp(s.currentCertificateCoverage, 0, 1) * s.certificateCostPerKwh;
+      const targetCertificateCost = totalPostTransitionElectricity * clamp(s.targetCertificateCoverage, 0, 1) * s.certificateCostPerKwh;
+      const additionalCertificateCost = targetCertificateCost - currentCertificateCost;
+      const currentElectricityCost = s.currentElectricityKwh * s.electricityRate + currentCertificateCost;
+      const targetElectricityCost = totalPostTransitionElectricity * s.electricityRate + targetCertificateCost;
+      const electricityCostChange = targetElectricityCost - currentElectricityCost;
+      const fuelCostAvoided = s.currentAnnualFuelCost * transitionPct;
+      const annualOperatingChange = electricityCostChange - fuelCostAvoided;
+      const transitionInvestment = vehiclesTransitioning * (s.bevPurchaseCost - s.resaleProceeds);
+      const incrementalInvestment = vehiclesTransitioning * (s.bevPurchaseCost - s.iceReplacementCost);
+      const annualSavings = annualOperatingChange < 0 ? Math.abs(annualOperatingChange) : 0;
+      const simplePaybackTransition = safeDivide(transitionInvestment, annualSavings);
+      const simplePaybackIncremental = safeDivide(incrementalInvestment, annualSavings);
+      const baselineTotalEmissions = baselineMobileScope1 + s.otherScope1 + baselineGridScope2;
+      const residualBeforeCertificates = remainingScope1 + postTransitionGridScope2;
+      const residualAfterCertificates = remainingScope1 + scope2AfterEac;
+
+      return {
+        vehiclesTransitioning, transitionPct, dieselEnergyGj, petrolEnergyGj, totalFuelEnergyGj,
+        dieselScope1, petrolScope1, otherFuelScope1, baselineMobileScope1, scope1Avoided,
+        remainingScope1, distanceBasedBev, fuelBasedBev, bevElectricityAdded,
+        totalPostTransitionElectricity, baselineGridScope2, postTransitionGridScope2,
+        scope2AfterEac, currentCertificateCost, targetCertificateCost, additionalCertificateCost,
+        currentElectricityCost, targetElectricityCost, electricityCostChange, fuelCostAvoided,
+        annualOperatingChange, transitionInvestment, incrementalInvestment,
+        simplePaybackTransition, simplePaybackIncremental, baselineTotalEmissions,
+        residualBeforeCertificates, residualAfterCertificates
+      };
+    }
+
+    function validateScenario(input) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
+      const messages = [];
+      const add = (field, severity, text) => messages.push({ field, severity, text });
+      if (!(s.totalIceVehicles > 0)) add("totalIceVehicles", "error", "Total ICE vehicles must be greater than zero.");
+      if (s.vehiclesTransitioning < 0 || s.vehiclesTransitioning > s.totalIceVehicles) add("vehiclesTransitioning", "error", "Vehicles transitioning must be between zero and the total fleet.");
+      if (!["Distance-based", "Fallback"].includes(s.bevMethod)) add("bevMethod", "error", "Select a supported BEV calculation method.");
+      if (s.bevMethod === "Distance-based" && (!(s.annualDistanceKm > 0) || !(s.bevKwhPerKm > 0))) add("annualDistanceKm", "error", "Distance and BEV efficiency are required for the distance-based method.");
+      if (s.bevMethod === "Fallback" && (!(s.fuelToBevPct > 0) || !(s.gjToKwh > 0))) add("fuelToBevPct", "error", "Fuel conversion inputs are required for the fallback method.");
+      if (!(s.currentElectricityKwh > 0) || !(s.electricityRate > 0) || !(s.gridEmissionFactor > 0)) add("currentElectricityKwh", "error", "Electricity consumption, rate, and grid factor are required and must be greater than zero.");
+      if (s.currentCertificateCoverage < 0 || s.currentCertificateCoverage > 1 || s.targetCertificateCoverage < 0 || s.targetCertificateCoverage > 1) add("targetCertificateCoverage", "error", "Certificate coverage must be between 0% and 100%.");
+      for (const field of ["currentAnnualFuelCost", "bevPurchaseCost", "iceReplacementCost", "resaleProceeds", "certificateCostPerKwh"]) {
+        if (s[field] < 0) add(field, "error", "Cost inputs cannot be negative.");
+      }
+      const result = calculateScenario(s);
+      if (result.simplePaybackTransition === null) add("currentAnnualFuelCost", "warning", "No payback under current assumptions.");
+      if (s.dataStatus === "User Data" && s.gridEmissionFactor === DEFAULT_SCENARIO.gridEmissionFactor) add("gridEmissionFactor", "warning", "Replace the fictional sample grid factor before relying on user-data results.");
+      return messages;
+    }
+
+    globalThis.__fleetModel = { DEFAULT_SCENARIO, calculateScenario, validateScenario };
+  </script>
+</body>
+</html>
