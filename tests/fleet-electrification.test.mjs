@@ -62,3 +62,33 @@ test("validation blocks invalid fleet and missing electricity inputs", async () 
   assert.ok(overFleet.some(message => message.field === "vehiclesTransitioning" && message.severity === "error"));
   assert.ok(missingElectricity.some(message => message.field === "currentElectricityKwh" && message.severity === "error"));
 });
+
+test("application exposes accessible views, controls, and chart summaries", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /class="skip-link"/);
+  assert.equal((html.match(/data-view-target=/g) || []).length, 5);
+  assert.match(html, /aria-live="polite"/);
+  assert.match(html, /<label for="\$\{name\}">\$\{label\}<\/label>/);
+  assert.match(html, /\["totalIceVehicles", "Total ICE vehicles"/);
+  assert.equal((html.match(/class="chart-summary"/g) || []).length, 2);
+  assert.match(html, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(html, /Scope 3 well-to-tank/);
+  assert.match(html, /illustrative planning estimate/i);
+});
+
+test("application remains self-contained", async () => {
+  const { html } = await loadApp();
+  assert.doesNotMatch(html, /<script\s+[^>]*src=/i);
+  assert.doesNotMatch(html, /<link\s+[^>]*rel=["']stylesheet/i);
+  assert.doesNotMatch(html, /@import\s+url/i);
+});
+
+test("scenario persistence uses a versioned and defensive schema", async () => {
+  const { model } = await loadApp();
+  const text = model.serializeScenario(model.DEFAULT_SCENARIO);
+  const payload = JSON.parse(text);
+  assert.equal(payload.version, 1);
+  assert.deepEqual(model.parseStoredScenario(text), model.DEFAULT_SCENARIO);
+  assert.equal(model.parseStoredScenario("not-json"), null);
+  assert.equal(model.parseStoredScenario(JSON.stringify({ version: 2, scenario: {} })), null);
+});
