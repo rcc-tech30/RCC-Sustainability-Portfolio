@@ -93,3 +93,11 @@ test("scenario persistence uses a versioned and defensive schema", async () => {
   assert.equal(model.parseStoredScenario("not-json"), null);
   assert.equal(model.parseStoredScenario(JSON.stringify({ version: 2, scenario: {} })), null);
 });
+
+test("charts use smooth curves and compact navigation keeps every view visible", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /\.nav\{display:flex;flex-wrap:wrap;overflow-x:visible/);
+  assert.match(html, /\.content:focus\{outline:none\}/);
+  assert.match(html, /const path = `M\$\{points\[0\]\.x\},\$\{points\[0\]\.y\} C/);
+  assert.match(html, /class="cost-trend"/);
+});
