@@ -78,6 +78,7 @@ test("application exposes accessible views, controls, and chart summaries", asyn
 
 test("application remains self-contained", async () => {
   const { html } = await loadApp();
+  assert.match(html, /rel="icon" href="data:image\/svg\+xml,/);
   assert.doesNotMatch(html, /<script\s+[^>]*src=/i);
   assert.doesNotMatch(html, /<link\s+[^>]*rel=["']stylesheet/i);
   assert.doesNotMatch(html, /@import\s+url/i);
