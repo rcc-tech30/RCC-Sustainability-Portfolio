@@ -4,7 +4,25 @@ I’m Reiniel Celgie Chan. This repository is a growing portfolio of practical w
 
 Each project is intended to show how I structure information, turn technical topics into decision-ready outputs, and build useful solutions. The portfolio will evolve as I complete new dashboards, analyses, workflow automations, and experiments.
 
-## Featured project
+## Featured projects
+
+### Fleet Electrification Transition Assessment
+
+**[Use the live interactive assessment](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/fleet-electrification-transition/)**
+
+[Read the project notes and methodology boundaries](dashboards/fleet-electrification-transition/)
+
+A browser-based scenario model for assessing the emissions, energy, investment, certificate-cost, operating-cost, and simple-payback implications of transitioning an ICE fleet to battery-electric vehicles.
+
+Capabilities demonstrated:
+
+- Editable scenario assumptions with immediate recalculation
+- Scope 1 avoided emissions and added grid-based Scope 2
+- Separate certificate-adjusted Scope 2 presentation
+- Distance-based and fuel-energy fallback charging-demand methods
+- Investment, operating-cost, and simple-payback comparisons
+- Validation warnings, local saving, JSON export, and print output
+- Accessible responsive presentation without external dependencies
 
 ### Company X GHG Dashboard
 
