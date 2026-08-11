@@ -119,7 +119,7 @@ test("input section preferences use a separate defensive schema", async () => {
 
 test("input groups expose accessible independent section controls", async () => {
   const { html } = await loadApp();
-  assert.match(html, /class="input-section-filters" aria-label="Input sections"/);
+  assert.match(html, /class="input-section-filters" role="group" aria-label="Input sections"/);
   assert.equal((html.match(/<button[^>]*data-section-toggle=/g) || []).length, 8);
   assert.equal((html.match(/data-input-section=/g) || []).length, 4);
   assert.match(html, /data-section-toggle="general"[^>]*aria-expanded="true"/);
@@ -129,6 +129,27 @@ test("input groups expose accessible independent section controls", async () => 
   assert.match(html, /const sectionStorageKey = "rcc\.fleet-electrification\.input-sections\.v1"/);
   assert.match(html, /function setInputSection\(sectionId, expanded\)/);
   assert.match(html, /\.input-section-filters\{[^}]*flex-wrap:wrap/);
+});
+
+test("both section controls target heading-wrapped visibility panels", async () => {
+  const { html } = await loadApp();
+  const sections = ["general", "fleet", "bev", "eac"];
+
+  assert.equal((html.match(/<h3 class="section-heading-wrap"><button class="section-heading"/g) || []).length, 4);
+  assert.match(html, /\.form-section \.section-heading-wrap\{margin:0\}/);
+  for (const section of sections) {
+    const panelId = `input-section-${section}-content`;
+    assert.match(html, new RegExp(`<button class="section-filter"[^>]*data-section-toggle="${section}"[^>]*aria-controls="${panelId}"`));
+    assert.match(html, new RegExp(`<h3 class="section-heading-wrap"><button class="section-heading"[^>]*data-section-toggle="${section}"[^>]*aria-controls="${panelId}"`));
+    assert.equal((html.match(new RegExp(`id="${panelId}"`, "g")) || []).length, 1);
+  }
+});
+
+test("section announcements use stable concise labels", async () => {
+  const { model } = await loadApp();
+
+  assert.equal(model.formatInputSectionAnnouncement("fleet", true), "Fleet baseline section expanded.");
+  assert.equal(model.formatInputSectionAnnouncement("general", false), "General section collapsed.");
 });
 
 test("charts use smooth curves and compact navigation keeps every view visible", async () => {
@@ -144,8 +165,48 @@ test("fallback-only BEV inputs explain and expose their active state", async () 
   assert.match(html, /\["fuelToBevPct", "Fuel-to-BEV conversion", "%", 1, "fallback"\]/);
   assert.match(html, /Applicable only when BEV calculation method = Fallback\./);
   assert.match(html, /data-field-status/);
-  assert.match(html, /function syncMethodFields\(\)/);
-  assert.match(html, /control\.disabled = !usesFallback/);
-  assert.match(html, /usesFallback \? "Required for Fallback" : "Not applicable"/);
   assert.match(html, /if \(control\.name === "bevMethod"\) syncMethodFields\(\)/);
+});
+
+test("fallback field synchronizer executes method transitions without replacing values", async () => {
+  const { model } = await loadApp();
+  assert.deepEqual(toHostRecord(model.getFallbackFieldState("Distance-based")), {
+    disabled: true,
+    applicable: "false",
+    status: "Not applicable",
+  });
+  assert.deepEqual(toHostRecord(model.getFallbackFieldState("Fallback")), {
+    disabled: false,
+    applicable: "true",
+    status: "Required for Fallback",
+  });
+
+  let storedValue = "37";
+  const control = { disabled: false };
+  Object.defineProperty(control, "value", {
+    get: () => storedValue,
+    set: () => { throw new Error("synchronizer must preserve the scenario value"); },
+  });
+  const status = { textContent: "" };
+  const field = {
+    dataset: {},
+    querySelector(selector) {
+      if (selector === "input, select") return control;
+      if (selector === "[data-field-status]") return status;
+      return null;
+    },
+  };
+
+  model.syncFallbackMethodFields([field], "Distance-based");
+  assert.equal(control.disabled, true);
+  assert.equal(field.dataset.applicable, "false");
+  assert.equal(status.textContent, "Not applicable");
+  assert.equal(control.value, "37");
+
+  model.syncFallbackMethodFields([field], "Fallback");
+  assert.equal(control.disabled, false);
+  assert.equal(field.dataset.applicable, "true");
+  assert.equal(status.textContent, "Required for Fallback");
+  assert.equal(control.value, "37");
+  assert.equal(storedValue, "37");
 });
