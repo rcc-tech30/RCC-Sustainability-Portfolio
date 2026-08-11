@@ -131,6 +131,14 @@
       gjToKwh: 277.7778
     });
 
+    const INPUT_SECTION_IDS = Object.freeze(["general", "fleet", "bev", "eac"]);
+    const DEFAULT_INPUT_SECTIONS = Object.freeze({
+      general: true,
+      fleet: false,
+      bev: false,
+      eac: false,
+    });
+
     const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
     const safeDivide = (numerator, denominator) => denominator > 0 ? numerator / denominator : null;
     const toTco2e = kilograms => kilograms / 1000;
@@ -225,7 +233,35 @@
       }
     }
 
-    globalThis.__fleetModel = { DEFAULT_SCENARIO, calculateScenario, validateScenario, serializeScenario, parseStoredScenario };
+    function serializeInputSections(sections) {
+      const normalized = Object.fromEntries(
+        INPUT_SECTION_IDS.map(id => [id, Boolean(sections?.[id])]),
+      );
+      return JSON.stringify({ version: 1, sections: normalized });
+    }
+
+    function parseStoredInputSections(text) {
+      try {
+        const payload = JSON.parse(text);
+        if (payload?.version !== 1 || !payload.sections) return null;
+        if (!INPUT_SECTION_IDS.every(id => typeof payload.sections[id] === "boolean")) return null;
+        if (Object.keys(payload.sections).length !== INPUT_SECTION_IDS.length) return null;
+        return Object.fromEntries(INPUT_SECTION_IDS.map(id => [id, payload.sections[id]]));
+      } catch {
+        return null;
+      }
+    }
+
+    globalThis.__fleetModel = {
+      DEFAULT_SCENARIO,
+      DEFAULT_INPUT_SECTIONS,
+      calculateScenario,
+      validateScenario,
+      serializeScenario,
+      parseStoredScenario,
+      serializeInputSections,
+      parseStoredInputSections,
+    };
   </script>
   <script>
     (() => {

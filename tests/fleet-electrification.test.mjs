@@ -16,6 +16,7 @@ async function loadApp() {
 
 const close = (actual, expected, tolerance = 1e-6) =>
   Math.abs(actual - expected) <= tolerance;
+const toHostRecord = value => JSON.parse(JSON.stringify(value));
 
 test("sample scenario reproduces workbook headline results", async () => {
   const { model } = await loadApp();
@@ -92,6 +93,28 @@ test("scenario persistence uses a versioned and defensive schema", async () => {
   assert.deepEqual(model.parseStoredScenario(text), model.DEFAULT_SCENARIO);
   assert.equal(model.parseStoredScenario("not-json"), null);
   assert.equal(model.parseStoredScenario(JSON.stringify({ version: 2, scenario: {} })), null);
+});
+
+test("input section preferences use a separate defensive schema", async () => {
+  const { model } = await loadApp();
+  assert.deepEqual(toHostRecord(model.DEFAULT_INPUT_SECTIONS), {
+    general: true,
+    fleet: false,
+    bev: false,
+    eac: false,
+  });
+
+  const chosen = { general: false, fleet: true, bev: true, eac: false };
+  const text = model.serializeInputSections(chosen);
+  assert.deepEqual(JSON.parse(text), { version: 1, sections: chosen });
+  assert.deepEqual(toHostRecord(model.parseStoredInputSections(text)), chosen);
+  assert.equal(model.parseStoredInputSections("not-json"), null);
+  assert.equal(model.parseStoredInputSections(JSON.stringify({ version: 2, sections: chosen })), null);
+  assert.equal(model.parseStoredInputSections(JSON.stringify({ version: 1, sections: { general: true } })), null);
+  assert.equal(model.parseStoredInputSections(JSON.stringify({
+    version: 1,
+    sections: { general: true, fleet: false, bev: false, eac: "yes" },
+  })), null);
 });
 
 test("charts use smooth curves and compact navigation keeps every view visible", async () => {
