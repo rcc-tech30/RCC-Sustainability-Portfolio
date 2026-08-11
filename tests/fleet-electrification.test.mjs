@@ -300,6 +300,28 @@ test("payback interpretation exposes the live fleet boundary", async () => {
   assert.deepEqual(toHostRecord(unavailable.boundary), { kind: "finite", maxTotalFleet: 14 });
 });
 
+test("fallback payback interpretation recalculates the strict fleet boundary", async () => {
+  const { model } = await loadApp();
+  const fallback = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    totalIceVehicles: 20,
+  };
+  const interpretation = model.derivePaybackInterpretation(
+    fallback,
+    model.calculateScenario(fallback),
+  );
+  assert.deepEqual(toHostRecord(interpretation.boundary), { kind: "finite", maxTotalFleet: 15 });
+
+  const fifteen = model.calculateScenario({ ...fallback, totalIceVehicles: 15 });
+  assert.ok(close(fifteen.annualOperatingChange, -320.08263894000265));
+  assert.notEqual(fifteen.simplePaybackTransition, null);
+
+  const sixteen = model.calculateScenario({ ...fallback, totalIceVehicles: 16 });
+  assert.ok(close(sixteen.annualOperatingChange, 387.42252599375206));
+  assert.equal(sixteen.simplePaybackTransition, null);
+});
+
 test("fleet boundary remains strict at exact whole numbers", async () => {
   const { model } = await loadApp();
   assert.equal(model.largestIntegerBelow(15), 14);
@@ -337,6 +359,11 @@ test("overview places board interpretation after graphs and errors before KPIs",
   assert.match(html, /\.board-note\[hidden\]\{display:none\}/);
   assert.match(html, /const errors = messages\.filter\(message => message\.severity === "error"\)/);
   assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
+});
+
+test("static numeric payback card starts neutral before live rendering", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<article class="kpi" id="payback-card">/);
 });
 
 test("overview payback explanation uses live interpretation values", async () => {

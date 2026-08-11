@@ -50,7 +50,7 @@
             <article class="kpi good"><span class="label">Residual after certificates</span><strong class="value" id="kpi-residual">0.00 tCO2e</strong><span class="sub" id="kpi-residual-sub">Grid-based result remains separately visible</span></article>
             <article class="kpi"><span class="label">Net transition investment</span><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
             <article class="kpi good" id="operating-card"><span class="label">Annual operating impact</span><strong class="value" id="kpi-operating">AUD 8,902 savings</strong><span class="sub">Electricity, certificates and avoided fuel</span></article>
-            <article class="kpi warn" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">13.48 years vs new ICE purchase</span></article>
+            <article class="kpi" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">13.48 years vs new ICE purchase</span></article>
             <article class="kpi"><span class="label">BEV electricity added</span><strong class="value" id="kpi-electricity">39,600 kWh</strong><span class="sub" id="kpi-electricity-sub">Distance-based estimate</span></article>
             <article class="kpi warn"><span class="label">Additional certificate cost</span><strong class="value" id="kpi-certificate">AUD 13,178</strong><span class="sub" id="kpi-certificate-sub">Target EAC coverage</span></article>
           </div>
@@ -243,11 +243,43 @@
       } else if (!(result.electricityCostChange > 0)) {
         boundary = { kind: "nonpositive-electricity-change", maxTotalFleet: null };
       } else {
-        const rawBoundary = s.currentAnnualFuelCost * vehiclesTransitioning / result.electricityCostChange;
-        const maxTotalFleet = largestIntegerBelow(rawBoundary);
-        boundary = maxTotalFleet < vehiclesTransitioning
-          ? { kind: "no-valid-boundary", maxTotalFleet: null }
-          : { kind: "finite", maxTotalFleet };
+        const minimumFleet = Math.ceil(vehiclesTransitioning);
+        const hasSavings = totalIceVehicles => calculateScenario({
+          ...s,
+          totalIceVehicles,
+        }).annualOperatingChange < 0;
+        if (!Number.isSafeInteger(minimumFleet) || !hasSavings(minimumFleet)) {
+          boundary = { kind: "no-valid-boundary", maxTotalFleet: null };
+        } else {
+          let maxTotalFleet = minimumFleet;
+          let firstFleetWithoutSavings = minimumFleet + 1;
+          while (
+            Number.isSafeInteger(firstFleetWithoutSavings)
+            && hasSavings(firstFleetWithoutSavings)
+          ) {
+            maxTotalFleet = firstFleetWithoutSavings;
+            firstFleetWithoutSavings = Math.min(
+              Number.MAX_SAFE_INTEGER,
+              firstFleetWithoutSavings * 2,
+            );
+            if (firstFleetWithoutSavings === maxTotalFleet) break;
+          }
+          if (
+            !Number.isSafeInteger(firstFleetWithoutSavings)
+            || hasSavings(firstFleetWithoutSavings)
+          ) {
+            boundary = { kind: "no-finite-boundary", maxTotalFleet: null };
+          } else {
+            while (maxTotalFleet + 1 < firstFleetWithoutSavings) {
+              const candidate = maxTotalFleet + Math.floor(
+                (firstFleetWithoutSavings - maxTotalFleet) / 2,
+              );
+              if (hasSavings(candidate)) maxTotalFleet = candidate;
+              else firstFleetWithoutSavings = candidate;
+            }
+            boundary = { kind: "finite", maxTotalFleet };
+          }
+        }
       }
       return {
         hasPayback: result.simplePaybackTransition !== null,
@@ -469,6 +501,7 @@
           "no-fuel-cost": "A fleet boundary cannot be calculated until current annual fleet fuel cost is greater than zero.",
           "nonpositive-electricity-change": "No upper fleet boundary is shown because the electricity and certificate cost change is zero or lower.",
           "no-valid-boundary": "No valid total-fleet size produces annual savings with the current vehicles transitioning and cost assumptions.",
+          "no-finite-boundary": "No finite whole-fleet boundary can be shown reliably with the current cost assumptions.",
         };
         const boundary = interpretation.boundary;
         q("#payback-boundary").textContent = interpretation.hasPayback
