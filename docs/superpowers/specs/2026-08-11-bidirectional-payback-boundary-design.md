@@ -57,7 +57,7 @@ Test-driven coverage must exercise real model behavior and include:
 
 - the existing default Distance-based maximum of 14;
 - the existing default Fallback transition between 15 and 16;
-- the reproduced inverse-direction Fallback scenario, proving a minimum threshold of 15;
+- the reproduced inverse-direction Fallback scenario, proving no payback at fleet 13 and a minimum threshold of 14;
 - the adjacent values on both sides of every threshold;
 - exact-zero behavior as no payback;
 - all-savings/no-finite-cap and no-valid-fleet states;
