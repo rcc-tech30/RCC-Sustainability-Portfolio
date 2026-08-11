@@ -8,6 +8,12 @@ This folder contains a browser-based planning tool converted from a formula-driv
 
 The application is self-contained. It requires no account, installation, package, build command, or external service.
 
+## Organizing inputs
+
+The Inputs and assumptions view opens with General expanded on first use. General, Fleet baseline, BEV, and EAC can then be opened or collapsed independently, and the browser remembers the last section combination for later visits.
+
+Fuel-to-BEV conversion is enabled only when the BEV calculation method is Fallback. Distance-based scenarios retain the fallback value but do not use it in calculations.
+
 ## What the tool demonstrates
 
 - Editable fleet, fuel, vehicle, electricity, certificate, and cost assumptions
