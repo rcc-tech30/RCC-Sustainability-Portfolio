@@ -336,14 +336,6 @@ test("payback interpretation classifies maximum and minimum whole-fleet threshol
   assert.equal(unavailable.vehiclesTransitioning, 10);
 });
 
-test("fleet boundary remains strict at exact whole numbers", async () => {
-  const { model } = await loadApp();
-  assert.equal(model.largestIntegerBelow(15), 14);
-  assert.equal(model.largestIntegerBelow(15.000000000000002), 14);
-  assert.equal(model.largestIntegerBelow(14.2), 14);
-  assert.equal(model.largestIntegerBelow(Number.POSITIVE_INFINITY), null);
-});
-
 test("payback fleet boundary preserves strict and non-numeric states", async () => {
   const { model } = await loadApp();
 
@@ -454,8 +446,12 @@ test("overview places board interpretation after graphs and errors before KPIs",
   const { html } = await loadApp();
   const chartMarkup = '<div class="chart-grid">';
   const notesMarkup = '<section class="board-interpretation" id="board-interpretation"';
+  const errorRegion = html.match(/<div\b[^>]*\bid="warning-stack"[^>]*>/)?.[0];
   assert.ok(html.indexOf(notesMarkup) > html.indexOf(chartMarkup));
-  assert.match(html, /id="warning-stack"[^>]*aria-label="Input errors"[^>]*aria-live="assertive"/);
+  assert.ok(errorRegion, "overview exposes an input-error region");
+  assert.match(errorRegion, /\brole="alert"/);
+  assert.match(errorRegion, /\baria-label="Input errors"/);
+  assert.match(errorRegion, /\baria-live="assertive"/);
   assert.match(html, /id="board-interpretation"[^>]*aria-labelledby="board-interpretation-title"/);
   assert.match(html, /id="payback-explanation"/);
   assert.match(html, /id="payback-boundary"/);

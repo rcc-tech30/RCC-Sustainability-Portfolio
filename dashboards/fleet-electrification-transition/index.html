@@ -43,7 +43,7 @@
       <main class="content" id="main-content" tabindex="-1">
         <section class="view" id="view-overview" data-view="overview">
           <div class="hero"><div><p class="eyebrow">Decision overview</p><h1>What changes when your fleet goes electric?</h1><p>Model the emissions, energy, investment and annual operating impact of replacing internal-combustion vehicles with BEVs.</p></div><div class="scenario-meta"><strong id="scenario-company">Company X by You</strong><br><span id="scenario-method">Distance-based method</span></div></div>
-          <div id="warning-stack" class="warning-stack" aria-label="Input errors" aria-live="assertive"></div>
+          <div id="warning-stack" class="warning-stack" role="alert" aria-label="Input errors" aria-live="assertive"></div>
           <div class="kpi-grid">
             <article class="kpi"><span class="label">Fleet transition</span><strong class="value" id="kpi-fleet">10 of 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></article>
             <article class="kpi good"><span class="label">Scope 1 avoided</span><strong class="value" id="kpi-scope1">46.49 tCO2e</strong><span class="sub">Mobile combustion eliminated</span></article>
@@ -221,15 +221,6 @@
         field.dataset.applicable = state.applicable;
         field.querySelector("[data-field-status]").textContent = state.status;
       });
-    }
-
-    function largestIntegerBelow(value) {
-      if (!Number.isFinite(value)) return null;
-      const nearestInteger = Math.round(value);
-      const tolerance = Number.EPSILON * Math.max(1, Math.abs(value)) * 16;
-      return Math.abs(value - nearestInteger) <= tolerance
-        ? nearestInteger - 1
-        : Math.floor(value);
     }
 
     function derivePaybackFleetBoundary(input, result) {
@@ -434,7 +425,6 @@
       formatChartYearLabel,
       getEmissionsPeriodLabels,
       syncFallbackMethodFields,
-      largestIntegerBelow,
       derivePaybackFleetBoundary,
       formatPaybackBoundaryMessage,
       derivePaybackInterpretation,
