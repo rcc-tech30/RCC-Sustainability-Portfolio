@@ -18,6 +18,32 @@ const close = (actual, expected, tolerance = 1e-6) =>
   Math.abs(actual - expected) <= tolerance;
 const toHostRecord = value => JSON.parse(JSON.stringify(value));
 
+test("emissions period labels use scenario years and safe display fallbacks", async () => {
+  const { model } = await loadApp();
+  assert.deepEqual(toHostRecord(model.getEmissionsPeriodLabels(" FY2024 ", "FY2032")), {
+    baselineYear: "FY2024",
+    targetYear: "FY2032",
+    title: "Emissions pathway: FY2024 baseline to FY2032 target",
+    ariaLabel: "Emissions pathway from FY2024 baseline to FY2032 target",
+    stages: [
+      { stage: "Baseline", year: "FY2024" },
+      { stage: "After fleet transition", year: "FY2032" },
+      { stage: "After certificates", year: "FY2032" },
+    ],
+  });
+  assert.deepEqual(toHostRecord(model.getEmissionsPeriodLabels("   ", "")), {
+    baselineYear: "Baseline year",
+    targetYear: "Target year",
+    title: "Emissions pathway: Baseline year baseline to Target year target",
+    ariaLabel: "Emissions pathway from Baseline year baseline to Target year target",
+    stages: [
+      { stage: "Baseline", year: "Baseline year" },
+      { stage: "After fleet transition", year: "Target year" },
+      { stage: "After certificates", year: "Target year" },
+    ],
+  });
+});
+
 test("sample scenario reproduces workbook headline results", async () => {
   const { model } = await loadApp();
   const result = model.calculateScenario(model.DEFAULT_SCENARIO);

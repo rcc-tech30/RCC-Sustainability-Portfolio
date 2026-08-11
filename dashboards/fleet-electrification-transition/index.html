@@ -181,6 +181,22 @@
       };
     }
 
+    function getEmissionsPeriodLabels(baselineYear, targetYear) {
+      const baseline = String(baselineYear ?? "").trim() || "Baseline year";
+      const target = String(targetYear ?? "").trim() || "Target year";
+      return {
+        baselineYear: baseline,
+        targetYear: target,
+        title: `Emissions pathway: ${baseline} baseline to ${target} target`,
+        ariaLabel: `Emissions pathway from ${baseline} baseline to ${target} target`,
+        stages: [
+          { stage: "Baseline", year: baseline },
+          { stage: "After fleet transition", year: target },
+          { stage: "After certificates", year: target },
+        ],
+      };
+    }
+
     function syncFallbackMethodFields(fields, bevMethod) {
       const state = getFallbackFieldState(bevMethod);
       fields.forEach(field => {
@@ -312,6 +328,7 @@
       parseStoredInputSections,
       formatInputSectionAnnouncement,
       getFallbackFieldState,
+      getEmissionsPeriodLabels,
       syncFallbackMethodFields,
     };
   </script>
