@@ -23,6 +23,8 @@ test("emissions period labels use scenario years and safe display fallbacks", as
   assert.deepEqual(toHostRecord(model.getEmissionsPeriodLabels(" FY2024 ", "FY2032")), {
     baselineYear: "FY2024",
     targetYear: "FY2032",
+    visualBaselineYear: "FY2024",
+    visualTargetYear: "FY2032",
     title: "Emissions pathway: FY2024 baseline to FY2032 target",
     ariaLabel: "Emissions pathway from FY2024 baseline to FY2032 target",
     stages: [
@@ -34,6 +36,8 @@ test("emissions period labels use scenario years and safe display fallbacks", as
   assert.deepEqual(toHostRecord(model.getEmissionsPeriodLabels("   ", "")), {
     baselineYear: "Baseline year",
     targetYear: "Target year",
+    visualBaselineYear: "Baseline year",
+    visualTargetYear: "Target year",
     title: "Emissions pathway: Baseline year baseline to Target year target",
     ariaLabel: "Emissions pathway from Baseline year baseline to Target year target",
     stages: [
@@ -44,6 +48,34 @@ test("emissions period labels use scenario years and safe display fallbacks", as
   });
 });
 
+test("chart year labels shorten only beyond 18 Unicode code points", async () => {
+  const { model } = await loadApp();
+  const eighteenEmoji = "😀".repeat(18);
+
+  assert.equal(model.formatChartYearLabel("FY2022"), "FY2022");
+  assert.equal(model.formatChartYearLabel(eighteenEmoji), eighteenEmoji);
+  assert.equal(model.formatChartYearLabel(`${eighteenEmoji}😀`), `${"😀".repeat(17)}…`);
+});
+
+test("emissions period labels preserve full long and adversarial values outside the SVG", async () => {
+  const { model } = await loadApp();
+  const longBaseline = "FiscalYearWithoutAnyBreakOpportunity2022";
+  const adversarialTarget = `<>&"`;
+  const labels = toHostRecord(model.getEmissionsPeriodLabels(` ${longBaseline} `, ` ${adversarialTarget} `));
+
+  assert.equal(labels.baselineYear, longBaseline);
+  assert.equal(labels.targetYear, adversarialTarget);
+  assert.equal(labels.title, `Emissions pathway: ${longBaseline} baseline to ${adversarialTarget} target`);
+  assert.equal(labels.ariaLabel, `Emissions pathway from ${longBaseline} baseline to ${adversarialTarget} target`);
+  assert.equal(labels.visualBaselineYear, "FiscalYearWithout…");
+  assert.equal(labels.visualTargetYear, adversarialTarget);
+  assert.deepEqual(labels.stages, [
+    { stage: "Baseline", year: "FiscalYearWithout…" },
+    { stage: "After fleet transition", year: adversarialTarget },
+    { stage: "After certificates", year: adversarialTarget },
+  ]);
+});
+
 test("overview emissions pathway renders dynamic year-aware labels", async () => {
   const { html } = await loadApp();
   assert.match(html, /<h3 id="emissions-chart-title">Emissions pathway<\/h3>/);
@@ -52,6 +84,7 @@ test("overview emissions pathway renders dynamic year-aware labels", async () =>
   assert.match(html, /q\("#emissions-chart"\)\.setAttribute\("aria-label", periodLabels\.ariaLabel\)/);
   assert.match(html, /escapeHtml\(labels\[i\]\.stage\)/);
   assert.match(html, /escapeHtml\(labels\[i\]\.year\)/);
+  assert.match(html, /#emissions-chart-title,#emissions-summary\{[^}]*overflow-wrap:anywhere/);
   assert.match(html, /lineChart\(pathway,periodLabels\.stages\)/);
   assert.match(html, /periodLabels\.baselineYear/);
   assert.match(html, /periodLabels\.targetYear/);

@@ -269,3 +269,48 @@ git log --oneline main..HEAD
 ```
 
 Expected: the branch changes only the approved design specification, this implementation plan, the assessment HTML, and assessment tests; the working tree is clean except for the ignored local `.superpowers/` companion directory.
+
+---
+
+## Final Review Fix Evidence — 2026-08-11
+
+The final-review boundary finding is addressed by preserving complete trimmed values in `baselineYear`, `targetYear`, the dynamic title, chart `aria-label`, and summary, while deriving separate SVG-only labels with `formatChartYearLabel()`. The formatter retains labels through 18 Unicode code points and, above that boundary, returns the first 17 code points plus `…`. The heading and summary use defensive wrapping; SVG overflow is contained; ordinary labels such as `FY2022` remain exact; SVG text continues through `escapeHtml()`.
+
+### RED / GREEN
+
+```powershell
+node --test --test-name-pattern="chart year labels|emissions period labels preserve|emissions period labels use" tests/fleet-electrification.test.mjs
+```
+
+RED result before production changes: exit `1`; 3 tests, 0 passed, 3 failed. Failures identified the missing visual-label properties and missing `formatChartYearLabel()` export.
+
+```powershell
+node --test --test-name-pattern="chart year labels|emissions period labels preserve|emissions period labels use|dynamic year-aware labels" tests/fleet-electrification.test.mjs
+```
+
+GREEN result after the minimal implementation: exit `0`; 4 tests, 4 passed, 0 failed.
+
+### Browser matrix
+
+The local self-contained dashboard was served from `http://127.0.0.1:8765/dashboards/fleet-electrification-transition/` and exercised through the in-app Chromium browser. Each case updated the actual inputs and then inspected the rendered title, chart `aria-label`, SVG year text, summary, stored input values, element bounds, document width, and console.
+
+| Viewport | Values | Result |
+| --- | --- | --- |
+| 1440×1000 | `FY2022` / `FY2035` | Full title, ARIA, and summary correct; SVG years exact; SVG contained; page overflow `0px`. |
+| 1440×1000 | whitespace / whitespace | Inputs retained whitespace; all presentation sinks used `Baseline year` / `Target year`; SVG contained; page overflow `0px`. |
+| 1440×1000 | `FiscalYearWithoutAnyBreakOpportunity2022` / `<>&"` | Full stored/title/ARIA/summary values retained; SVG years were `FiscalYearWithout…`, `<>&"`, `<>&"`; special-character markup escaped; 9 expected SVG text nodes; title wrapped to 2 lines; SVG contained; page overflow `0px`. |
+| 390×844 | `FY2022` / `FY2035` | Full title, ARIA, and summary correct; SVG years exact; SVG contained; page overflow `0px`. |
+| 390×844 | whitespace / whitespace | Inputs retained whitespace; all presentation sinks used fallbacks; SVG contained; page overflow `0px`. |
+| 390×844 | `FiscalYearWithoutAnyBreakOpportunity2022` / `<>&"` | Full stored/title/ARIA/summary values retained; SVG years compact/safe; special-character markup escaped; 9 expected SVG text nodes; title wrapped to 3 lines; SVG contained; page overflow `0px`. |
+
+Console result after all six cases: `[]` for warning/error entries.
+
+### Fresh full verification
+
+```powershell
+node --test tests/fleet-electrification.test.mjs
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-portfolio.ps1
+git diff --check
+```
+
+Results: `19` tests passed, `0` failed (exit `0`); `Portfolio verification passed.` (exit `0`); `git diff --check` exit `0` with no whitespace errors. Git emitted only the repository's line-ending conversion notices for the three edited source files.
