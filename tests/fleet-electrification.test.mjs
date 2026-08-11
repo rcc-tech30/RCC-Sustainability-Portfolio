@@ -390,6 +390,44 @@ test("payback fleet boundary preserves strict and non-numeric states", async () 
   }
 });
 
+test("payback fleet boundary finds an exact safe-integer crossing without slope tolerance", async () => {
+  const { model } = await loadApp();
+  const scenario = {
+    ...model.DEFAULT_SCENARIO,
+    totalIceVehicles: 6_000_000_000_000_000,
+    vehiclesTransitioning: 1_000_000_000_000_000,
+    annualDistanceKm: 100,
+    bevKwhPerKm: 0.01,
+    chargingLossPct: 0,
+    electricityRate: 0.01,
+    currentAnnualFuelCost: 50_000_000_000_000,
+    currentCertificateCoverage: 0,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0,
+  };
+
+  assert.ok(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 4_999_999_999_999_999,
+  }).annualOperatingChange < 0);
+  assert.equal(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 5_000_000_000_000_000,
+  }).annualOperatingChange, 0);
+  assert.ok(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 5_000_000_000_000_001,
+  }).annualOperatingChange > 0);
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    scenario,
+    model.calculateScenario(scenario),
+  )), {
+    kind: "maximum",
+    maxTotalFleet: 4_999_999_999_999_999,
+    minTotalFleet: null,
+  });
+});
+
 test("payback boundary copy states maximum and minimum direction in words", async () => {
   const { model } = await loadApp();
   const formatValue = value => String(value);

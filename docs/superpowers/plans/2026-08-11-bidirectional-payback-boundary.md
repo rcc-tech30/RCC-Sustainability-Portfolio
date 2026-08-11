@@ -4,7 +4,7 @@
 
 **Goal:** Make the live board explanation report an exact maximum fleet, minimum fleet, or safe non-numeric condition for every valid Distance-based and Fallback scenario.
 
-**Architecture:** Keep `calculateScenario` as the only financial source of truth. Replace the one-direction boundary search with a pure classifier that evaluates the unchanged model at feasible whole-fleet sizes, determines whether annual operating change rises or falls with total fleet, and uses bracketing plus binary search in the correct direction. Extract pure boundary copy so executable tests cover the actual wording used by the renderer.
+**Architecture:** Keep `calculateScenario` as the only financial source of truth. Replace the one-direction boundary search with a pure classifier that compares strict savings states at the minimum feasible whole fleet and `Number.MAX_SAFE_INTEGER`. Matching endpoint states produce the appropriate non-numeric condition; differing states define the maximum/minimum binary-search invariant and yield the exact strict crossing. Extract pure boundary copy so executable tests cover the actual wording used by the renderer.
 
 **Tech Stack:** Self-contained HTML, CSS and vanilla JavaScript; Node.js built-in test runner and VM; PowerShell portfolio verifier; installed Chromium browser verification.
 
@@ -15,6 +15,7 @@
 - Whole-fleet thresholds are strict: annual operating change must be negative; exactly zero is no payback.
 - Support both increasing and decreasing operating-cost relationships without assuming Distance-based and Fallback move in the same direction.
 - Do not use an arbitrary fleet search limit. Use JavaScript safe-integer bounds and suppress a numeric threshold if it cannot be established reliably.
+- Do not infer direction from adjacent-point deltas or floating-point tolerances. Classify the feasible safe-integer domain from its endpoint savings states.
 - Dynamic board copy must use `textContent`, communicate direction in words, and remain live on every input change.
 - Keep the existing rule that threshold copy is hidden when the current scenario already has payback.
 - Add no dependencies and avoid unrelated refactoring.
@@ -173,31 +174,26 @@ function derivePaybackFleetBoundary(input, result) {
 
   const minimumFleet = Math.ceil(vehiclesTransitioning);
   if (!Number.isSafeInteger(minimumFleet)) return empty("no-valid-boundary");
-  const annualChange = totalIceVehicles => calculateScenario({
+  const hasSavings = totalIceVehicles => calculateScenario({
     ...s,
     totalIceVehicles,
-  }).annualOperatingChange;
-  const hasSavings = totalIceVehicles => annualChange(totalIceVehicles) < 0;
-  const firstChange = annualChange(minimumFleet);
-  const secondChange = annualChange(minimumFleet + 1);
-  const scale = Math.max(1, Math.abs(firstChange), Math.abs(secondChange));
-  const tolerance = Number.EPSILON * scale * 32;
-  const direction = secondChange - firstChange > tolerance
-    ? "increasing"
-    : secondChange - firstChange < -tolerance
-      ? "decreasing"
-      : "flat";
+  }).annualOperatingChange < 0;
+  const minimumHasSavings = hasSavings(minimumFleet);
+  const maximumHasSavings = hasSavings(Number.MAX_SAFE_INTEGER);
+  if (minimumHasSavings === maximumHasSavings) {
+    return minimumHasSavings
+      ? empty("no-finite-boundary")
+      : empty("no-valid-boundary");
+  }
 
-  // Increasing: savings can end at one strict maximum.
-  // Decreasing: savings can begin at one strict minimum.
-  // Flat: every feasible fleet saves or none does.
-  // Bracket toward Number.MAX_SAFE_INTEGER, then binary-search the first
-  // integer on the opposite side. If no reliable bracket exists, return
-  // the appropriate non-numeric state rather than a guessed threshold.
+  let lower = minimumFleet;
+  let upper = Number.MAX_SAFE_INTEGER;
+  // If the minimum saves, binary-search the strict maximum.
+  // Otherwise, binary-search the strict minimum.
 }
 ```
 
-Use a local safe growth helper that returns `Number.MAX_SAFE_INTEGER` instead of overflowing. Binary search invariants must be explicit:
+Compare the two endpoint savings states directly; do not use adjacent-point deltas, a tolerance, or an exponential growth helper. When the endpoint states differ, binary search invariants must be explicit:
 
 - maximum search: `lower` has savings; `upper` does not; return `lower`;
 - minimum search: `lower` does not have savings; `upper` does; return `upper`.
