@@ -282,3 +282,198 @@ test("fallback field synchronizer executes method transitions without replacing 
   assert.equal(control.value, "37");
   assert.equal(storedValue, "37");
 });
+
+test("payback interpretation classifies maximum and minimum whole-fleet thresholds", async () => {
+  const { model } = await loadApp();
+
+  const defaultResult = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const available = model.derivePaybackInterpretation(model.DEFAULT_SCENARIO, defaultResult);
+  assert.equal(available.hasPayback, true);
+  assert.ok(close(available.annualSavings, 8902));
+  assert.equal(available.annualCostIncrease, 0);
+  assert.deepEqual(toHostRecord(available.boundary), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
+
+  const distanceNoPayback = { ...model.DEFAULT_SCENARIO, totalIceVehicles: 15 };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    distanceNoPayback,
+    model.calculateScenario(distanceNoPayback),
+  )), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
+
+  const fallbackMaximum = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    totalIceVehicles: 20,
+  };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackMaximum,
+    model.calculateScenario(fallbackMaximum),
+  )), { kind: "maximum", maxTotalFleet: 15, minTotalFleet: null });
+  assert.ok(close(model.calculateScenario({ ...fallbackMaximum, totalIceVehicles: 15 }).annualOperatingChange, -320.08263894000265));
+  assert.ok(close(model.calculateScenario({ ...fallbackMaximum, totalIceVehicles: 16 }).annualOperatingChange, 387.42252599375206));
+
+  const fallbackMinimum = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    totalIceVehicles: 10,
+    currentCertificateCoverage: 1,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0.02,
+    currentAnnualFuelCost: 5000,
+  };
+  assert.ok(close(model.calculateScenario({ ...fallbackMinimum, totalIceVehicles: 13 }).annualOperatingChange, 8.974987384620817));
+  assert.ok(close(model.calculateScenario({ ...fallbackMinimum, totalIceVehicles: 14 }).annualOperatingChange, -277.38036885714155));
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackMinimum,
+    model.calculateScenario(fallbackMinimum),
+  )), { kind: "minimum", maxTotalFleet: null, minTotalFleet: 14 });
+
+  const unavailable = model.derivePaybackInterpretation(
+    distanceNoPayback,
+    model.calculateScenario(distanceNoPayback),
+  );
+  assert.equal(unavailable.hasPayback, false);
+  assert.ok(close(unavailable.annualCostIncrease, 1098));
+  assert.equal(unavailable.vehiclesTransitioning, 10);
+});
+
+test("payback fleet boundary preserves strict and non-numeric states", async () => {
+  const { model } = await loadApp();
+
+  const exactZero = {
+    ...model.DEFAULT_SCENARIO,
+    totalIceVehicles: 15,
+    currentAnnualFuelCost: 31647,
+  };
+  assert.ok(close(model.calculateScenario(exactZero).annualOperatingChange, 0));
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    exactZero,
+    model.calculateScenario(exactZero),
+  )), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
+
+  const fallbackAllSavings = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    currentCertificateCoverage: 1,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0.02,
+  };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackAllSavings,
+    model.calculateScenario(fallbackAllSavings),
+  )), { kind: "no-finite-boundary", maxTotalFleet: null, minTotalFleet: null });
+
+  const noValidFleet = { ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 1000 };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    noValidFleet,
+    model.calculateScenario(noValidFleet),
+  )), { kind: "no-valid-boundary", maxTotalFleet: null, minTotalFleet: null });
+
+  const result = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const cases = [
+    [{ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 0 }, { ...result, vehiclesTransitioning: 0 }, "no-transition"],
+    [{ ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 0 }, result, "no-fuel-cost"],
+    [model.DEFAULT_SCENARIO, { ...result, electricityCostChange: 0 }, "nonpositive-electricity-change"],
+  ];
+  for (const [scenario, scenarioResult, kind] of cases) {
+    assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+      scenario,
+      scenarioResult,
+    )), { kind, maxTotalFleet: null, minTotalFleet: null });
+  }
+});
+
+test("payback fleet boundary finds an exact safe-integer crossing without slope tolerance", async () => {
+  const { model } = await loadApp();
+  const scenario = {
+    ...model.DEFAULT_SCENARIO,
+    totalIceVehicles: 6_000_000_000_000_000,
+    vehiclesTransitioning: 1_000_000_000_000_000,
+    annualDistanceKm: 100,
+    bevKwhPerKm: 0.01,
+    chargingLossPct: 0,
+    electricityRate: 0.01,
+    currentAnnualFuelCost: 50_000_000_000_000,
+    currentCertificateCoverage: 0,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0,
+  };
+
+  assert.ok(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 4_999_999_999_999_999,
+  }).annualOperatingChange < 0);
+  assert.equal(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 5_000_000_000_000_000,
+  }).annualOperatingChange, 0);
+  assert.ok(model.calculateScenario({
+    ...scenario,
+    totalIceVehicles: 5_000_000_000_000_001,
+  }).annualOperatingChange > 0);
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    scenario,
+    model.calculateScenario(scenario),
+  )), {
+    kind: "maximum",
+    maxTotalFleet: 4_999_999_999_999_999,
+    minTotalFleet: null,
+  });
+});
+
+test("payback boundary copy states maximum and minimum direction in words", async () => {
+  const { model } = await loadApp();
+  const formatValue = value => String(value);
+
+  assert.equal(
+    model.formatPaybackBoundaryMessage(
+      { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null },
+      10,
+      formatValue,
+    ),
+    "With 10 vehicles transitioning, annual savings require a total fleet of 14 vehicles or fewer, holding other assumptions constant.",
+  );
+  assert.equal(
+    model.formatPaybackBoundaryMessage(
+      { kind: "minimum", maxTotalFleet: null, minTotalFleet: 14 },
+      10,
+      formatValue,
+    ),
+    "With 10 vehicles transitioning, annual savings require a total fleet of 14 vehicles or more, holding other assumptions constant.",
+  );
+});
+
+test("overview places board interpretation after graphs and errors before KPIs", async () => {
+  const { html } = await loadApp();
+  const chartMarkup = '<div class="chart-grid">';
+  const notesMarkup = '<section class="board-interpretation" id="board-interpretation"';
+  const errorRegion = html.match(/<div\b[^>]*\bid="warning-stack"[^>]*>/)?.[0];
+  assert.ok(html.indexOf(notesMarkup) > html.indexOf(chartMarkup));
+  assert.ok(errorRegion, "overview exposes an input-error region");
+  assert.match(errorRegion, /\brole="alert"/);
+  assert.match(errorRegion, /\baria-label="Input errors"/);
+  assert.match(errorRegion, /\baria-live="assertive"/);
+  assert.match(html, /id="board-interpretation"[^>]*aria-labelledby="board-interpretation-title"/);
+  assert.match(html, /id="payback-explanation"/);
+  assert.match(html, /id="payback-boundary"/);
+  assert.match(html, /id="overview-warning-list"/);
+  assert.match(html, /id="payback-limitation"/);
+  assert.match(html, /\.board-note\[hidden\]\{display:none\}/);
+  assert.match(html, /const errors = messages\.filter\(message => message\.severity === "error"\)/);
+  assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
+});
+
+test("static numeric payback card starts neutral before live rendering", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<article class="kpi" id="payback-card">/);
+});
+
+test("overview payback explanation uses live interpretation values", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /const payback = derivePaybackInterpretation\(scenario, result\)/);
+  assert.match(html, /function renderPaybackInterpretation\(interpretation, warnings\)/);
+  assert.match(html, /q\("#payback-explanation"\)\.textContent =/);
+  assert.match(html, /q\("#payback-boundary"\)\.textContent =/);
+  assert.match(html, /Based on \$\{formatMoney\(interpretation\.annualSavings\)\} annual savings/);
+  assert.match(html, /Annual operating cost increases by \$\{formatMoney\(interpretation\.annualCostIncrease\)\}/);
+  assert.match(html, /holding other assumptions constant/);
+});

@@ -9,14 +9,14 @@
   <style>
     :root{--navy:#081b33;--navy-2:#102a48;--ink:#152033;--muted:#607087;--line:#d8e0e8;--surface:#f4f7f9;--white:#fff;--emerald:#087f5b;--emerald-soft:#e6f5ef;--orange:#b85c00;--orange-soft:#fff1df;--red:#b42318;--red-soft:#ffebe9;--radius-panel:12px;--radius-control:8px;--shadow:0 12px 34px rgba(8,27,51,.08);font-family:Arial,"Helvetica Neue",sans-serif;color:var(--ink);background:var(--surface);font-synthesis:none}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--surface);color:var(--ink)}button,input,select{font:inherit}.skip-link{position:fixed;z-index:100;left:12px;top:12px;transform:translateY(-180%);background:var(--white);color:var(--navy);padding:10px 14px;border-radius:var(--radius-control);box-shadow:var(--shadow)}.skip-link:focus{transform:none}
-    .app-shell{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100dvh;overflow-y:auto;padding:28px 18px;background:var(--navy);color:#fff;display:flex;flex-direction:column}.brand{padding:0 10px 26px;border-bottom:1px solid rgba(255,255,255,.14)}.brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:10px;font-weight:800;letter-spacing:-.04em}.brand strong{display:block;margin-top:16px;font-size:15px;line-height:1.25}.brand span{display:block;margin-top:6px;color:#a9b9ca;font-size:12px;line-height:1.45}.nav{display:grid;gap:6px;margin-top:24px}.nav button{min-height:44px;border:0;border-radius:8px;background:transparent;color:#b9c6d5;text-align:left;padding:0 12px;cursor:pointer;font-weight:700}.nav button:hover{background:rgba(255,255,255,.08);color:#fff}.nav button[aria-current="page"]{background:#fff;color:var(--navy)}.sidebar-note{margin-top:auto;padding:14px 10px 0;color:#9fb0c3;font-size:11px;line-height:1.5}.main{min-width:0}.topbar{min-height:76px;padding:16px clamp(20px,4vw,54px);border-bottom:1px solid var(--line);background:rgba(244,247,249,.94);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}.page-title{min-width:0;font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere}.page-title small{display:block;margin-top:4px;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:0}.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.status{border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px;background:var(--orange-soft);color:var(--orange)}.button{min-height:40px;padding:0 13px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.button:hover{border-color:#98a8ba}.button:active{transform:translateY(1px)}.button.primary{background:var(--emerald);border-color:var(--emerald);color:#fff}.content{padding:34px clamp(20px,4vw,54px) 64px;max-width:1520px;margin:0 auto}.view[hidden]{display:none}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}.eyebrow{margin:0 0 9px;color:var(--emerald);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1,.view-heading h2{margin:0;color:var(--navy);letter-spacing:-.045em;line-height:1.03}.hero h1{font-size:clamp(32px,4vw,56px);max-width:760px}.hero p,.view-heading p{max-width:68ch;color:var(--muted);line-height:1.6}.scenario-meta{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}.warning-stack{display:grid;gap:8px;margin:18px 0}.alert{padding:12px 14px;border-radius:var(--radius-control);font-size:13px;font-weight:650}.alert.warning{background:var(--orange-soft);color:#743b00}.alert.error{background:var(--red-soft);color:var(--red)}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.kpi{min-height:140px;padding:18px;border-radius:var(--radius-panel);border:1px solid var(--line);background:var(--white);box-shadow:0 8px 22px rgba(8,27,51,.04);display:flex;flex-direction:column}.kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.04em;text-transform:uppercase}.kpi .value{margin-top:16px;font-size:clamp(22px,2.1vw,32px);line-height:1;font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-.035em}.kpi.good .value{color:var(--emerald)}.kpi.warn .value{color:var(--orange)}.kpi .sub{margin-top:auto;padding-top:14px;color:var(--muted);font-size:11px;line-height:1.35}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{min-width:0;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow);padding:20px}.panel h3{margin:0;color:var(--navy);font-size:15px}.panel-intro{margin:6px 0 18px;color:var(--muted);font-size:12px}.chart{min-height:260px}.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.5}.view-heading{margin-bottom:24px}.view-heading h2{font-size:clamp(28px,3vw,42px)}.form-section{margin-top:18px;border-top:1px solid var(--line);padding-top:22px}.form-section h3{margin:0 0 14px;color:var(--navy);font-size:15px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:800;color:#33445a}.field input,.field select{width:100%;height:44px;border:1px solid #b9c5d2;border-radius:var(--radius-control);background:#fff;padding:0 12px;color:var(--ink);font-variant-numeric:tabular-nums}.field input:focus,.field select:focus,.button:focus-visible,.nav button:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px;border-color:var(--emerald)}.field small{min-height:14px;color:var(--muted);font-size:10px;line-height:1.35}.field.has-error input,.field.has-error select{border-color:var(--red)}.field .field-error{color:var(--red)}.metric-table{width:100%;border-collapse:collapse}.metric-table th,.metric-table td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.metric-table th{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}.metric-table td:nth-child(2){font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums}.metric-table tr:last-child td{border-bottom:0}.two-col{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px}.stack{display:grid;gap:18px}.callout{padding:18px;border-left:4px solid var(--emerald);background:var(--emerald-soft);border-radius:0 var(--radius-control) var(--radius-control) 0;color:#174d3e;line-height:1.55;font-size:13px}.callout.warning{border-color:var(--orange);background:var(--orange-soft);color:#6b3d09}.method-list{display:grid;gap:14px}.method-item{padding-bottom:14px;border-bottom:1px solid var(--line)}.method-item:last-child{border-bottom:0;padding-bottom:0}.method-item strong{display:block;color:var(--navy);margin-bottom:5px}.method-item p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.source-link{color:var(--emerald);word-break:break-word}.footer{padding:22px clamp(20px,4vw,54px);border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+    .app-shell{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100dvh;overflow-y:auto;padding:28px 18px;background:var(--navy);color:#fff;display:flex;flex-direction:column}.brand{padding:0 10px 26px;border-bottom:1px solid rgba(255,255,255,.14)}.brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:10px;font-weight:800;letter-spacing:-.04em}.brand strong{display:block;margin-top:16px;font-size:15px;line-height:1.25}.brand span{display:block;margin-top:6px;color:#a9b9ca;font-size:12px;line-height:1.45}.nav{display:grid;gap:6px;margin-top:24px}.nav button{min-height:44px;border:0;border-radius:8px;background:transparent;color:#b9c6d5;text-align:left;padding:0 12px;cursor:pointer;font-weight:700}.nav button:hover{background:rgba(255,255,255,.08);color:#fff}.nav button[aria-current="page"]{background:#fff;color:var(--navy)}.sidebar-note{margin-top:auto;padding:14px 10px 0;color:#9fb0c3;font-size:11px;line-height:1.5}.main{min-width:0}.topbar{min-height:76px;padding:16px clamp(20px,4vw,54px);border-bottom:1px solid var(--line);background:rgba(244,247,249,.94);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}.page-title{min-width:0;font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere}.page-title small{display:block;margin-top:4px;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:0}.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.status{border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px;background:var(--orange-soft);color:var(--orange)}.button{min-height:40px;padding:0 13px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.button:hover{border-color:#98a8ba}.button:active{transform:translateY(1px)}.button.primary{background:var(--emerald);border-color:var(--emerald);color:#fff}.content{padding:34px clamp(20px,4vw,54px) 64px;max-width:1520px;margin:0 auto}.view[hidden]{display:none}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}.eyebrow{margin:0 0 9px;color:var(--emerald);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1,.view-heading h2{margin:0;color:var(--navy);letter-spacing:-.045em;line-height:1.03}.hero h1{font-size:clamp(32px,4vw,56px);max-width:760px}.hero p,.view-heading p{max-width:68ch;color:var(--muted);line-height:1.6}.scenario-meta{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}.warning-stack{display:grid;gap:8px;margin:18px 0}.alert{padding:12px 14px;border-radius:var(--radius-control);font-size:13px;font-weight:650}.alert.warning{background:var(--orange-soft);color:#743b00}.alert.error{background:var(--red-soft);color:var(--red)}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.kpi{min-height:140px;padding:18px;border-radius:var(--radius-panel);border:1px solid var(--line);background:var(--white);box-shadow:0 8px 22px rgba(8,27,51,.04);display:flex;flex-direction:column}.kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.04em;text-transform:uppercase}.kpi .value{margin-top:16px;font-size:clamp(22px,2.1vw,32px);line-height:1;font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-.035em}.kpi.good .value{color:var(--emerald)}.kpi.warn .value{color:var(--orange)}.kpi .sub{margin-top:auto;padding-top:14px;color:var(--muted);font-size:11px;line-height:1.35}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{min-width:0;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow);padding:20px}.panel h3{margin:0;color:var(--navy);font-size:15px}.panel-intro{margin:6px 0 18px;color:var(--muted);font-size:12px}.chart{min-height:260px}.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.5}.board-interpretation{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}.board-interpretation-heading{margin-bottom:8px}.board-interpretation-heading h2{margin:0;color:var(--navy);font-size:20px;letter-spacing:-.025em}.board-note{display:grid;grid-template-columns:minmax(150px,.25fr) minmax(0,1fr);gap:10px 24px;padding:16px 0;border-bottom:1px solid var(--line)}.board-note[hidden]{display:none}.board-note:last-child{border-bottom:0}.board-note strong{color:var(--navy);font-size:12px}.board-note p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.board-note p+p{grid-column:2}.board-note ul{grid-column:2;margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.55}.view-heading{margin-bottom:24px}.view-heading h2{font-size:clamp(28px,3vw,42px)}.form-section{margin-top:18px;border-top:1px solid var(--line);padding-top:22px}.form-section h3{margin:0 0 14px;color:var(--navy);font-size:15px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:800;color:#33445a}.field input,.field select{width:100%;height:44px;border:1px solid #b9c5d2;border-radius:var(--radius-control);background:#fff;padding:0 12px;color:var(--ink);font-variant-numeric:tabular-nums}.field input:focus,.field select:focus,.button:focus-visible,.nav button:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px;border-color:var(--emerald)}.field small{min-height:14px;color:var(--muted);font-size:10px;line-height:1.35}.field.has-error input,.field.has-error select{border-color:var(--red)}.field .field-error{color:var(--red)}.metric-table{width:100%;border-collapse:collapse}.metric-table th,.metric-table td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.metric-table th{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}.metric-table td:nth-child(2){font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums}.metric-table tr:last-child td{border-bottom:0}.two-col{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px}.stack{display:grid;gap:18px}.callout{padding:18px;border-left:4px solid var(--emerald);background:var(--emerald-soft);border-radius:0 var(--radius-control) var(--radius-control) 0;color:#174d3e;line-height:1.55;font-size:13px}.callout.warning{border-color:var(--orange);background:var(--orange-soft);color:#6b3d09}.method-list{display:grid;gap:14px}.method-item{padding-bottom:14px;border-bottom:1px solid var(--line)}.method-item:last-child{border-bottom:0;padding-bottom:0}.method-item strong{display:block;color:var(--navy);margin-bottom:5px}.method-item p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.source-link{color:var(--emerald);word-break:break-word}.footer{padding:22px clamp(20px,4vw,54px);border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
     #emissions-chart-title,#emissions-summary{overflow-wrap:anywhere;word-break:break-word}#emissions-chart svg{overflow:hidden}
     .input-section-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.section-filter{display:flex;align-items:center;gap:7px;min-height:38px;padding:0 12px;border:1px solid #b9c5d2;border-radius:999px;background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.section-filter small{color:var(--muted);font-size:10px;font-weight:700}.section-filter[aria-expanded="true"]{border-color:var(--emerald);background:var(--emerald);color:#fff}.section-filter[aria-expanded="true"] small{color:#d9f3e9}.section-filter:active,.section-heading:active{transform:translateY(1px)}.form-section .section-heading-wrap{margin:0}.section-heading{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 0 14px;border:0;background:transparent;color:var(--navy);text-align:left;cursor:pointer}.section-heading strong,.section-heading small{display:block}.section-heading strong{font-size:15px}.section-heading small{margin-top:4px;color:var(--muted);font-size:11px;font-weight:500}.section-heading [data-section-action]{color:var(--emerald);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.section-content{opacity:1;transform:translateY(0);transition:opacity .18s ease,transform .18s ease}.section-content[hidden]{display:none}.section-filter:focus-visible,.section-heading:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px}
     .field-label-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.field-status{color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.field[data-method][data-applicable="false"]{opacity:.66}.field[data-method][data-applicable="false"] input{border-style:dashed;background:#edf1f3;color:var(--muted);cursor:not-allowed}.field[data-method][data-applicable="true"] .field-status{color:var(--emerald)}
     .content:focus{outline:none}
     @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:900px){.app-shell{display:block}.sidebar{position:relative;height:auto;overflow:visible;padding:14px 18px;display:block}.brand{display:flex;align-items:center;gap:12px;padding:0;border:0}.brand-mark{width:38px;height:38px}.brand strong{margin:0}.brand span,.sidebar-note{display:none}.nav{display:flex;flex-wrap:wrap;overflow-x:visible;margin:14px -2px 0;padding-bottom:2px}.nav button{white-space:nowrap;flex:1 1 auto;text-align:center}.nav button[aria-current="page"]{background:rgba(255,255,255,.14);color:#fff}.topbar{top:0}.chart-grid,.two-col{grid-template-columns:1fr}}
-    @media(max-width:640px){.topbar{align-items:flex-start}.top-actions .button:not(.primary){display:none}.content{padding-top:24px}.hero{display:block}.scenario-meta{text-align:left;margin-top:14px;white-space:normal}.kpi-grid,.form-grid{grid-template-columns:1fr}.kpi{min-height:126px}.chart{min-height:220px}.panel{padding:16px}.metric-table th:nth-child(3),.metric-table td:nth-child(3){display:none}}
+    @media(max-width:640px){.topbar{align-items:flex-start}.top-actions .button:not(.primary){display:none}.content{padding-top:24px}.hero{display:block}.scenario-meta{text-align:left;margin-top:14px;white-space:normal}.kpi-grid,.form-grid{grid-template-columns:1fr}.kpi{min-height:126px}.chart{min-height:220px}.panel{padding:16px}.board-note{grid-template-columns:1fr;gap:7px}.board-note p+p,.board-note ul{grid-column:1}.metric-table th:nth-child(3),.metric-table td:nth-child(3){display:none}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
     @media print{.sidebar,.topbar,.button,.skip-link{display:none!important}.app-shell{display:block}.content{padding:0}.view{display:block!important;break-after:page}.panel,.kpi{box-shadow:none;break-inside:avoid}.footer{padding:18px 0}}
   </style>
@@ -43,14 +43,14 @@
       <main class="content" id="main-content" tabindex="-1">
         <section class="view" id="view-overview" data-view="overview">
           <div class="hero"><div><p class="eyebrow">Decision overview</p><h1>What changes when your fleet goes electric?</h1><p>Model the emissions, energy, investment and annual operating impact of replacing internal-combustion vehicles with BEVs.</p></div><div class="scenario-meta"><strong id="scenario-company">Company X by You</strong><br><span id="scenario-method">Distance-based method</span></div></div>
-          <div id="warning-stack" class="warning-stack" aria-label="Scenario warnings"></div>
+          <div id="warning-stack" class="warning-stack" role="alert" aria-label="Input errors" aria-live="assertive"></div>
           <div class="kpi-grid">
             <article class="kpi"><span class="label">Fleet transition</span><strong class="value" id="kpi-fleet">10 of 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></article>
             <article class="kpi good"><span class="label">Scope 1 avoided</span><strong class="value" id="kpi-scope1">46.49 tCO2e</strong><span class="sub">Mobile combustion eliminated</span></article>
             <article class="kpi good"><span class="label">Residual after certificates</span><strong class="value" id="kpi-residual">0.00 tCO2e</strong><span class="sub" id="kpi-residual-sub">Grid-based result remains separately visible</span></article>
             <article class="kpi"><span class="label">Net transition investment</span><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
             <article class="kpi good" id="operating-card"><span class="label">Annual operating impact</span><strong class="value" id="kpi-operating">AUD 8,902 savings</strong><span class="sub">Electricity, certificates and avoided fuel</span></article>
-            <article class="kpi warn" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">13.48 years vs new ICE purchase</span></article>
+            <article class="kpi" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">13.48 years vs new ICE purchase</span></article>
             <article class="kpi"><span class="label">BEV electricity added</span><strong class="value" id="kpi-electricity">39,600 kWh</strong><span class="sub" id="kpi-electricity-sub">Distance-based estimate</span></article>
             <article class="kpi warn"><span class="label">Additional certificate cost</span><strong class="value" id="kpi-certificate">AUD 13,178</strong><span class="sub" id="kpi-certificate-sub">Target EAC coverage</span></article>
           </div>
@@ -58,6 +58,12 @@
             <article class="panel"><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
             <article class="panel"><h3>Annual operating cost</h3><p class="panel-intro">Current fuel and electricity compared with the projected state.</p><div class="chart" id="cost-chart" role="img" aria-label="Annual operating cost comparison chart"></div><div class="chart-summary" id="cost-summary"></div></article>
           </div>
+          <section class="board-interpretation" id="board-interpretation" aria-labelledby="board-interpretation-title">
+            <div class="board-interpretation-heading"><p class="eyebrow">Decision support</p><h2 id="board-interpretation-title">Board interpretation</h2></div>
+            <div class="board-note"><strong>Payback outlook</strong><p id="payback-explanation"></p><p id="payback-boundary"></p></div>
+            <div class="board-note" id="overview-warning-note" hidden><strong>Scenario warnings</strong><ul id="overview-warning-list"></ul></div>
+            <div class="board-note"><strong>Important limitation</strong><p id="payback-limitation">Simple payback excludes maintenance, financing, tax, depreciation, battery replacement and time value of money.</p></div>
+          </section>
         </section>
 
         <section class="view" id="view-inputs" data-view="inputs" hidden>
@@ -216,6 +222,84 @@
         field.querySelector("[data-field-status]").textContent = state.status;
       });
     }
+
+    function derivePaybackFleetBoundary(input, result) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
+      const vehiclesTransitioning = result.vehiclesTransitioning;
+      const empty = kind => ({ kind, maxTotalFleet: null, minTotalFleet: null });
+      if (!(vehiclesTransitioning > 0)) return empty("no-transition");
+      if (!(s.currentAnnualFuelCost > 0)) return empty("no-fuel-cost");
+      if (!(result.electricityCostChange > 0)) return empty("nonpositive-electricity-change");
+
+      const minimumFleet = Math.ceil(vehiclesTransitioning);
+      if (!Number.isSafeInteger(minimumFleet)) return empty("no-valid-boundary");
+      const hasSavings = totalIceVehicles => calculateScenario({
+        ...s,
+        totalIceVehicles,
+      }).annualOperatingChange < 0;
+      const minimumHasSavings = hasSavings(minimumFleet);
+      const maximumHasSavings = hasSavings(Number.MAX_SAFE_INTEGER);
+      if (minimumHasSavings === maximumHasSavings) {
+        return minimumHasSavings
+          ? empty("no-finite-boundary")
+          : empty("no-valid-boundary");
+      }
+
+      let lower = minimumFleet;
+      let upper = Number.MAX_SAFE_INTEGER;
+      if (minimumHasSavings) {
+        // Invariant: lower has savings; upper does not.
+        while (lower + 1 < upper) {
+          const candidate = lower + Math.floor((upper - lower) / 2);
+          if (hasSavings(candidate)) lower = candidate;
+          else upper = candidate;
+        }
+        return { kind: "maximum", maxTotalFleet: lower, minTotalFleet: null };
+      }
+
+      // Invariant: lower does not have savings; upper does.
+      while (lower + 1 < upper) {
+        const candidate = lower + Math.floor((upper - lower) / 2);
+        if (hasSavings(candidate)) upper = candidate;
+        else lower = candidate;
+      }
+      return { kind: "minimum", maxTotalFleet: null, minTotalFleet: upper };
+    }
+
+    function formatPaybackBoundaryMessage(boundary, vehiclesTransitioning, formatValue) {
+      if (boundary.kind === "maximum") {
+        return `With ${formatValue(vehiclesTransitioning)} vehicles transitioning, annual savings require a total fleet of ${formatValue(boundary.maxTotalFleet)} vehicles or fewer, holding other assumptions constant.`;
+      }
+      if (boundary.kind === "minimum") {
+        return `With ${formatValue(vehiclesTransitioning)} vehicles transitioning, annual savings require a total fleet of ${formatValue(boundary.minTotalFleet)} vehicles or more, holding other assumptions constant.`;
+      }
+      const messages = {
+        "no-transition": "A fleet boundary cannot be calculated until at least one vehicle is transitioning.",
+        "no-fuel-cost": "A fleet boundary cannot be calculated until current annual fleet fuel cost is greater than zero.",
+        "nonpositive-electricity-change": "No upper fleet boundary is shown because the electricity and certificate cost change is zero or lower.",
+        "no-valid-boundary": "No feasible total-fleet size produces annual savings with the current vehicles transitioning and cost assumptions.",
+        "no-finite-boundary": "No maximum total-fleet threshold applies under these assumptions; modelled annual savings continue as total fleet grows.",
+      };
+      return messages[boundary.kind] || "A reliable fleet threshold cannot be shown under the current assumptions.";
+    }
+
+    function derivePaybackInterpretation(input, result) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
+      return {
+        hasPayback: result.simplePaybackTransition !== null,
+        annualSavings: result.annualOperatingChange < 0 ? Math.abs(result.annualOperatingChange) : 0,
+        annualCostIncrease: result.annualOperatingChange > 0 ? result.annualOperatingChange : 0,
+        operatingChangeIsZero: result.annualOperatingChange === 0,
+        boundary: derivePaybackFleetBoundary(s, result),
+        fuelCostAvoided: result.fuelCostAvoided,
+        electricityCostChange: result.electricityCostChange,
+        transitionInvestment: result.transitionInvestment,
+        incrementalInvestment: result.incrementalInvestment,
+        simplePaybackTransition: result.simplePaybackTransition,
+        simplePaybackIncremental: result.simplePaybackIncremental,
+        vehiclesTransitioning: result.vehiclesTransitioning,
+      };
+    }
     const toTco2e = kilograms => kilograms / 1000;
 
     function calculateScenario(input) {
@@ -341,11 +425,14 @@
       formatChartYearLabel,
       getEmissionsPeriodLabels,
       syncFallbackMethodFields,
+      derivePaybackFleetBoundary,
+      formatPaybackBoundaryMessage,
+      derivePaybackInterpretation,
     };
   </script>
   <script>
     (() => {
-      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
+      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
       const percentageFields = new Set(["chargingLossPct", "fuelToBevPct", "currentCertificateCoverage", "targetCertificateCoverage"]);
       const fieldGroups = {
         "fleet-fields": [
@@ -395,6 +482,40 @@
       const formatMoney = (value, digits = 0) => `${scenario.currencyCode || "AUD"} ${formatNumber(Math.abs(value), digits)}`;
       const formatT = value => `${formatNumber(value, 2)} tCO2e`;
       const announce = text => { q("#live-region").textContent = text; };
+
+      function renderPaybackInterpretation(interpretation, warnings) {
+        const card = q("#payback-card");
+        card.className = `kpi${interpretation.hasPayback ? "" : " warn"}`;
+        q("#kpi-payback").textContent = interpretation.hasPayback
+          ? `${formatNumber(interpretation.simplePaybackTransition, 2)} years`
+          : "No payback";
+        q("#kpi-payback-sub").textContent = interpretation.hasPayback
+          ? `Based on ${formatMoney(interpretation.annualSavings)} annual savings`
+          : interpretation.operatingChangeIsZero
+            ? "No annual operating savings"
+            : `Annual operating cost increases by ${formatMoney(interpretation.annualCostIncrease)}`;
+
+        q("#payback-explanation").textContent = interpretation.hasPayback
+          ? `Transition investment of ${formatMoney(interpretation.transitionInvestment)} divided by ${formatMoney(interpretation.annualSavings)} annual operating savings produces a ${formatNumber(interpretation.simplePaybackTransition, 2)}-year simple payback. Incremental payback versus planned replacement ICE vehicles is ${formatNumber(interpretation.simplePaybackIncremental, 2)} years.`
+          : interpretation.operatingChangeIsZero
+            ? `Fuel savings of ${formatMoney(interpretation.fuelCostAvoided)} exactly equal the ${formatMoney(interpretation.electricityCostChange)} electricity and certificate increase, leaving no annual operating savings.`
+            : `Fuel savings of ${formatMoney(interpretation.fuelCostAvoided)} do not cover the ${formatMoney(interpretation.electricityCostChange)} electricity and certificate increase, resulting in a ${formatMoney(interpretation.annualCostIncrease)} annual operating cost increase.`;
+
+        q("#payback-boundary").textContent = formatPaybackBoundaryMessage(
+          interpretation.boundary,
+          interpretation.vehiclesTransitioning,
+          formatNumber,
+        );
+        q("#payback-boundary").hidden = interpretation.hasPayback;
+
+        const warningList = q("#overview-warning-list");
+        warningList.replaceChildren(...warnings.map(message => {
+          const item = document.createElement("li");
+          item.textContent = message.text;
+          return item;
+        }));
+        q("#overview-warning-note").hidden = warnings.length === 0;
+      }
 
       function setInputSection(sectionId, expanded) {
         if (!(sectionId in inputSections)) return;
@@ -491,7 +612,12 @@
         q("#header-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
         q("#scenario-company").textContent = scenario.companyName;
         q("#scenario-method").textContent = `${scenario.bevMethod} method`;
-        q("#warning-stack").innerHTML = messages.map(message => `<div class="alert ${message.severity}">${escapeHtml(message.text)}</div>`).join("");
+        const errors = messages.filter(message => message.severity === "error");
+        const warnings = messages.filter(message => message.severity === "warning" && message.text !== "No payback under current assumptions.");
+        q("#warning-stack").innerHTML = errors.map(message => `<div class="alert error">${escapeHtml(message.text)}</div>`).join("");
+        q("#warning-stack").hidden = errors.length === 0;
+        const payback = derivePaybackInterpretation(scenario, result);
+        renderPaybackInterpretation(payback, warnings);
         qa(".field").forEach(field => { field.classList.remove("has-error"); const old = field.querySelector(".field-error"); if(old) old.remove(); });
         messages.filter(message => message.severity === "error").forEach(message => { const field=q(`[data-field="${message.field}"]`); if(field){field.classList.add("has-error");field.insertAdjacentHTML("beforeend",`<small class="field-error">${escapeHtml(message.text)}</small>`);} });
         q("#kpi-fleet").textContent = `${result.vehiclesTransitioning} of ${scenario.totalIceVehicles}`;
@@ -504,8 +630,6 @@
         const savings = result.annualOperatingChange < 0;
         q("#operating-card").className = `kpi ${savings ? "good" : "warn"}`;
         q("#kpi-operating").textContent = `${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}`;
-        q("#kpi-payback").textContent = result.simplePaybackTransition === null ? "No payback" : `${formatNumber(result.simplePaybackTransition,2)} years`;
-        q("#kpi-payback-sub").textContent = result.simplePaybackIncremental === null ? "No payback under current assumptions" : `${formatNumber(result.simplePaybackIncremental,2)} years vs new ICE purchase`;
         q("#kpi-electricity").textContent = `${formatNumber(result.bevElectricityAdded)} kWh`;
         q("#kpi-electricity-sub").textContent = `${scenario.bevMethod} estimate`;
         q("#kpi-certificate").textContent = formatMoney(result.additionalCertificateCost);

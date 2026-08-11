@@ -14,6 +14,12 @@ The Inputs and assumptions view opens with General expanded on first use. Genera
 
 Fuel-to-BEV conversion is enabled only when the BEV calculation method is Fallback. Distance-based scenarios retain the fallback value but do not use it in calculations.
 
+## Board interpretation
+
+The Overview keeps critical input errors above the KPIs and places explanatory notes below the graphs. Its payback card and Board interpretation update from the current scenario, including annual savings or cost increase and a strict whole-number fleet boundary where that boundary is meaningful.
+
+The boundary holds Vehicles transitioning and every financial and energy assumption constant. It is decision support, not a permanent fleet rule.
+
 ## What the tool demonstrates
 
 - Editable fleet, fuel, vehicle, electricity, certificate, and cost assumptions
