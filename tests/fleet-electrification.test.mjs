@@ -283,43 +283,57 @@ test("fallback field synchronizer executes method transitions without replacing 
   assert.equal(storedValue, "37");
 });
 
-test("payback interpretation exposes the live fleet boundary", async () => {
+test("payback interpretation classifies maximum and minimum whole-fleet thresholds", async () => {
   const { model } = await loadApp();
+
   const defaultResult = model.calculateScenario(model.DEFAULT_SCENARIO);
   const available = model.derivePaybackInterpretation(model.DEFAULT_SCENARIO, defaultResult);
   assert.equal(available.hasPayback, true);
   assert.ok(close(available.annualSavings, 8902));
   assert.equal(available.annualCostIncrease, 0);
-  assert.deepEqual(toHostRecord(available.boundary), { kind: "finite", maxTotalFleet: 14 });
+  assert.deepEqual(toHostRecord(available.boundary), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
 
-  const fifteenVehicles = { ...model.DEFAULT_SCENARIO, totalIceVehicles: 15 };
-  const noPaybackResult = model.calculateScenario(fifteenVehicles);
-  const unavailable = model.derivePaybackInterpretation(fifteenVehicles, noPaybackResult);
-  assert.equal(unavailable.hasPayback, false);
-  assert.ok(close(unavailable.annualCostIncrease, 1098));
-  assert.deepEqual(toHostRecord(unavailable.boundary), { kind: "finite", maxTotalFleet: 14 });
-});
+  const distanceNoPayback = { ...model.DEFAULT_SCENARIO, totalIceVehicles: 15 };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    distanceNoPayback,
+    model.calculateScenario(distanceNoPayback),
+  )), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
 
-test("fallback payback interpretation recalculates the strict fleet boundary", async () => {
-  const { model } = await loadApp();
-  const fallback = {
+  const fallbackMaximum = {
     ...model.DEFAULT_SCENARIO,
     bevMethod: "Fallback",
     totalIceVehicles: 20,
   };
-  const interpretation = model.derivePaybackInterpretation(
-    fallback,
-    model.calculateScenario(fallback),
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackMaximum,
+    model.calculateScenario(fallbackMaximum),
+  )), { kind: "maximum", maxTotalFleet: 15, minTotalFleet: null });
+  assert.ok(close(model.calculateScenario({ ...fallbackMaximum, totalIceVehicles: 15 }).annualOperatingChange, -320.08263894000265));
+  assert.ok(close(model.calculateScenario({ ...fallbackMaximum, totalIceVehicles: 16 }).annualOperatingChange, 387.42252599375206));
+
+  const fallbackMinimum = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    totalIceVehicles: 10,
+    currentCertificateCoverage: 1,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0.02,
+    currentAnnualFuelCost: 5000,
+  };
+  assert.ok(close(model.calculateScenario({ ...fallbackMinimum, totalIceVehicles: 13 }).annualOperatingChange, 8.974987384620817));
+  assert.ok(close(model.calculateScenario({ ...fallbackMinimum, totalIceVehicles: 14 }).annualOperatingChange, -277.38036885714155));
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackMinimum,
+    model.calculateScenario(fallbackMinimum),
+  )), { kind: "minimum", maxTotalFleet: null, minTotalFleet: 14 });
+
+  const unavailable = model.derivePaybackInterpretation(
+    distanceNoPayback,
+    model.calculateScenario(distanceNoPayback),
   );
-  assert.deepEqual(toHostRecord(interpretation.boundary), { kind: "finite", maxTotalFleet: 15 });
-
-  const fifteen = model.calculateScenario({ ...fallback, totalIceVehicles: 15 });
-  assert.ok(close(fifteen.annualOperatingChange, -320.08263894000265));
-  assert.notEqual(fifteen.simplePaybackTransition, null);
-
-  const sixteen = model.calculateScenario({ ...fallback, totalIceVehicles: 16 });
-  assert.ok(close(sixteen.annualOperatingChange, 387.42252599375206));
-  assert.equal(sixteen.simplePaybackTransition, null);
+  assert.equal(unavailable.hasPayback, false);
+  assert.ok(close(unavailable.annualCostIncrease, 1098));
+  assert.equal(unavailable.vehiclesTransitioning, 10);
 });
 
 test("fleet boundary remains strict at exact whole numbers", async () => {
@@ -330,19 +344,72 @@ test("fleet boundary remains strict at exact whole numbers", async () => {
   assert.equal(model.largestIntegerBelow(Number.POSITIVE_INFINITY), null);
 });
 
-test("payback interpretation identifies uncomputable fleet boundaries", async () => {
+test("payback fleet boundary preserves strict and non-numeric states", async () => {
   const { model } = await loadApp();
+
+  const exactZero = {
+    ...model.DEFAULT_SCENARIO,
+    totalIceVehicles: 15,
+    currentAnnualFuelCost: 31647,
+  };
+  assert.ok(close(model.calculateScenario(exactZero).annualOperatingChange, 0));
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    exactZero,
+    model.calculateScenario(exactZero),
+  )), { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null });
+
+  const fallbackAllSavings = {
+    ...model.DEFAULT_SCENARIO,
+    bevMethod: "Fallback",
+    currentCertificateCoverage: 1,
+    targetCertificateCoverage: 0,
+    certificateCostPerKwh: 0.02,
+  };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    fallbackAllSavings,
+    model.calculateScenario(fallbackAllSavings),
+  )), { kind: "no-finite-boundary", maxTotalFleet: null, minTotalFleet: null });
+
+  const noValidFleet = { ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 1000 };
+  assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+    noValidFleet,
+    model.calculateScenario(noValidFleet),
+  )), { kind: "no-valid-boundary", maxTotalFleet: null, minTotalFleet: null });
+
   const result = model.calculateScenario(model.DEFAULT_SCENARIO);
   const cases = [
     [{ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 0 }, { ...result, vehiclesTransitioning: 0 }, "no-transition"],
     [{ ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 0 }, result, "no-fuel-cost"],
     [model.DEFAULT_SCENARIO, { ...result, electricityCostChange: 0 }, "nonpositive-electricity-change"],
-    [{ ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 1000 }, { ...result, electricityCostChange: 2000 }, "no-valid-boundary"],
   ];
   for (const [scenario, scenarioResult, kind] of cases) {
-    const interpretation = model.derivePaybackInterpretation(scenario, scenarioResult);
-    assert.deepEqual(toHostRecord(interpretation.boundary), { kind, maxTotalFleet: null });
+    assert.deepEqual(toHostRecord(model.derivePaybackFleetBoundary(
+      scenario,
+      scenarioResult,
+    )), { kind, maxTotalFleet: null, minTotalFleet: null });
   }
+});
+
+test("payback boundary copy states maximum and minimum direction in words", async () => {
+  const { model } = await loadApp();
+  const formatValue = value => String(value);
+
+  assert.equal(
+    model.formatPaybackBoundaryMessage(
+      { kind: "maximum", maxTotalFleet: 14, minTotalFleet: null },
+      10,
+      formatValue,
+    ),
+    "With 10 vehicles transitioning, annual savings require a total fleet of 14 vehicles or fewer, holding other assumptions constant.",
+  );
+  assert.equal(
+    model.formatPaybackBoundaryMessage(
+      { kind: "minimum", maxTotalFleet: null, minTotalFleet: 14 },
+      10,
+      formatValue,
+    ),
+    "With 10 vehicles transitioning, annual savings require a total fleet of 14 vehicles or more, holding other assumptions constant.",
+  );
 });
 
 test("overview places board interpretation after graphs and errors before KPIs", async () => {

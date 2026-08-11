@@ -232,68 +232,114 @@
         : Math.floor(value);
     }
 
-    function derivePaybackInterpretation(input, result) {
+    function derivePaybackFleetBoundary(input, result) {
       const s = { ...DEFAULT_SCENARIO, ...input };
       const vehiclesTransitioning = result.vehiclesTransitioning;
-      let boundary;
-      if (!(vehiclesTransitioning > 0)) {
-        boundary = { kind: "no-transition", maxTotalFleet: null };
-      } else if (!(s.currentAnnualFuelCost > 0)) {
-        boundary = { kind: "no-fuel-cost", maxTotalFleet: null };
-      } else if (!(result.electricityCostChange > 0)) {
-        boundary = { kind: "nonpositive-electricity-change", maxTotalFleet: null };
-      } else {
-        const minimumFleet = Math.ceil(vehiclesTransitioning);
-        const hasSavings = totalIceVehicles => calculateScenario({
-          ...s,
-          totalIceVehicles,
-        }).annualOperatingChange < 0;
-        if (!Number.isSafeInteger(minimumFleet) || !hasSavings(minimumFleet)) {
-          boundary = { kind: "no-valid-boundary", maxTotalFleet: null };
-        } else {
-          let maxTotalFleet = minimumFleet;
-          let firstFleetWithoutSavings = minimumFleet + 1;
-          while (
-            Number.isSafeInteger(firstFleetWithoutSavings)
-            && hasSavings(firstFleetWithoutSavings)
-          ) {
-            maxTotalFleet = firstFleetWithoutSavings;
-            firstFleetWithoutSavings = Math.min(
-              Number.MAX_SAFE_INTEGER,
-              firstFleetWithoutSavings * 2,
-            );
-            if (firstFleetWithoutSavings === maxTotalFleet) break;
-          }
-          if (
-            !Number.isSafeInteger(firstFleetWithoutSavings)
-            || hasSavings(firstFleetWithoutSavings)
-          ) {
-            boundary = { kind: "no-finite-boundary", maxTotalFleet: null };
-          } else {
-            while (maxTotalFleet + 1 < firstFleetWithoutSavings) {
-              const candidate = maxTotalFleet + Math.floor(
-                (firstFleetWithoutSavings - maxTotalFleet) / 2,
-              );
-              if (hasSavings(candidate)) maxTotalFleet = candidate;
-              else firstFleetWithoutSavings = candidate;
-            }
-            boundary = { kind: "finite", maxTotalFleet };
-          }
-        }
+      const empty = kind => ({ kind, maxTotalFleet: null, minTotalFleet: null });
+      if (!(vehiclesTransitioning > 0)) return empty("no-transition");
+      if (!(s.currentAnnualFuelCost > 0)) return empty("no-fuel-cost");
+      if (!(result.electricityCostChange > 0)) return empty("nonpositive-electricity-change");
+
+      const minimumFleet = Math.ceil(vehiclesTransitioning);
+      if (!Number.isSafeInteger(minimumFleet)) return empty("no-valid-boundary");
+      const annualChange = totalIceVehicles => calculateScenario({
+        ...s,
+        totalIceVehicles,
+      }).annualOperatingChange;
+      const hasSavings = totalIceVehicles => annualChange(totalIceVehicles) < 0;
+      const firstChange = annualChange(minimumFleet);
+      if (minimumFleet === Number.MAX_SAFE_INTEGER) {
+        return firstChange < 0
+          ? empty("no-finite-boundary")
+          : empty("no-valid-boundary");
       }
+      const secondChange = annualChange(minimumFleet + 1);
+      const scale = Math.max(1, Math.abs(firstChange), Math.abs(secondChange));
+      const tolerance = Number.EPSILON * scale * 32;
+      const direction = secondChange - firstChange > tolerance
+        ? "increasing"
+        : secondChange - firstChange < -tolerance
+          ? "decreasing"
+          : "flat";
+      const growFleet = totalIceVehicles => totalIceVehicles >= Number.MAX_SAFE_INTEGER / 2
+        ? Number.MAX_SAFE_INTEGER
+        : totalIceVehicles * 2;
+
+      if (direction === "flat") {
+        return firstChange < 0
+          ? empty("no-finite-boundary")
+          : empty("no-valid-boundary");
+      }
+
+      if (direction === "increasing") {
+        if (!(firstChange < 0)) return empty("no-valid-boundary");
+        let lower = minimumFleet;
+        let upper = growFleet(lower);
+        while (upper < Number.MAX_SAFE_INTEGER && hasSavings(upper)) {
+          lower = upper;
+          upper = growFleet(upper);
+        }
+        if (hasSavings(upper)) return empty("no-finite-boundary");
+
+        // Invariant: lower has savings; upper does not.
+        while (lower + 1 < upper) {
+          const candidate = lower + Math.floor((upper - lower) / 2);
+          if (hasSavings(candidate)) lower = candidate;
+          else upper = candidate;
+        }
+        return { kind: "maximum", maxTotalFleet: lower, minTotalFleet: null };
+      }
+
+      if (firstChange < 0) return empty("no-finite-boundary");
+      let lower = minimumFleet;
+      let upper = growFleet(lower);
+      while (upper < Number.MAX_SAFE_INTEGER && !hasSavings(upper)) {
+        lower = upper;
+        upper = growFleet(upper);
+      }
+      if (!hasSavings(upper)) return empty("no-valid-boundary");
+
+      // Invariant: lower does not have savings; upper does.
+      while (lower + 1 < upper) {
+        const candidate = lower + Math.floor((upper - lower) / 2);
+        if (hasSavings(candidate)) upper = candidate;
+        else lower = candidate;
+      }
+      return { kind: "minimum", maxTotalFleet: null, minTotalFleet: upper };
+    }
+
+    function formatPaybackBoundaryMessage(boundary, vehiclesTransitioning, formatValue) {
+      if (boundary.kind === "maximum") {
+        return `With ${formatValue(vehiclesTransitioning)} vehicles transitioning, annual savings require a total fleet of ${formatValue(boundary.maxTotalFleet)} vehicles or fewer, holding other assumptions constant.`;
+      }
+      if (boundary.kind === "minimum") {
+        return `With ${formatValue(vehiclesTransitioning)} vehicles transitioning, annual savings require a total fleet of ${formatValue(boundary.minTotalFleet)} vehicles or more, holding other assumptions constant.`;
+      }
+      const messages = {
+        "no-transition": "A fleet boundary cannot be calculated until at least one vehicle is transitioning.",
+        "no-fuel-cost": "A fleet boundary cannot be calculated until current annual fleet fuel cost is greater than zero.",
+        "nonpositive-electricity-change": "No upper fleet boundary is shown because the electricity and certificate cost change is zero or lower.",
+        "no-valid-boundary": "No feasible total-fleet size produces annual savings with the current vehicles transitioning and cost assumptions.",
+        "no-finite-boundary": "No maximum total-fleet threshold applies under these assumptions; modelled annual savings continue as total fleet grows.",
+      };
+      return messages[boundary.kind] || "A reliable fleet threshold cannot be shown under the current assumptions.";
+    }
+
+    function derivePaybackInterpretation(input, result) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
       return {
         hasPayback: result.simplePaybackTransition !== null,
         annualSavings: result.annualOperatingChange < 0 ? Math.abs(result.annualOperatingChange) : 0,
         annualCostIncrease: result.annualOperatingChange > 0 ? result.annualOperatingChange : 0,
         operatingChangeIsZero: result.annualOperatingChange === 0,
-        boundary,
+        boundary: derivePaybackFleetBoundary(s, result),
         fuelCostAvoided: result.fuelCostAvoided,
         electricityCostChange: result.electricityCostChange,
         transitionInvestment: result.transitionInvestment,
         incrementalInvestment: result.incrementalInvestment,
         simplePaybackTransition: result.simplePaybackTransition,
         simplePaybackIncremental: result.simplePaybackIncremental,
-        vehiclesTransitioning,
+        vehiclesTransitioning: result.vehiclesTransitioning,
       };
     }
     const toTco2e = kilograms => kilograms / 1000;
@@ -422,12 +468,14 @@
       getEmissionsPeriodLabels,
       syncFallbackMethodFields,
       largestIntegerBelow,
+      derivePaybackFleetBoundary,
+      formatPaybackBoundaryMessage,
       derivePaybackInterpretation,
     };
   </script>
   <script>
     (() => {
-      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, derivePaybackInterpretation, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
+      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
       const percentageFields = new Set(["chargingLossPct", "fuelToBevPct", "currentCertificateCoverage", "targetCertificateCoverage"]);
       const fieldGroups = {
         "fleet-fields": [
@@ -496,19 +544,11 @@
             ? `Fuel savings of ${formatMoney(interpretation.fuelCostAvoided)} exactly equal the ${formatMoney(interpretation.electricityCostChange)} electricity and certificate increase, leaving no annual operating savings.`
             : `Fuel savings of ${formatMoney(interpretation.fuelCostAvoided)} do not cover the ${formatMoney(interpretation.electricityCostChange)} electricity and certificate increase, resulting in a ${formatMoney(interpretation.annualCostIncrease)} annual operating cost increase.`;
 
-        const boundaryMessages = {
-          "no-transition": "A fleet boundary cannot be calculated until at least one vehicle is transitioning.",
-          "no-fuel-cost": "A fleet boundary cannot be calculated until current annual fleet fuel cost is greater than zero.",
-          "nonpositive-electricity-change": "No upper fleet boundary is shown because the electricity and certificate cost change is zero or lower.",
-          "no-valid-boundary": "No valid total-fleet size produces annual savings with the current vehicles transitioning and cost assumptions.",
-          "no-finite-boundary": "No finite whole-fleet boundary can be shown reliably with the current cost assumptions.",
-        };
-        const boundary = interpretation.boundary;
-        q("#payback-boundary").textContent = interpretation.hasPayback
-          ? ""
-          : boundary.kind === "finite"
-            ? `With ${formatNumber(interpretation.vehiclesTransitioning)} vehicles transitioning, annual savings require a total fleet of ${formatNumber(boundary.maxTotalFleet)} vehicles or fewer, holding other assumptions constant.`
-            : boundaryMessages[boundary.kind];
+        q("#payback-boundary").textContent = formatPaybackBoundaryMessage(
+          interpretation.boundary,
+          interpretation.vehiclesTransitioning,
+          formatNumber,
+        );
         q("#payback-boundary").hidden = interpretation.hasPayback;
 
         const warningList = q("#overview-warning-list");
