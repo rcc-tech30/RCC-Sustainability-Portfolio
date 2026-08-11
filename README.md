@@ -41,6 +41,22 @@ Capabilities demonstrated:
 - Interactive filters, reset controls, presentation mode, and dashboard download
 - Accessible labels and a self-contained presentation without external dependencies
 
+### Company X Native Power BI Dashboard
+
+**[Download the native Power BI dashboard](dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix)**
+
+[Read the project notes and viewing instructions](dashboards/company-x-power-bi/)
+
+A native Microsoft Power BI report provided as a downloadable PBIX portfolio artifact. This project is separate from the browser-based Company X GHG Dashboard and uses a different illustrative dataset. Microsoft Power BI Desktop is required to open and explore it.
+
+Capabilities demonstrated:
+
+- Native Power BI report development
+- Interactive dashboard design and filtering
+- Data modeling and transformation
+- Sustainability data communication
+- Executive-ready visual presentation
+
 ## Portfolio areas
 
 - Sustainability dashboards
