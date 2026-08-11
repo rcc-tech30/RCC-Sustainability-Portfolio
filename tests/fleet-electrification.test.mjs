@@ -117,6 +117,20 @@ test("input section preferences use a separate defensive schema", async () => {
   })), null);
 });
 
+test("input groups expose accessible independent section controls", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /class="input-section-filters" aria-label="Input sections"/);
+  assert.equal((html.match(/<button[^>]*data-section-toggle=/g) || []).length, 8);
+  assert.equal((html.match(/data-input-section=/g) || []).length, 4);
+  assert.match(html, /data-section-toggle="general"[^>]*aria-expanded="true"/);
+  assert.match(html, /data-section-toggle="fleet"[^>]*aria-expanded="false"/);
+  assert.match(html, /data-section-toggle="bev"[^>]*aria-expanded="false"/);
+  assert.match(html, /data-section-toggle="eac"[^>]*aria-expanded="false"/);
+  assert.match(html, /const sectionStorageKey = "rcc\.fleet-electrification\.input-sections\.v1"/);
+  assert.match(html, /function setInputSection\(sectionId, expanded\)/);
+  assert.match(html, /\.input-section-filters\{[^}]*flex-wrap:wrap/);
+});
+
 test("charts use smooth curves and compact navigation keeps every view visible", async () => {
   const { html } = await loadApp();
   assert.match(html, /\.nav\{display:flex;flex-wrap:wrap;overflow-x:visible/);
