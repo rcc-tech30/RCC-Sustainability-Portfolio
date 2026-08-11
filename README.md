@@ -43,7 +43,7 @@ Capabilities demonstrated:
 
 ### Company X Native Power BI Dashboard
 
-**[Download the native Power BI dashboard](dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix)**
+**[Download the native Power BI dashboard](https://github.com/rcc-tech30/RCC-Sustainability-Portfolio/raw/refs/heads/main/dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix)**
 
 [Read the project notes and viewing instructions](dashboards/company-x-power-bi/)
 
