@@ -322,3 +322,30 @@ test("payback interpretation identifies uncomputable fleet boundaries", async ()
     assert.deepEqual(toHostRecord(interpretation.boundary), { kind, maxTotalFleet: null });
   }
 });
+
+test("overview places board interpretation after graphs and errors before KPIs", async () => {
+  const { html } = await loadApp();
+  const chartMarkup = '<div class="chart-grid">';
+  const notesMarkup = '<section class="board-interpretation" id="board-interpretation"';
+  assert.ok(html.indexOf(notesMarkup) > html.indexOf(chartMarkup));
+  assert.match(html, /id="warning-stack"[^>]*aria-label="Input errors"[^>]*aria-live="assertive"/);
+  assert.match(html, /id="board-interpretation"[^>]*aria-labelledby="board-interpretation-title"/);
+  assert.match(html, /id="payback-explanation"/);
+  assert.match(html, /id="payback-boundary"/);
+  assert.match(html, /id="overview-warning-list"/);
+  assert.match(html, /id="payback-limitation"/);
+  assert.match(html, /\.board-note\[hidden\]\{display:none\}/);
+  assert.match(html, /const errors = messages\.filter\(message => message\.severity === "error"\)/);
+  assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
+});
+
+test("overview payback explanation uses live interpretation values", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /const payback = derivePaybackInterpretation\(scenario, result\)/);
+  assert.match(html, /function renderPaybackInterpretation\(interpretation, warnings\)/);
+  assert.match(html, /q\("#payback-explanation"\)\.textContent =/);
+  assert.match(html, /q\("#payback-boundary"\)\.textContent =/);
+  assert.match(html, /Based on \$\{formatMoney\(interpretation\.annualSavings\)\} annual savings/);
+  assert.match(html, /Annual operating cost increases by \$\{formatMoney\(interpretation\.annualCostIncrease\)\}/);
+  assert.match(html, /holding other assumptions constant/);
+});
