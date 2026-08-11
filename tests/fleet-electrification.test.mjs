@@ -138,3 +138,14 @@ test("charts use smooth curves and compact navigation keeps every view visible",
   assert.match(html, /const path = `M\$\{points\[0\]\.x\},\$\{points\[0\]\.y\} C/);
   assert.match(html, /class="cost-trend"/);
 });
+
+test("fallback-only BEV inputs explain and expose their active state", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /\["fuelToBevPct", "Fuel-to-BEV conversion", "%", 1, "fallback"\]/);
+  assert.match(html, /Applicable only when BEV calculation method = Fallback\./);
+  assert.match(html, /data-field-status/);
+  assert.match(html, /function syncMethodFields\(\)/);
+  assert.match(html, /control\.disabled = !usesFallback/);
+  assert.match(html, /usesFallback \? "Required for Fallback" : "Not applicable"/);
+  assert.match(html, /if \(control\.name === "bevMethod"\) syncMethodFields\(\)/);
+});
