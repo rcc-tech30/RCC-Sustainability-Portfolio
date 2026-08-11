@@ -216,6 +216,48 @@
         field.querySelector("[data-field-status]").textContent = state.status;
       });
     }
+
+    function largestIntegerBelow(value) {
+      if (!Number.isFinite(value)) return null;
+      const nearestInteger = Math.round(value);
+      const tolerance = Number.EPSILON * Math.max(1, Math.abs(value)) * 16;
+      return Math.abs(value - nearestInteger) <= tolerance
+        ? nearestInteger - 1
+        : Math.floor(value);
+    }
+
+    function derivePaybackInterpretation(input, result) {
+      const s = { ...DEFAULT_SCENARIO, ...input };
+      const vehiclesTransitioning = result.vehiclesTransitioning;
+      let boundary;
+      if (!(vehiclesTransitioning > 0)) {
+        boundary = { kind: "no-transition", maxTotalFleet: null };
+      } else if (!(s.currentAnnualFuelCost > 0)) {
+        boundary = { kind: "no-fuel-cost", maxTotalFleet: null };
+      } else if (!(result.electricityCostChange > 0)) {
+        boundary = { kind: "nonpositive-electricity-change", maxTotalFleet: null };
+      } else {
+        const rawBoundary = s.currentAnnualFuelCost * vehiclesTransitioning / result.electricityCostChange;
+        const maxTotalFleet = largestIntegerBelow(rawBoundary);
+        boundary = maxTotalFleet < vehiclesTransitioning
+          ? { kind: "no-valid-boundary", maxTotalFleet: null }
+          : { kind: "finite", maxTotalFleet };
+      }
+      return {
+        hasPayback: result.simplePaybackTransition !== null,
+        annualSavings: result.annualOperatingChange < 0 ? Math.abs(result.annualOperatingChange) : 0,
+        annualCostIncrease: result.annualOperatingChange > 0 ? result.annualOperatingChange : 0,
+        operatingChangeIsZero: result.annualOperatingChange === 0,
+        boundary,
+        fuelCostAvoided: result.fuelCostAvoided,
+        electricityCostChange: result.electricityCostChange,
+        transitionInvestment: result.transitionInvestment,
+        incrementalInvestment: result.incrementalInvestment,
+        simplePaybackTransition: result.simplePaybackTransition,
+        simplePaybackIncremental: result.simplePaybackIncremental,
+        vehiclesTransitioning,
+      };
+    }
     const toTco2e = kilograms => kilograms / 1000;
 
     function calculateScenario(input) {
@@ -341,6 +383,8 @@
       formatChartYearLabel,
       getEmissionsPeriodLabels,
       syncFallbackMethodFields,
+      largestIntegerBelow,
+      derivePaybackInterpretation,
     };
   </script>
   <script>

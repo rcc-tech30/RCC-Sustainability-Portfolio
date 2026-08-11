@@ -282,3 +282,43 @@ test("fallback field synchronizer executes method transitions without replacing 
   assert.equal(control.value, "37");
   assert.equal(storedValue, "37");
 });
+
+test("payback interpretation exposes the live fleet boundary", async () => {
+  const { model } = await loadApp();
+  const defaultResult = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const available = model.derivePaybackInterpretation(model.DEFAULT_SCENARIO, defaultResult);
+  assert.equal(available.hasPayback, true);
+  assert.ok(close(available.annualSavings, 8902));
+  assert.equal(available.annualCostIncrease, 0);
+  assert.deepEqual(toHostRecord(available.boundary), { kind: "finite", maxTotalFleet: 14 });
+
+  const fifteenVehicles = { ...model.DEFAULT_SCENARIO, totalIceVehicles: 15 };
+  const noPaybackResult = model.calculateScenario(fifteenVehicles);
+  const unavailable = model.derivePaybackInterpretation(fifteenVehicles, noPaybackResult);
+  assert.equal(unavailable.hasPayback, false);
+  assert.ok(close(unavailable.annualCostIncrease, 1098));
+  assert.deepEqual(toHostRecord(unavailable.boundary), { kind: "finite", maxTotalFleet: 14 });
+});
+
+test("fleet boundary remains strict at exact whole numbers", async () => {
+  const { model } = await loadApp();
+  assert.equal(model.largestIntegerBelow(15), 14);
+  assert.equal(model.largestIntegerBelow(15.000000000000002), 14);
+  assert.equal(model.largestIntegerBelow(14.2), 14);
+  assert.equal(model.largestIntegerBelow(Number.POSITIVE_INFINITY), null);
+});
+
+test("payback interpretation identifies uncomputable fleet boundaries", async () => {
+  const { model } = await loadApp();
+  const result = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const cases = [
+    [{ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 0 }, { ...result, vehiclesTransitioning: 0 }, "no-transition"],
+    [{ ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 0 }, result, "no-fuel-cost"],
+    [model.DEFAULT_SCENARIO, { ...result, electricityCostChange: 0 }, "nonpositive-electricity-change"],
+    [{ ...model.DEFAULT_SCENARIO, currentAnnualFuelCost: 1000 }, { ...result, electricityCostChange: 2000 }, "no-valid-boundary"],
+  ];
+  for (const [scenario, scenarioResult, kind] of cases) {
+    const interpretation = model.derivePaybackInterpretation(scenario, scenarioResult);
+    assert.deepEqual(toHostRecord(interpretation.boundary), { kind, maxTotalFleet: null });
+  }
+});
