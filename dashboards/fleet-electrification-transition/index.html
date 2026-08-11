@@ -54,7 +54,7 @@
             <article class="kpi warn"><span class="label">Additional certificate cost</span><strong class="value" id="kpi-certificate">AUD 13,178</strong><span class="sub" id="kpi-certificate-sub">Target EAC coverage</span></article>
           </div>
           <div class="chart-grid">
-            <article class="panel"><h3>Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
+            <article class="panel"><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
             <article class="panel"><h3>Annual operating cost</h3><p class="panel-intro">Current fuel and electricity compared with the projected state.</p><div class="chart" id="cost-chart" role="img" aria-label="Annual operating cost comparison chart"></div><div class="chart-summary" id="cost-summary"></div></article>
           </div>
         </section>
@@ -334,7 +334,7 @@
   </script>
   <script>
     (() => {
-      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, syncFallbackMethodFields } = globalThis.__fleetModel;
+      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
       const percentageFields = new Set(["chargingLossPct", "fuelToBevPct", "currentCertificateCoverage", "targetCertificateCoverage"]);
       const fieldGroups = {
         "fleet-fields": [
@@ -447,14 +447,14 @@
       }
 
       function lineChart(values, labels) {
-        const width = 620, height = 250, left = 52, right = 24, top = 22, bottom = 48;
+        const width = 620, height = 262, left = 70, right = 70, top = 22, bottom = 62;
         const max = Math.max(...values, 1) * 1.12;
         const innerW = width - left - right, innerH = height - top - bottom;
         const points = values.map((value, index) => ({ x: left + (innerW * index / (values.length - 1)), y: top + innerH - (value / max * innerH), value }));
         const midpoint01 = (points[0].x + points[1].x) / 2;
         const midpoint12 = (points[1].x + points[2].x) / 2;
         const path = `M${points[0].x},${points[0].y} C${midpoint01},${points[0].y} ${midpoint01},${points[1].y} ${points[1].x},${points[1].y} C${midpoint12},${points[1].y} ${midpoint12},${points[2].y} ${points[2].x},${points[2].y}`;
-        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="${left}" y1="${top + innerH}" x2="${width-right}" y2="${top + innerH}" stroke="#cdd7e1"/><path d="${path}" fill="none" stroke="#087f5b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${points.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="6" fill="#fff" stroke="#087f5b" stroke-width="3"/><text x="${p.x}" y="${Math.max(14,p.y-14)}" text-anchor="middle" font-size="12" font-weight="700" fill="#102a48">${formatNumber(p.value,1)}</text><text x="${p.x}" y="${height-18}" text-anchor="middle" font-size="11" fill="#607087">${labels[i]}</text>`).join("")}</svg>`;
+        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="${left}" y1="${top + innerH}" x2="${width-right}" y2="${top + innerH}" stroke="#cdd7e1"/><path d="${path}" fill="none" stroke="#087f5b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${points.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="6" fill="#fff" stroke="#087f5b" stroke-width="3"/><text x="${p.x}" y="${Math.max(14,p.y-14)}" text-anchor="middle" font-size="12" font-weight="700" fill="#102a48">${formatNumber(p.value,1)}</text><text x="${p.x}" y="${height-30}" text-anchor="middle" font-size="11" font-weight="700" fill="#33445a">${escapeHtml(labels[i].stage)}</text><text x="${p.x}" y="${height-14}" text-anchor="middle" font-size="10" fill="#607087">${escapeHtml(labels[i].year)}</text>`).join("")}</svg>`;
       }
 
       function barChart(current, projected) {
@@ -499,9 +499,12 @@
         q("#kpi-electricity-sub").textContent = `${scenario.bevMethod} estimate`;
         q("#kpi-certificate").textContent = formatMoney(result.additionalCertificateCost);
         q("#kpi-certificate-sub").textContent = `${formatNumber(scenario.targetCertificateCoverage*100)}% ${scenario.certificateType} coverage`;
+        const periodLabels = getEmissionsPeriodLabels(scenario.baselineYear, scenario.targetYear);
+        q("#emissions-chart-title").textContent = periodLabels.title;
+        q("#emissions-chart").setAttribute("aria-label", periodLabels.ariaLabel);
         const pathway = [result.baselineTotalEmissions,result.residualBeforeCertificates,result.residualAfterCertificates];
-        q("#emissions-chart").innerHTML = lineChart(pathway,["Baseline","After fleet","After certificates"]);
-        q("#emissions-summary").textContent = `Baseline ${formatT(pathway[0])}; after fleet electrification ${formatT(pathway[1])}; after certificate adjustment ${formatT(pathway[2])}.`;
+        q("#emissions-chart").innerHTML = lineChart(pathway,periodLabels.stages);
+        q("#emissions-summary").textContent = `${periodLabels.baselineYear} baseline ${formatT(pathway[0])}; ${periodLabels.targetYear} after fleet electrification ${formatT(pathway[1])}; ${periodLabels.targetYear} after certificate adjustment ${formatT(pathway[2])}.`;
         const currentCost = result.currentElectricityCost + scenario.currentAnnualFuelCost;
         const projectedCost = result.targetElectricityCost + (scenario.currentAnnualFuelCost-result.fuelCostAvoided);
         q("#cost-chart").innerHTML = barChart(currentCost, projectedCost);

@@ -44,6 +44,19 @@ test("emissions period labels use scenario years and safe display fallbacks", as
   });
 });
 
+test("overview emissions pathway renders dynamic year-aware labels", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<h3 id="emissions-chart-title">Emissions pathway<\/h3>/);
+  assert.match(html, /const periodLabels = getEmissionsPeriodLabels\(scenario\.baselineYear, scenario\.targetYear\)/);
+  assert.match(html, /q\("#emissions-chart-title"\)\.textContent = periodLabels\.title/);
+  assert.match(html, /q\("#emissions-chart"\)\.setAttribute\("aria-label", periodLabels\.ariaLabel\)/);
+  assert.match(html, /escapeHtml\(labels\[i\]\.stage\)/);
+  assert.match(html, /escapeHtml\(labels\[i\]\.year\)/);
+  assert.match(html, /lineChart\(pathway,periodLabels\.stages\)/);
+  assert.match(html, /periodLabels\.baselineYear/);
+  assert.match(html, /periodLabels\.targetYear/);
+});
+
 test("sample scenario reproduces workbook headline results", async () => {
   const { model } = await loadApp();
   const result = model.calculateScenario(model.DEFAULT_SCENARIO);
