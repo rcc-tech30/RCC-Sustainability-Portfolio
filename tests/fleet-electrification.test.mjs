@@ -105,6 +105,53 @@ test("sample scenario reproduces workbook headline results", async () => {
   assert.ok(close(result.residualAfterCertificates, 0));
 });
 
+test("overview KPI story derives live Scope 2 and net emissions changes", async () => {
+  const { model } = await loadApp();
+  const result = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const story = model.deriveOverviewKpiStory(result);
+
+  assert.ok(close(story.scope2Increase, 24.552));
+  assert.equal(story.scope2Tone, "warn");
+  assert.ok(close(story.netEmissionsChange, 21.937536));
+  assert.ok(close(story.netEmissionsMagnitude, 21.937536));
+  assert.equal(story.netTone, "good");
+  assert.equal(story.netSubline, "Reduction before certificates");
+});
+
+test("overview KPI story communicates increase and exact-zero states", async () => {
+  const { model } = await loadApp();
+
+  const increase = model.deriveOverviewKpiStory({
+    baselineGridScope2: 100,
+    postTransitionGridScope2: 130,
+    baselineTotalEmissions: 150,
+    residualBeforeCertificates: 170,
+  });
+  assert.deepEqual(toHostRecord(increase), {
+    scope2Increase: 30,
+    scope2Tone: "warn",
+    netEmissionsChange: -20,
+    netEmissionsMagnitude: 20,
+    netTone: "warn",
+    netSubline: "Increase before certificates",
+  });
+
+  const noChange = model.deriveOverviewKpiStory({
+    baselineGridScope2: 100,
+    postTransitionGridScope2: 100,
+    baselineTotalEmissions: 170,
+    residualBeforeCertificates: 170,
+  });
+  assert.deepEqual(toHostRecord(noChange), {
+    scope2Increase: 0,
+    scope2Tone: "neutral",
+    netEmissionsChange: 0,
+    netEmissionsMagnitude: 0,
+    netTone: "neutral",
+    netSubline: "No change before certificates",
+  });
+});
+
 test("partial transition scales fleet effects", async () => {
   const { model } = await loadApp();
   const result = model.calculateScenario({ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 5 });
@@ -460,6 +507,34 @@ test("overview places board interpretation after graphs and errors before KPIs",
   assert.match(html, /\.board-note\[hidden\]\{display:none\}/);
   assert.match(html, /const errors = messages\.filter\(message => message\.severity === "error"\)/);
   assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
+});
+
+test("overview presents the approved eight-card KPI story in reading order", async () => {
+  const { html } = await loadApp();
+  const grid = html.match(/<div class="kpi-grid">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(grid, "Overview KPI grid exists");
+
+  const valueIds = [...grid.matchAll(/id="(kpi-[^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(valueIds, [
+    "kpi-fleet",
+    "kpi-fleet-sub",
+    "kpi-scope1",
+    "kpi-scope2-increase",
+    "kpi-scope2-increase-sub",
+    "kpi-residual",
+    "kpi-residual-sub",
+    "kpi-operating",
+    "kpi-payback",
+    "kpi-payback-sub",
+    "kpi-net-emissions",
+    "kpi-net-emissions-sub",
+    "kpi-investment",
+    "kpi-investment-sub",
+  ]);
+
+  assert.doesNotMatch(grid, /BEV electricity added|Additional certificate cost/);
+  assert.match(html, /\["BEV electricity added",`\$\{formatNumber\(result\.bevElectricityAdded\)\} kWh`/);
+  assert.match(html, /\["Additional certificate cost",formatMoney\(result\.additionalCertificateCost\)/);
 });
 
 test("static numeric payback card starts neutral before live rendering", async () => {
