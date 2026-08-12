@@ -77,7 +77,7 @@ test("applies the approved light UI polish", () => {
   requireFragments([
     "--line: #d5ded8;",
     "--shadow: 0 18px 52px rgba(7, 42, 36, 0.10);",
-    "padding: clamp(64px, 9.5vw, 128px) 0 68px;",
+    "padding: clamp(24px, 4vw, 56px) 0 72px;",
     "border-radius: 24px;",
     "transform: rotate(-0.7deg);",
     ".project:hover .dashboard-preview { transform: rotate(0deg) translateY(-3px); }"
@@ -138,8 +138,15 @@ test("renders the founder introduction with exact copy and CTAs", () => {
     ">Email me<",
     'href="mailto:reinielcelgiechan@gmail.com"'
   ]);
-  // Justify only on wide viewports, revert on mobile.
-  requireFragments(["text-align: justify;", "text-align: left; hyphens: manual;"]);
+  // Justified on desktop for a clean block edge (with hyphenation and a left
+  // last line), but reverted to left alignment on mobile where justification
+  // produced severe word gaps at ~375px. Readability wins over strict matching.
+  requireFragments([
+    "text-align: justify;",
+    "text-align-last: left;",
+    "hyphens: auto;",
+    "text-align: left; hyphens: manual;"
+  ]);
 });
 
 test("renders the three-card About bento with exact content", () => {
@@ -171,6 +178,63 @@ test("bento interaction is progressive enhancement and CSS only", () => {
   requireFragments([":has(", "@media (prefers-reduced-motion: reduce)"]);
   // No JavaScript drives the bento.
   assert.ok(!/bento/i.test(scriptBody), "bento hover must be CSS-only");
+});
+
+test("home leads with text then photo and greets as the heading", () => {
+  requireFragments([
+    'class="hero-text"',
+    'id="home-heading"',
+    'class="founder-photo"'
+  ]);
+  // DOM order: eyebrow -> greeting heading -> body -> CTAs -> photo (photo last).
+  requireOrder([
+    'id="home"',
+    'class="eyebrow"',
+    "Hi, I'm Reiniel.",
+    'class="founder-body"',
+    'class="founder-cta"',
+    'class="founder-photo"'
+  ]);
+  // The old Home headline is no longer the Home H1.
+  assert.ok(
+    !/<h1[^>]*>\s*Work built to make complex information useful\./.test(html),
+    "'Work built...' must not be the Home H1"
+  );
+});
+
+test("portfolio starts with a Featured work heading and the relocated subheader", () => {
+  requireFragments([
+    'class="portfolio-title"',
+    ">Featured work<",
+    'class="portfolio-sub"',
+    "font-size: clamp(32px, 4.5vw, 52px);"
+  ]);
+  requireOrder([
+    'id="portfolio"',
+    'class="portfolio-title"',
+    'class="portfolio-sub"',
+    "Work built to make complex information useful.",
+    'class="projects"'
+  ]);
+});
+
+test("keeps a sticky nav dock with only the segmented control, brand outside it", () => {
+  requireFragments([
+    'class="shell nav-dock"',
+    "position: sticky;",
+    "scroll-margin-top: 88px;"
+  ]);
+  // Brand sits before the nav dock, and the segmented control is inside the dock.
+  requireOrder([
+    'class="brand"',
+    'class="shell nav-dock"',
+    'class="segmented"'
+  ]);
+  // The brand wordmark is not part of the segmented nav.
+  const navStart = html.indexOf('class="segmented"');
+  const navEnd = html.indexOf("</nav>", navStart);
+  const navMarkup = html.slice(navStart, navEnd);
+  assert.ok(!navMarkup.includes("RCC Sustainability Portfolio"), "brand must not be inside the sticky nav");
 });
 
 test("excludes forbidden content and external map/location data", () => {
