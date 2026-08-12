@@ -357,9 +357,10 @@
     function deriveOverviewKpiStory(result) {
       const scope2Increase = result.postTransitionGridScope2 - result.baselineGridScope2;
       const netEmissionsChange = result.baselineTotalEmissions - result.residualBeforeCertificates;
-      const netTone = netEmissionsChange > 0
+      const netEmissionsDisplayChange = Math.abs(netEmissionsChange) < 0.005 ? 0 : netEmissionsChange;
+      const netTone = netEmissionsDisplayChange > 0
         ? "good"
-        : netEmissionsChange < 0
+        : netEmissionsDisplayChange < 0
           ? "warn"
           : "neutral";
 
@@ -367,7 +368,7 @@
         scope2Increase,
         scope2Tone: scope2Increase > 0 ? "warn" : scope2Increase < 0 ? "good" : "neutral",
         netEmissionsChange,
-        netEmissionsMagnitude: Math.abs(netEmissionsChange),
+        netEmissionsMagnitude: Math.abs(netEmissionsDisplayChange),
         netTone,
         netSubline: netTone === "good"
           ? "Reduction before certificates"

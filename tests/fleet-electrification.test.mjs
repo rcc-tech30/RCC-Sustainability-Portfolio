@@ -152,6 +152,23 @@ test("overview KPI story communicates increase and exact-zero states", async () 
   });
 });
 
+test("overview KPI story neutralizes floating break-even residuals at display precision", async () => {
+  const { model } = await loadApp();
+  const scenario = { ...model.DEFAULT_SCENARIO, annualDistanceKm: 20_000 };
+  const distanceResult = model.calculateScenario(scenario);
+  const breakEvenGridFactor = distanceResult.scope1Avoided * 1000 / distanceResult.bevElectricityAdded;
+  const result = model.calculateScenario({ ...scenario, gridEmissionFactor: breakEvenGridFactor });
+  const rawNetEmissionsChange = result.baselineTotalEmissions - result.residualBeforeCertificates;
+  const story = model.deriveOverviewKpiStory(result);
+
+  assert.ok(rawNetEmissionsChange < 0, "real model retains the floating-point residual");
+  assert.ok(Math.abs(rawNetEmissionsChange) < 0.005, "residual displays as 0.00 tCO2e");
+  assert.equal(story.netEmissionsChange, rawNetEmissionsChange);
+  assert.equal(story.netEmissionsMagnitude, 0);
+  assert.equal(story.netTone, "neutral");
+  assert.equal(story.netSubline, "No change before certificates");
+});
+
 test("partial transition scales fleet effects", async () => {
   const { model } = await loadApp();
   const result = model.calculateScenario({ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 5 });
