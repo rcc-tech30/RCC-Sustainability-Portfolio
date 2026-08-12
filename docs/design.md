@@ -37,8 +37,11 @@ No JavaScript names or drives the aurora.
   - Project card titles: `clamp(32px, 4vw, 48px)`.
   - About heading: `clamp(28px, 4vw, 44px)`.
 - Eyebrow labels and monospace tool/eyebrow labels stay small and uppercase.
-- Justify the founder body only on wide viewports; revert to left-aligned with
-  manual hyphenation below the `820px` breakpoint.
+- Justify the founder body on both desktop and mobile for a consistent block
+  edge, but only while readability stays acceptable. Guard narrow-width spacing
+  with `hyphens: auto`, `text-align-last: left`, a constrained `max-width`
+  (~60ch), and comfortable `line-height` (1.7). If justification ever produces
+  severe rivers/gaps at small widths, fall back to left alignment.
 
 ## Information architecture
 
@@ -77,6 +80,12 @@ footer. `#about` is the last main section and is not a second hero.
   `Home`, `Portfolio`, `About`.
 - The segmented control lives in a sticky dock (`.nav-dock`,
   `position: sticky`) pinned top-centre while scrolling.
+- At rest the nav pill visually anchors to the header divider line: it is
+  pulled up (negative `margin-top`) so its centre straddles the 1px line under
+  the brand, rather than floating in a dead gap below it. This makes the top of
+  the page read as intentional.
+- The brand/header area stays visually light (compact, muted wordmark, reduced
+  header height) so it does not dominate the landing view.
 - The brand wordmark `RCC Sustainability Portfolio` stays in the normal
   (non-sticky) header and is never part of the sticky nav.
 - Anchored sections carry `scroll-margin-top` so headings are not hidden

@@ -138,8 +138,9 @@ test("renders the founder introduction with exact copy and CTAs", () => {
     ">Email me<",
     'href="mailto:reinielcelgiechan@gmail.com"'
   ]);
-  // Justify only on wide viewports, revert on mobile.
-  requireFragments(["text-align: justify;", "text-align: left; hyphens: manual;"]);
+  // Justified on desktop and mobile, with hyphenation and a left last line as
+  // readability safeguards against wide gaps at narrow widths.
+  requireFragments(["text-align: justify;", "text-align-last: left;", "hyphens: auto;"]);
 });
 
 test("renders the three-card About bento with exact content", () => {
