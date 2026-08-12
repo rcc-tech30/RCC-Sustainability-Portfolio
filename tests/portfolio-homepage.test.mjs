@@ -138,9 +138,15 @@ test("renders the founder introduction with exact copy and CTAs", () => {
     ">Email me<",
     'href="mailto:reinielcelgiechan@gmail.com"'
   ]);
-  // Justified on desktop and mobile, with hyphenation and a left last line as
-  // readability safeguards against wide gaps at narrow widths.
-  requireFragments(["text-align: justify;", "text-align-last: left;", "hyphens: auto;"]);
+  // Justified on desktop for a clean block edge (with hyphenation and a left
+  // last line), but reverted to left alignment on mobile where justification
+  // produced severe word gaps at ~375px. Readability wins over strict matching.
+  requireFragments([
+    "text-align: justify;",
+    "text-align-last: left;",
+    "hyphens: auto;",
+    "text-align: left; hyphens: manual;"
+  ]);
 });
 
 test("renders the three-card About bento with exact content", () => {

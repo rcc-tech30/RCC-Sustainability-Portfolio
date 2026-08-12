@@ -37,11 +37,11 @@ No JavaScript names or drives the aurora.
   - Project card titles: `clamp(32px, 4vw, 48px)`.
   - About heading: `clamp(28px, 4vw, 44px)`.
 - Eyebrow labels and monospace tool/eyebrow labels stay small and uppercase.
-- Justify the founder body on both desktop and mobile for a consistent block
-  edge, but only while readability stays acceptable. Guard narrow-width spacing
-  with `hyphens: auto`, `text-align-last: left`, a constrained `max-width`
-  (~60ch), and comfortable `line-height` (1.7). If justification ever produces
-  severe rivers/gaps at small widths, fall back to left alignment.
+- Justify the founder body on desktop for a clean block edge (guarded with
+  `hyphens: auto`, `text-align-last: left`, ~60ch `max-width`, 1.7
+  `line-height`). On mobile (`<= 820px`) revert the body to left alignment:
+  at ~375px justification produced severe word gaps/rivers that hurt
+  readability. Mobile readability wins over matching the desktop justification.
 
 ## Information architecture
 
@@ -80,10 +80,19 @@ footer. `#about` is the last main section and is not a second hero.
   `Home`, `Portfolio`, `About`.
 - The segmented control lives in a sticky dock (`.nav-dock`,
   `position: sticky`) pinned top-centre while scrolling.
-- At rest the nav pill visually anchors to the header divider line: it is
-  pulled up (negative `margin-top`) so its centre straddles the 1px line under
-  the brand, rather than floating in a dead gap below it. This makes the top of
-  the page read as intentional.
+- On desktop, at rest the nav pill visually anchors to the header divider line:
+  it is pulled up (negative `margin-top`) so its centre straddles the 1px line
+  under the brand, rather than floating in a dead gap below it. This makes the
+  top of the page read as intentional.
+- On mobile (`<= 820px`) the nav pill is NOT forced onto the divider: the brand
+  wordmark can wrap to two lines there, so straddling the line looks cramped and
+  collides with the brand. Instead the pill sits cleanly below the divider with
+  a positive `margin-top`, centred, so brand, divider, and nav read as
+  deliberate.
+- The divider belongs to the header, not the nav: it scrolls away with the
+  header. When the nav sticks, it is a standalone pill (opaque background,
+  border, shadow, own stacking context) with no horizontal rule attached to or
+  travelling with it.
 - The brand/header area stays visually light (compact, muted wordmark, reduced
   header height) so it does not dominate the landing view.
 - The brand wordmark `RCC Sustainability Portfolio` stays in the normal

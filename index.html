@@ -492,8 +492,11 @@
     .bento:has(> .bento-card:focus-within) > .bento-card:not(:focus-within) { opacity: 0.88; }
 
     @media (max-width: 820px) {
+      /* Mobile: nav sits cleanly below the divider, never straddling it. */
+      .nav-dock { margin-top: 16px; }
       .founder-photo { max-width: 320px; }
-      .founder-body { text-align: justify; text-align-last: left; hyphens: auto; }
+      /* Mobile: left-align the body; justification made severe word gaps at ~375px. */
+      .founder-body { text-align: left; hyphens: manual; }
       .segmented { flex-wrap: wrap; }
       .bento { grid-template-columns: 1fr; }
       .bento-lead, .bento-loc, .bento-tools { grid-column: 1; grid-row: auto; }
