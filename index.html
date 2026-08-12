@@ -112,10 +112,7 @@
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
-      gap: clamp(48px, 8vw, 112px);
-      align-items: end;
+      display: block;
       padding: clamp(64px, 9.5vw, 128px) 0 68px;
     }
 
@@ -328,24 +325,197 @@
       body::before { animation: none; transform: none; }
       .dashboard-preview, .button { transition: none; }
     }
+    /* Segmented navigation */
+    .segmented {
+      position: relative;
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+    }
+    .seg {
+      position: relative;
+      z-index: 1;
+      padding: 8px 16px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+      text-decoration: none;
+      transition: color 240ms ease;
+    }
+    .seg[aria-current="true"] { color: var(--forest-deep); }
+    .seg:hover { color: var(--forest-deep); }
+    .seg-pill {
+      position: absolute;
+      z-index: 0;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: 76px;
+      border-radius: 999px;
+      background: var(--mint);
+      transition: left 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    /* Founder introduction */
+    .home-lead { margin-bottom: clamp(36px, 5vw, 56px); }
+    .founder {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(28px, 4vw, 56px);
+      align-items: center;
+    }
+    .founder-photo {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #eef4f0;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .founder-hi {
+      margin: 0 0 16px;
+      color: var(--forest-deep);
+      font-size: clamp(28px, 4vw, 40px);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+    .founder-body {
+      margin: 0 0 26px;
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+      text-align: justify;
+      hyphens: auto;
+    }
+    .founder-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .founder-cta .button { min-height: 50px; }
+
+    /* About bento */
+    .about { padding: 0 0 104px; }
+    .about-title {
+      margin: 0 0 28px;
+      color: var(--forest-deep);
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.03em;
+    }
+    .bento {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      grid-auto-rows: 1fr;
+      gap: 18px;
+    }
+    .bento-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: clamp(20px, 3vw, 32px);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 200ms ease, border-color 200ms ease;
+    }
+    .bento-lead { grid-column: 1; grid-row: 1 / span 2; }
+    .bento-loc { grid-column: 2; grid-row: 1; }
+    .bento-tools { grid-column: 2; grid-row: 2; }
+    .bento-eyebrow {
+      margin: 0;
+      color: var(--muted);
+      font: 700 12px ui-monospace, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .bento-lead p:not(.bento-eyebrow) { margin: 0; color: var(--ink); line-height: 1.7; }
+    .loc-visual { border-radius: 14px; overflow: hidden; }
+    .loc-visual svg { display: block; width: 100%; height: auto; }
+    .loc-label { margin: 0; color: var(--forest-deep); font-weight: 750; font-size: 18px; }
+    .tool-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .tool-list li {
+      font: 600 13px ui-monospace, monospace;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--forest);
+    }
+    /* Lift on hover and keyboard focus; restrained amber accent. */
+    .bento-card:hover,
+    .bento-card:focus-within,
+    .bento-card:focus-visible {
+      transform: translateY(-4px) scale(1.015);
+      border-color: var(--aurora-amber);
+    }
+    /* Sibling dimming as progressive enhancement only: subtle, no shrink. */
+    .bento:has(> .bento-card:hover) > .bento-card,
+    .bento:has(> .bento-card:focus-within) > .bento-card { transition: opacity 200ms ease, transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 200ms ease, border-color 200ms ease; }
+    .bento:has(> .bento-card:hover) > .bento-card:not(:hover),
+    .bento:has(> .bento-card:focus-within) > .bento-card:not(:focus-within) { opacity: 0.88; }
+
+    @media (max-width: 820px) {
+      .founder { grid-template-columns: 1fr; }
+      .founder-photo { max-width: 340px; }
+      .founder-body { text-align: left; hyphens: manual; }
+      .segmented { flex-wrap: wrap; }
+      .bento { grid-template-columns: 1fr; }
+      .bento-lead, .bento-loc, .bento-tools { grid-column: 1; grid-row: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .seg-pill { transition: none; }
+      .seg { transition: none; }
+      .bento-card { transition: border-color 200ms ease, background 200ms ease; }
+      .bento-card:hover,
+      .bento-card:focus-within,
+      .bento-card:focus-visible { transform: none; }
+      .bento:has(> .bento-card:hover) > .bento-card:not(:hover),
+      .bento:has(> .bento-card:focus-within) > .bento-card:not(:focus-within) { opacity: 1; }
+    }
   </style>
 </head>
 <body>
   <header class="shell site-header">
-    <a class="brand" href="./">RCC Sustainability Portfolio</a>
-    <a class="header-link" href="https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a class="brand" href="#home">RCC Sustainability Portfolio</a>
+    <nav class="segmented" aria-label="Section navigation">
+      <span class="seg-pill" aria-hidden="true"></span>
+      <a class="seg" href="#home" aria-current="true">Home</a>
+      <a class="seg" href="#portfolio">Portfolio</a>
+      <a class="seg" href="#about">About</a>
+    </nav>
   </header>
 
   <main>
-    <section class="shell hero" aria-labelledby="portfolio-title">
-      <div>
+    <section class="shell hero" id="home" aria-labelledby="portfolio-title">
+      <div class="home-lead">
         <p class="eyebrow">Sustainability · Data · Automation</p>
         <h1 id="portfolio-title">Work built to make complex information useful.</h1>
       </div>
-      <p class="hero-copy">I’m Reiniel Celgie Chan. This is an evolving collection of sustainability dashboards, carbon-accounting analyses, workflow automations, and practical tools I build as I learn.</p>
+      <div class="founder">
+        <img class="founder-photo" src="assets/founder-reiniel.jpg"
+             alt="Reiniel Celgie Chan standing on a forest trail beside a distance marker post."
+             width="960" height="1200" loading="eager" decoding="async">
+        <div class="founder-copy">
+          <h2 class="founder-hi">Hi, I'm Reiniel.</h2>
+          <p class="founder-body">I'm a carbon analyst specializing in greenhouse gas accounting across Scope 1, Scope 2, and Scope 3. I work across the end-to-end process, from mapping business activities and identifying applicable emission sources to building dashboards and translating results into practical insights. My work helps teams assess decarbonization opportunities and understand their potential financial, energy, and emissions impacts.</p>
+          <div class="founder-cta">
+            <a class="button button-primary" href="https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/" target="_blank" rel="noopener noreferrer"><span>View LinkedIn</span><span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="mailto:reinielcelgiechan@gmail.com"><span>Email me</span><span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="shell project-section" aria-labelledby="featured-title">
+    <section class="shell project-section" id="portfolio" aria-labelledby="featured-title">
       <div class="section-label">Featured work</div>
       <div class="projects">
       <article class="project">
@@ -440,11 +610,124 @@
       </article>
       </div>
     </section>
+
+    <section class="shell about" id="about" aria-labelledby="about-title">
+      <div class="section-label">About</div>
+      <h2 id="about-title" class="about-title">A bit about how I work</h2>
+      <div class="bento">
+        <article class="bento-card bento-lead">
+          <p class="bento-eyebrow">Regional emission-factor experience</p>
+          <p>Working familiarity with applying Australia's DCCEEW National Greenhouse Accounts (NGA) Factors and the United Kingdom's DESNZ greenhouse gas reporting conversion factors when preparing emissions estimates. This reflects hands-on experience only, not assurance, certification, or regulatory advice.</p>
+        </article>
+        <article class="bento-card bento-loc">
+          <p class="bento-eyebrow">Based in</p>
+          <div class="loc-visual" role="img" aria-label="Illustrated marker over Metro Manila">
+            <svg viewBox="0 0 240 160" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="locGlow" cx="50%" cy="62%" r="60%">
+                  <stop offset="0%" stop-color="#7ed7b4" stop-opacity="0.55"></stop>
+                  <stop offset="100%" stop-color="#7ed7b4" stop-opacity="0"></stop>
+                </radialGradient>
+              </defs>
+              <rect width="240" height="160" rx="14" fill="#eef4f0"></rect>
+              <path d="M28 118 C60 96 78 120 108 108 C140 96 150 122 186 110 C206 103 218 116 224 132 L224 160 L16 160 Z" fill="#dceee5"></path>
+              <path d="M16 132 C64 118 96 140 132 128 C168 116 200 138 224 128" fill="none" stroke="#69a781" stroke-width="2" stroke-opacity="0.5"></path>
+              <circle cx="132" cy="96" r="52" fill="url(#locGlow)"></circle>
+              <g transform="translate(132 92)">
+                <path d="M0 44 C-22 16 -30 6 -30 -12 A30 30 0 1 1 30 -12 C30 6 22 16 0 44 Z" fill="#0b3b31"></path>
+                <circle cx="0" cy="-14" r="17" fill="#f7f8f5"></circle>
+                <path d="M-11 -8 A11 13 0 0 1 11 -8 Z" fill="#278963"></path>
+              </g>
+            </svg>
+          </div>
+          <p class="loc-label">Metro Manila, Philippines</p>
+        </article>
+        <article class="bento-card bento-tools">
+          <p class="bento-eyebrow">Tools I use</p>
+          <ul class="tool-list">
+            <li><span>Excel</span></li>
+            <li><span>Power Query</span></li>
+            <li><span>Power Automate</span></li>
+            <li><span>Power BI</span></li>
+            <li><span>ChatGPT</span></li>
+            <li><span>Claude</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
   </main>
 
   <footer class="shell">
     <span>Reiniel Celgie Chan</span>
     <span>Growing through practical work</span>
   </footer>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.segmented');
+      if (!nav) return;
+      var pill = nav.querySelector('.seg-pill');
+      var links = Array.prototype.slice.call(nav.querySelectorAll('.seg'));
+      if (!links.length) return;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      function movePill(el) {
+        if (!pill || !el) return;
+        if (reduce.matches) { pill.style.transition = 'none'; }
+        pill.style.left = el.offsetLeft + 'px';
+        pill.style.width = el.offsetWidth + 'px';
+      }
+      function currentLink() {
+        return links.filter(function (l) { return l.getAttribute('aria-current') === 'true'; })[0] || links[0];
+      }
+      function linkFor(id) {
+        return links.filter(function (l) { return l.getAttribute('href') === '#' + id; })[0];
+      }
+      function setActive(el) {
+        if (!el) return;
+        links.forEach(function (l) { l.removeAttribute('aria-current'); });
+        el.setAttribute('aria-current', 'true');
+        movePill(el);
+      }
+
+      var initial = currentLink();
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () { movePill(currentLink()); });
+      }
+      window.addEventListener('load', function () { movePill(currentLink()); });
+      window.addEventListener('resize', function () {
+        var saved = pill ? pill.style.transition : '';
+        if (pill) pill.style.transition = 'none';
+        movePill(currentLink());
+        if (pill) requestAnimationFrame(function () { pill.style.transition = saved; });
+      });
+
+      links.forEach(function (l) {
+        l.addEventListener('click', function (e) {
+          var id = l.getAttribute('href').slice(1);
+          var target = document.getElementById(id);
+          if (!target) return;
+          e.preventDefault();
+          setActive(l);
+          target.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+          if (history.replaceState) { history.replaceState(null, '', '#' + id); }
+        });
+      });
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { setActive(linkFor(en.target.id)); }
+          });
+        }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+        ['home', 'portfolio', 'about'].forEach(function (id) {
+          var s = document.getElementById(id);
+          if (s) obs.observe(s);
+        });
+      }
+
+      movePill(initial);
+    })();
+  </script>
 </body>
 </html>
