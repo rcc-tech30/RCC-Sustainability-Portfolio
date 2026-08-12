@@ -90,9 +90,24 @@
     .site-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       min-height: 82px;
       border-bottom: 1px solid var(--line);
+    }
+
+    .nav-dock {
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      margin: 16px auto 0;
+      pointer-events: none;
+    }
+
+    .nav-dock .segmented {
+      pointer-events: auto;
+      box-shadow: var(--shadow);
     }
 
     .brand {
@@ -111,9 +126,19 @@
       text-underline-offset: 5px;
     }
 
+    #home, #portfolio, #about { scroll-margin-top: 88px; }
+
     .hero {
-      display: block;
-      padding: clamp(64px, 9.5vw, 128px) 0 68px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: clamp(28px, 5vw, 64px);
+      align-items: center;
+      padding: clamp(24px, 4vw, 56px) 0 72px;
+    }
+
+    .hero h1 {
+      max-width: none;
+      font-size: clamp(40px, 6vw, 72px);
     }
 
     .eyebrow {
@@ -135,16 +160,24 @@
       line-height: 0.98;
     }
 
-    .hero-copy {
-      max-width: 49ch;
-      margin: 0 0 6px;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.7;
-    }
-
     .project-section {
       padding: 0 0 104px;
+    }
+
+    .portfolio-title {
+      margin: 0 0 10px;
+      color: var(--forest-deep);
+      font-size: clamp(32px, 4.5vw, 52px);
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+
+    .portfolio-sub {
+      margin: 0 0 40px;
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
     }
 
     .projects { display: grid; gap: 30px; }
@@ -298,9 +331,8 @@
     @media (max-width: 820px) {
       body::before { animation: none; transform: none; }
       .shell { width: min(100% - 32px, 640px); }
-      .hero { grid-template-columns: 1fr; gap: 28px; align-items: start; padding: 68px 0 56px; }
-      h1 { font-size: clamp(44px, 14vw, 68px); }
-      .hero-copy { font-size: 16px; }
+      .hero { grid-template-columns: 1fr; gap: 28px; align-items: start; padding: 20px 0 48px; }
+      .hero h1 { font-size: clamp(34px, 10vw, 54px); }
       .project { grid-template-columns: 1fr; border-radius: 20px; }
       .project-visual { min-height: 340px; padding: 24px; }
       .dashboard-preview { min-height: 290px; transform: none; }
@@ -360,28 +392,23 @@
       transition: left 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
     }
     /* Founder introduction */
-    .home-lead { margin-bottom: clamp(36px, 5vw, 56px); }
-    .founder {
-      display: grid;
-      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
-      gap: clamp(28px, 4vw, 56px);
-      align-items: center;
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
+    .hero-text .eyebrow { margin-bottom: 18px; }
+    .hero-text h1 { margin-bottom: 20px; }
     .founder-photo {
       width: 100%;
+      max-width: 420px;
       height: auto;
       aspect-ratio: 4 / 5;
       object-fit: cover;
+      justify-self: end;
       background: #eef4f0;
       border-radius: 18px;
       box-shadow: var(--shadow);
-    }
-    .founder-hi {
-      margin: 0 0 16px;
-      color: var(--forest-deep);
-      font-size: clamp(28px, 4vw, 40px);
-      letter-spacing: -0.03em;
-      line-height: 1.05;
     }
     .founder-body {
       margin: 0 0 26px;
@@ -463,8 +490,7 @@
     .bento:has(> .bento-card:focus-within) > .bento-card:not(:focus-within) { opacity: 0.88; }
 
     @media (max-width: 820px) {
-      .founder { grid-template-columns: 1fr; }
-      .founder-photo { max-width: 340px; }
+      .founder-photo { max-width: 320px; }
       .founder-body { text-align: left; hyphens: manual; }
       .segmented { flex-wrap: wrap; }
       .bento { grid-template-columns: 1fr; }
@@ -486,37 +512,35 @@
 <body>
   <header class="shell site-header">
     <a class="brand" href="#home">RCC Sustainability Portfolio</a>
+  </header>
+  <div class="shell nav-dock">
     <nav class="segmented" aria-label="Section navigation">
       <span class="seg-pill" aria-hidden="true"></span>
       <a class="seg" href="#home" aria-current="true">Home</a>
       <a class="seg" href="#portfolio">Portfolio</a>
       <a class="seg" href="#about">About</a>
     </nav>
-  </header>
+  </div>
 
   <main>
-    <section class="shell hero" id="home" aria-labelledby="portfolio-title">
-      <div class="home-lead">
+    <section class="shell hero" id="home" aria-labelledby="home-heading">
+      <div class="hero-text">
         <p class="eyebrow">Sustainability · Data · Automation</p>
-        <h1 id="portfolio-title">Work built to make complex information useful.</h1>
-      </div>
-      <div class="founder">
-        <img class="founder-photo" src="assets/founder-reiniel.jpg"
-             alt="Reiniel Celgie Chan standing on a forest trail beside a distance marker post."
-             width="960" height="1200" loading="eager" decoding="async">
-        <div class="founder-copy">
-          <h2 class="founder-hi">Hi, I'm Reiniel.</h2>
-          <p class="founder-body">I'm a carbon analyst specializing in greenhouse gas accounting across Scope 1, Scope 2, and Scope 3. I work across the end-to-end process, from mapping business activities and identifying applicable emission sources to building dashboards and translating results into practical insights. My work helps teams assess decarbonization opportunities and understand their potential financial, energy, and emissions impacts.</p>
-          <div class="founder-cta">
-            <a class="button button-primary" href="https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/" target="_blank" rel="noopener noreferrer"><span>View LinkedIn</span><span aria-hidden="true">↗</span></a>
-            <a class="button button-secondary" href="mailto:reinielcelgiechan@gmail.com"><span>Email me</span><span aria-hidden="true">→</span></a>
-          </div>
+        <h1 id="home-heading">Hi, I'm Reiniel.</h1>
+        <p class="founder-body">I'm a carbon analyst specializing in greenhouse gas accounting across Scope 1, Scope 2, and Scope 3. I work across the end-to-end process, from mapping business activities and identifying applicable emission sources to building dashboards and translating results into practical insights. My work helps teams assess decarbonization opportunities and understand their potential financial, energy, and emissions impacts.</p>
+        <div class="founder-cta">
+          <a class="button button-primary" href="https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/" target="_blank" rel="noopener noreferrer"><span>View LinkedIn</span><span aria-hidden="true">↗</span></a>
+          <a class="button button-secondary" href="mailto:reinielcelgiechan@gmail.com"><span>Email me</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
+      <img class="founder-photo" src="assets/founder-reiniel.jpg"
+           alt="Reiniel Celgie Chan standing on a forest trail beside a distance marker post."
+           width="960" height="1200" loading="eager" decoding="async">
     </section>
 
-    <section class="shell project-section" id="portfolio" aria-labelledby="featured-title">
-      <div class="section-label">Featured work</div>
+    <section class="shell project-section" id="portfolio" aria-labelledby="portfolio-heading">
+      <h2 id="portfolio-heading" class="portfolio-title">Featured work</h2>
+      <p class="portfolio-sub">Work built to make complex information useful.</p>
       <div class="projects">
       <article class="project">
         <div class="project-visual" aria-hidden="true">
@@ -536,7 +560,7 @@
         <div class="project-copy">
           <div>
             <span class="project-number">PROJECT 01</span>
-            <h2 id="featured-title">Fleet Electrification Transition Assessment</h2>
+            <h2>Fleet Electrification Transition Assessment</h2>
             <p>An editable decision tool for modelling fleet transition, emissions, electricity demand, investment, certificate cost, annual operating impact, and simple payback.</p>
           </div>
           <div>
