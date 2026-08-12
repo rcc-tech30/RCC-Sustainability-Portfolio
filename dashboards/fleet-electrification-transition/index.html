@@ -47,12 +47,12 @@
           <div class="kpi-grid">
             <article class="kpi"><span class="label">Fleet transition</span><strong class="value" id="kpi-fleet">10 of 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></article>
             <article class="kpi good"><span class="label">Scope 1 avoided</span><strong class="value" id="kpi-scope1">46.49 tCO2e</strong><span class="sub">Mobile combustion eliminated</span></article>
-            <article class="kpi good"><span class="label">Residual after certificates</span><strong class="value" id="kpi-residual">0.00 tCO2e</strong><span class="sub" id="kpi-residual-sub">Grid-based result remains separately visible</span></article>
-            <article class="kpi"><span class="label">Net transition investment</span><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
+            <article class="kpi warn" id="scope2-card"><span class="label">Scope 2 increase</span><strong class="value" id="kpi-scope2-increase">24.55 tCO2e</strong><span class="sub" id="kpi-scope2-increase-sub">Grid Scope 2: 124.00 to 148.55 tCO2e</span></article>
+            <article class="kpi good"><span class="label">Residual after certificates</span><strong class="value" id="kpi-residual">0.00 tCO2e</strong><span class="sub" id="kpi-residual-sub">Before certificates: 148.55 tCO2e</span></article>
             <article class="kpi good" id="operating-card"><span class="label">Annual operating impact</span><strong class="value" id="kpi-operating">AUD 8,902 savings</strong><span class="sub">Electricity, certificates and avoided fuel</span></article>
-            <article class="kpi" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">13.48 years vs new ICE purchase</span></article>
-            <article class="kpi"><span class="label">BEV electricity added</span><strong class="value" id="kpi-electricity">39,600 kWh</strong><span class="sub" id="kpi-electricity-sub">Distance-based estimate</span></article>
-            <article class="kpi warn"><span class="label">Additional certificate cost</span><strong class="value" id="kpi-certificate">AUD 13,178</strong><span class="sub" id="kpi-certificate-sub">Target EAC coverage</span></article>
+            <article class="kpi" id="payback-card"><span class="label">Simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">Based on AUD 8,902 annual savings</span></article>
+            <article class="kpi good" id="net-emissions-card"><span class="label">Net emissions change</span><strong class="value" id="kpi-net-emissions">21.94 tCO2e</strong><span class="sub" id="kpi-net-emissions-sub">Reduction before certificates</span></article>
+            <article class="kpi"><span class="label">Net transition investment</span><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
           </div>
           <div class="chart-grid">
             <article class="panel"><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
@@ -354,6 +354,30 @@
       };
     }
 
+    function deriveOverviewKpiStory(result) {
+      const scope2Increase = result.postTransitionGridScope2 - result.baselineGridScope2;
+      const netEmissionsChange = result.baselineTotalEmissions - result.residualBeforeCertificates;
+      const netEmissionsDisplayChange = Math.abs(netEmissionsChange) < 0.005 ? 0 : netEmissionsChange;
+      const netTone = netEmissionsDisplayChange > 0
+        ? "good"
+        : netEmissionsDisplayChange < 0
+          ? "warn"
+          : "neutral";
+
+      return {
+        scope2Increase,
+        scope2Tone: scope2Increase > 0 ? "warn" : scope2Increase < 0 ? "good" : "neutral",
+        netEmissionsChange,
+        netEmissionsMagnitude: Math.abs(netEmissionsDisplayChange),
+        netTone,
+        netSubline: netTone === "good"
+          ? "Reduction before certificates"
+          : netTone === "warn"
+            ? "Increase before certificates"
+            : "No change before certificates",
+      };
+    }
+
     function validateScenario(input) {
       const s = { ...DEFAULT_SCENARIO, ...input };
       const messages = [];
@@ -415,6 +439,7 @@
       DEFAULT_SCENARIO,
       DEFAULT_INPUT_SECTIONS,
       calculateScenario,
+      deriveOverviewKpiStory,
       validateScenario,
       serializeScenario,
       parseStoredScenario,
@@ -432,7 +457,7 @@
   </script>
   <script>
     (() => {
-      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
+      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, deriveOverviewKpiStory, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
       const percentageFields = new Set(["chargingLossPct", "fuelToBevPct", "currentCertificateCoverage", "targetCertificateCoverage"]);
       const fieldGroups = {
         "fleet-fields": [
@@ -605,6 +630,7 @@
 
       function render() {
         const result = calculateScenario(scenario);
+        const kpiStory = deriveOverviewKpiStory(result);
         const messages = validateScenario(scenario);
         q("#data-status").textContent = scenario.dataStatus;
         q("#data-status").style.background = scenario.dataStatus === "Sample Data" ? "var(--orange-soft)" : "var(--emerald-soft)";
@@ -623,17 +649,19 @@
         q("#kpi-fleet").textContent = `${result.vehiclesTransitioning} of ${scenario.totalIceVehicles}`;
         q("#kpi-fleet-sub").textContent = `${formatNumber(result.transitionPct*100)}% of fleet transitioned`;
         q("#kpi-scope1").textContent = formatT(result.scope1Avoided);
+        q("#scope2-card").className = `kpi${kpiStory.scope2Tone === "neutral" ? "" : ` ${kpiStory.scope2Tone}`}`;
+        q("#kpi-scope2-increase").textContent = formatT(kpiStory.scope2Increase);
+        q("#kpi-scope2-increase-sub").textContent = `Grid Scope 2: ${formatT(result.baselineGridScope2)} to ${formatT(result.postTransitionGridScope2)}`;
         q("#kpi-residual").textContent = formatT(result.residualAfterCertificates);
-        q("#kpi-residual-sub").textContent = `Grid-based: ${formatT(result.residualBeforeCertificates)}`;
+        q("#kpi-residual-sub").textContent = `Before certificates: ${formatT(result.residualBeforeCertificates)}`;
         q("#kpi-investment").textContent = formatMoney(result.transitionInvestment);
         q("#kpi-investment-sub").textContent = `${formatMoney(result.incrementalInvestment)} vs new ICE purchase`;
         const savings = result.annualOperatingChange < 0;
         q("#operating-card").className = `kpi ${savings ? "good" : "warn"}`;
         q("#kpi-operating").textContent = `${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}`;
-        q("#kpi-electricity").textContent = `${formatNumber(result.bevElectricityAdded)} kWh`;
-        q("#kpi-electricity-sub").textContent = `${scenario.bevMethod} estimate`;
-        q("#kpi-certificate").textContent = formatMoney(result.additionalCertificateCost);
-        q("#kpi-certificate-sub").textContent = `${formatNumber(scenario.targetCertificateCoverage*100)}% ${scenario.certificateType} coverage`;
+        q("#net-emissions-card").className = `kpi${kpiStory.netTone === "neutral" ? "" : ` ${kpiStory.netTone}`}`;
+        q("#kpi-net-emissions").textContent = formatT(kpiStory.netEmissionsMagnitude);
+        q("#kpi-net-emissions-sub").textContent = kpiStory.netSubline;
         const periodLabels = getEmissionsPeriodLabels(scenario.baselineYear, scenario.targetYear);
         q("#emissions-chart-title").textContent = periodLabels.title;
         q("#emissions-chart").setAttribute("aria-label", periodLabels.ariaLabel);
