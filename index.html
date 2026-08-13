@@ -669,12 +669,39 @@
       .bento-lead, .bento-loc, .bento-explore, .bento-tools { grid-column: 1; grid-row: auto; }
       .factor-layout { grid-template-columns: 1fr; }
       .region-factor-grid { grid-template-columns: 1fr; }
-      .factor-docs { min-height: 190px; }
+      .factor-docs {
+        display: grid;
+        gap: 12px;
+        min-height: 0;
+      }
+      .factor-doc,
+      .factor-doc:first-child,
+      .factor-doc:last-child {
+        position: static;
+        inset: auto;
+        width: 100%;
+        min-height: 0;
+      }
+      .factor-doc + .factor-doc { margin-top: 0; }
       .bento-loc { grid-template-columns: 1fr; }
       .loc-visual img { max-height: 215px; }
       .tool-set:nth-child(2) { display: none; }
       .tool-track { animation: none; }
-      .tool-set { flex-wrap: wrap; }
+      .tool-track { width: 100%; }
+      .tool-set {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        width: 100%;
+        padding: 0;
+      }
+      .tool-set li {
+        min-width: 0;
+        min-height: 84px;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {

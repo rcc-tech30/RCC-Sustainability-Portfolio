@@ -78,6 +78,9 @@ footer. `#about` is the last main section and is not a second hero.
   run it at a calm 22s linear loop, pause on hover, mask the edges with a fade
   gradient, and disable the marquee under reduced motion and on mobile. Do not
   add a visible bottom scroll bar, progress indicator, or "and more" navigator.
+- At mobile widths (`<= 820px`), the Tools card becomes a non-animated,
+  two-column grid of six compact cards. The duplicate marquee set is hidden;
+  each card uses centered logo and label content with no horizontal overflow.
 - Tool cards should use same-file decorative logo-style SVG marks plus visible
   text labels. Do not regress to plain letter badges such as `X`, `PQ`, `PA`,
   `BI`, `◎`, or `*`.
@@ -96,6 +99,9 @@ footer. `#about` is the last main section and is not a second hero.
   proportionally. Avoid short floating cards that leave a large unused bottom
   area; use taller document cards with enough internal stub rows to look
   intentional.
+- At mobile widths, the regional document cards must leave absolute positioning
+  and stack in normal flow with a fixed gap. No document card may overlap the
+  paragraph, region cards, map, tools card, or footer.
   - The right column is intentionally uneven but compact: the `Based in` card
   remains slightly taller than `Currently exploring`, without leaving a large
   empty lower area in either card.
