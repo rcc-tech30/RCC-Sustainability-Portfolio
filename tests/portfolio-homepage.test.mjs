@@ -1,61 +1,4 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { createHash } from "node:crypto";
-
-const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const philippinesMap = readFileSync(new URL("../assets/rcc-philippines-map.jpg", import.meta.url));
-
-function requireFragments(fragments) {
-  for (const fragment of fragments) {
-    assert.ok(html.includes(fragment), `Missing required fragment: ${fragment}`);
-  }
-}
-
-function refuseFragments(fragments) {
-  for (const fragment of fragments) {
-    assert.ok(!html.includes(fragment), `Forbidden fragment present: ${fragment}`);
-  }
-}
-
-function requireOrder(markers) {
-  let last = -1;
-  for (const m of markers) {
-    const i = html.indexOf(m);
-    assert.ok(i !== -1, `Missing ordered marker: ${m}`);
-    assert.ok(i > last, `Marker out of order: ${m}`);
-    last = i;
-  }
-}
-
-// The inline <script> body (nav enhancement only).
-const scriptBody = (() => {
-  const s = html.indexOf("<script>");
-  const e = html.indexOf("</script>");
-  return s === -1 || e === -1 ? "" : html.slice(s, e);
-})();
-
-test("preserves the current portfolio content and destinations", () => {
-  requireFragments([
-    "Work built to make complex information useful.",
-    "Fleet Electrification Transition Assessment",
-    "Company X GHG Dashboard",
-    "Company X Native Power BI Dashboard",
-    'href="dashboards/fleet-electrification-transition/"',
-    'href="dashboards/company-x-ghg/"',
-    'href="dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix"',
-    'href="https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/"'
-  ]);
-});
-
-test("defines the approved asymmetric edge aurora (CSS only)", () => {
-  requireFragments([
-    "--aurora-blue: #5b8def;",
-    "--aurora-mint: #69a781;",
-    "--aurora-amber: #d49a35;",
-    "body::before {",
-    "body::after {",
-    "filter: blur(56px);",
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬Õ¥µÁ½ÉÐÑ•ÍÐ™É½´€‰¹½‘”éÑ•ÍÐˆì)¥µÁ½ÉÐ…ÍÍ•ÉÐ™É½´€‰¹½‘”é…ÍÍ•ÉÐ½ÍÑÉ¥Ðˆì)¥µÁ½ÉÐìÉ•…‘¥±•Må¹Œô™É½´€‰¹½‘”é™Ìˆì)¥µÁ½ÉÐìÉ•…Ñ•!…Í ô™É½´€‰¹½‘”éÉåÁÑ¼ˆì()½¹ÍÐ¡Ñµ°€ôÉ•…‘¥±•Må¹Œ¡¹•ÜUI0 ˆ¸¸½¥¹‘•à¹¡Ñµ°ˆ°¥µÁ½ÉÐ¹µ•Ñ„¹ÕÉ°¤°€‰ÕÑ˜àˆ¤ì)½¹ÍÐÁ¡¥±¥ÁÁ¥¹•Í5…À€ôÉ•…‘¥±•Må¹Œ¡¹•ÜUI0 ˆ¸¸½…ÍÍ•ÑÌ½ÉŒµÁ¡¥±¥ÁÁ¥¹•Ìµµ…À¹©Áœˆ°¥µÁ½ÉÐ¹µ•Ñ„¹ÕÉ°¤¤ì(4)™Õ¹Ñ¥½¸É•ÅÕ¥É•É…µ•¹ÑÌ¡™É…µ•¹ÑÌ¤ì4(€™½È€¡½¹ÍÐ™É…µ•¹Ð½˜™É…µ•¹ÑÌ¤ì4(€€€…ÍÍ•ÉÐ¹½¬¡¡Ñµ°¹¥¹±Õ‘•Ì¡™É…µ•¹Ð¤°5¥ÍÍ¥¹œÉ•ÅÕ¥É•™É…µ•¹Ðè€‘í™É…µ•¹Ñõ€¤ì4(€ô4)ô4(4)™Õ¹Ñ¥½¸É•™ÕÍ•É…µ•¹ÑÌ¡™É…µ•¹ÑÌ¤ì4(€™½È€¡½¹ÍÐ™É…µ•¹Ð½˜™É…µ•¹ÑÌ¤ì4(€€€…ÍÍ•ÉÐ¹½¬ …¡Ñµ°¹¥¹±Õ‘•Ì¡™É…µ•¹Ð¤°½É‰¥‘‘•¸™É…µ•¹ÐÁÉ•Í•¹Ðè€‘í™É…µ•¹Ñõ€¤ì4(€ô4)ô4(4)™Õ¹Ñ¥½¸É•ÅÕ¥É•=É‘•È¡µ…É­•ÉÌ¤ì4(€±•Ð±…ÍÐ€ô€´Äì4(€™½È€¡½¹ÍÐ´½˜µ…É­•ÉÌ¤ì4(€€€½¹ÍÐ¤€ô¡Ñµ°¹¥¹‘•á=˜¡´¤ì4(€€€…ÍÍ•ÉÐ¹½¬¡¤€„ôô€´Ä°5¥ÍÍ¥¹œ½É‘•É•µ…É­•Èè€‘íµõ€¤ì4(€€€…ÍÍ•ÉÐ¹½¬¡¤€ø±…ÍÐ°5…É­•È½ÕÐ½˜½É‘•Èè€‘íµõ€¤ì4(€€€±…ÍÐ€ô¤ì4(€ô4)ô4(4(¼¼Q¡”¥¹±¥¹”€ñÍÉ¥ÁÐø‰½‘ä€¡¹…Ø•¹¡…¹•µ•¹Ð½¹±ä¤¸4)½¹ÍÐÍÉ¥ÁÑ	½‘ä€ô€  ¤€ôøì4(€½¹ÍÐÌ€ô¡Ñµ°¹¥¹‘•á=˜ ˆñÍÉ¥ÁÐøˆ¤ì4(€½¹ÍÐ”€ô¡Ñµ°¹¥¹‘•á=˜ ˆð½ÍÉ¥ÁÐøˆ¤ì4(€É•ÑÕÉ¸Ì€ôôô€´Äñð”€ôôô€´Ä€ü€ˆˆ€è¡Ñµ°¹Í±¥”¡Ì°”¤ì4)ô¤ ¤ì4(4)Ñ•ÍÐ ‰ÁÉ•Í•ÉÙ•ÌÑ¡”ÕÉÉ•¹ÐÁ½ÉÑ™½±¥¼½¹Ñ•¹Ð…¹‘•ÍÑ¥¹…Ñ¥½¹Ìˆ°€ ¤€ôøì4(€É•ÅÕ¥É•É…µ•¹ÑÌ¡l4(€€€€‰]½É¬‰Õ¥±ÐÑ¼µ…­”½µÁ±•à¥¹™½Éµ…Ñ¥½¸ÕÍ•™Õ°¸ˆ°4(€€€€‰±••Ð±•ÑÉ¥™¥…Ñ¥½¸QÉ…¹Í¥Ñ¥½¸ÍÍ•ÍÍµ•¹Ðˆ°4(€€€€‰½µÁ…¹ä`!…Í¡‰½…Éˆ°4(€€€€‰½µÁ…¹ä`9…Ñ¥Ù”A½Ý•È	$…Í¡‰½…Éˆ°4(€€€€¡É•˜ô‰‘…Í¡‰½…É‘Ì½™±••Ðµ•±•ÑÉ¥™¥…Ñ¥½¸µÑÉ…¹Í¥Ñ¥½¸¼ˆœ°4(€€€€¡É•˜ô‰‘…Í¡‰½…É‘Ì½½µÁ…¹äµàµ¡œ¼ˆœ°4(€€€€¡É•˜ô‰‘…Í¡‰½…É‘Ì½½µÁ…¹äµàµÁ½Ý•Èµ‰¤½½µÁ…¹äµàµÍÕÍÑ…¥¹…‰¥±¥Ñäµ‘…Í¡‰½…É¹Á‰¥àˆœ°4(€€€€¡É•˜ô‰¡ÑÑÁÌè¼½ÝÝÜ¹±¥¹­•‘¥¸¹½´½¥¸½É•¥¹¥•°µ•±¥”µ¡…¸´Á„ÄÈÈÐÈáˆ¼ˆœ4(€t¤ì4)ô¤ì4(4)Ñ•ÍÐ ‰‘•™¥¹•ÌÑ¡”…ÁÁÉ½Ù•…Íåµµ•ÑÉ¥Œ•‘”…ÕÉ½É„€¡ML½¹±ä¤ˆ°€ ¤€ôøì4(€É•ÅÕ¥É•É…µ•¹ÑÌ£m¢G§²ÚîÆ­yÙlter: blur(56px);",
     "animation: aurora-drift 22s ease-in-out infinite alternate;",
     "pointer-events: none;",
     "@keyframes aurora-drift"
@@ -108,44 +51,7 @@ test("renders the approved footer copyright", () => {
 
 test("provides a Home/Portfolio/About segmented nav of anchor links", () => {
   requireFragments([
-    'class="segmented"',
-    '<a class="seg" href="#home"',
-    '<a class="seg" href="#portfolio"',
-    '<a class="seg" href="#about"',
-    ">Home<",
-    ">Portfolio<",
-    ">About<",
-    'class="seg-pill"'
-  ]);
-  requireOrder(['href="#home"', 'href="#portfolio"', 'href="#about"']);
-});
-
-test("enhances the nav with offset-measured pill and reduced-motion guard", () => {
-  // Nav enhancement lives in the inline script and reads pixel geometry.
-  assert.ok(scriptBody.includes("offsetLeft"), "pill must read offsetLeft");
-  assert.ok(scriptBody.includes("offsetWidth"), "pill must read offsetWidth");
-  assert.ok(scriptBody.includes("IntersectionObserver"), "active state must follow scroll");
-  assert.ok(scriptBody.includes("prefers-reduced-motion"), "script must guard reduced motion");
-  assert.ok(scriptBody.includes("matchMedia"), "script must detect reduced motion");
-  // Pill easing/duration is declared in CSS.
-  requireFragments([
-    "transition: left 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);"
-  ]);
-});
-
-test("renders the founder introduction with exact copy and CTAs", () => {
-  requireFragments([
-    'id="home"',
-    "Hi, I'm Reiniel.",
-    "I'm a carbon analyst specializing in greenhouse gas accounting across Scope 1, Scope 2, and Scope 3. I work across the end-to-end process, from mapping business activities and identifying applicable emission sources to building dashboards and translating results into practical insights. My work helps teams assess decarbonization opportunities and understand their potential financial, energy, and emissions impacts.",
-    'src="assets/founder-reiniel.jpg"',
-    'alt="Reiniel Celgie Chan standing on a forest trail beside a distance marker post."',
-    ">View LinkedIn<",
-    'rel="noopener noreferrer"',
-    ">Email me<",
-    'href="mailto:reinielcelgiechan@gmail.com"'
-  ]);
-  // Justified on desktop for a clean block edge (with hyphenation and a left
+    'class="segYªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬Õµ•¹Ñ•ˆœ°4(€€€€œñ„±…ÍÌô‰Í•œˆ¡É•˜ôˆ¡½µ”ˆœ°4(€€€€œñ„±…ÍÌô‰Í•œˆ¡É•˜ôˆÁ½ÉÑ™½±¥¼ˆœ°4(€€€€œñ„±…ÍÌô‰Í•œˆ¡É•˜ôˆ…‰½ÕÐˆœ°4(€€€€ˆù!½µ”ðˆ°4(€€€€ˆùA½ÉÑ™½±¥¼ðˆ°4(€€€€ˆù‰½ÕÐðˆ°4(€€€€±…ÍÌô‰Í•œµÁ¥±°ˆœ4(€t¤ì4(€É•ÅÕ¥É•=É‘•È¡l¡É•˜ôˆ¡½µ”ˆœ°€¡É•˜ôˆÁ½ÉÑ™½±¥¼ˆœ°€¡É•˜ôˆ…‰½ÕÐˆt¤ì4)ô¤ì4(4)Ñ•ÍÐ ‰•¹¡…¹•ÌÑ¡”¹…ØÝ¥Ñ ½™™Í•Ðµµ•…ÍÕÉ•Á¥±°…¹É•‘Õ•µµ½Ñ¥½¸Õ…Éˆ°€ ¤€ôøì4(€€¼¼9…Ø•¹¡…¹•µ•¹Ð±¥Ù•Ì¥¸Ñ¡”¥¹±¥¹”ÍÉ¥ÁÐ…¹É•…‘ÌÁ¥á•°•½µ•ÑÉä¸4(€…ÍÍ•ÉÐ¹½¬¡ÍÉ¥ÁÑ	½‘ä¹¥¹±Õ‘•Ì ‰½™™Í•Ñ1•™Ðˆ¤°€‰Á¥±°µÕÍÐÉ•…½™™Í•Ñ1•™Ðˆ¤ì4(€…ÍÍ•ÉÐ¹½¬¡ÍÉ¥ÁÑ	½‘ä¹¥¹±Õ‘•Ì ‰½™™Í•Ñ]¥‘Ñ ˆ¤°€‰Á¥±°µÕÍÐÉ•…½™™Í•Ñ]¥‘Ñ ˆ¤ì4(€…ÍÍ•ÉÐ¹½¬¡ÍÉ¥ÁÑ	½‘ä¹¥¹±Õ‘•Ì ‰%¹Ñ•ÉÍ•Ñ¥½¹=‰Í•ÉÙ•Èˆ¤°€‰…Ñ¥Ù”ÍÑ…Ñ”µÕÍÐ™½±±½ÜÍÉ½±°ˆ¤ì4(€…ÍÍ•ÉÐ¹½¬¡ÍÉ¥ÁÑ	½‘ä¹¥¹±Õ‘•Ì ‰ÁÉ•™•ÉÌµÉ•‘Õ•µµ½Ñ¥½¸ˆ¤°€‰ÍÉ¥ÁÐµÕÍÐÕ…ÉÉ•‘Õ•µ½Ñ¥½¸ˆ¤ì4(€…ÍÍ•ÉÐ¹½¬¡ÍÉ¥ÁÑ	½‘ä¹¥¹±Õ‘•Ì ‰µ…Ñ¡5•‘¥„ˆ¤°€‰ÍÉ¥ÁÐµÕÍÐ‘•Ñ•ÐÉ•‘Õ•µ½Ñ¥½¸ˆ¤ì4(€€¼¼A¥±°•…Í¥¹œ½‘ÕÉ…Ñ¥½¸¥Ì‘•±…É•¥¸ML¸4(€É•ÅÕ¥É•É…µ•¹ÑÌ¡l4(€€€€‰ÑÉ…¹Í¥Ñ¥½¸è±•™Ð€À¸ÑÌÕ‰¥Œµ‰•é¥•È À¸ØÔ°€À°€À¸ÌÔ°€Ä¤°Ý¥‘Ñ €À¸ÑÌÕ‰¥Œµ‰•é¥•È À¸ØÔ°€À°€À¸ÌÔ°€Ä¤ìˆ4(€t¤ì4)ô¤ì4(4)Ñ•ÍÐ ‰É•¹‘•ÉÌÑ¡”™½Õ¹‘•È¥¹ÑÉ½‘ÕÑ¥½¸Ý¥Ñ •á…Ð½Áä…¹QÌˆ°€ ¤€ôøì4(€É•ÅÕ¥É•É…µ•¹ÑÌ¡l4(€€€€¥ô‰¡½µ”ˆœ°4(€€€€‰!¤°$´I•¥¹¥•°¸ˆ°4(€€€€‰$´„…É‰½¸…¹…±åÍÐÍÁ•¥…±¥é¥¹œ¥¸É••¹¡½ÕÍ”…Ì…½Õ¹Ñ¥¹œ…É½ÍÌM½Á”€Ä°M½Á”€È°…¹M½Á”€Ì¸$Ý½É¬…É½ÍÌÑ¡”•¹µÑ¼µ•¹ÁÉ½•ÍÌ°™É½´µ…ÁÁ¥¹œ‰ÕÍ¥¹•ÍÌ…Ñ¥Ù¥Ñ¥•Ì…¹¥‘•¹Ñ¥™å¥¹œ…ÁÁ±¥…‰±”•µ¥ÍÍ¥½¸Í½ÕÉ•ÌÑ¼‰Õ¥±‘¥¹œ‘…Í¡‰½…É‘Ì…¹ÑÉ…¹Í±…Ñ¥¹œÉ•ÍÕ±ÑÌ¥¹Ñ¼ÁÉ…Ñ¥…°¥¹Í¥¡ÑÌ¸5äÝ½É¬¡•±ÁÌÑ•…µÌ…ÍÍ•ÍÌ‘•…É‰½¹¥é…Ñ¥½¸½ÁÁ½ÉÑÕ¹¥Ñ¥•Ì…¹Õ¹‘•ÉÍÑ…¹Ñ¡•¥ÈÁ½Ñ•¹Ñ¥…°™¥¹…¹¥…°°•¹•Éä°…¹•µ¥ÍÍ¥½¹Ì¥µÁ…ÑÌ¸ˆ°4(€€€€ÍÉŒô‰…ÍÍ•ÑÌ½™½Õ¹‘•ÈµÉ•¥¹¥•°¹©Áœˆœ°4(€€€€…±Ðô‰I•¥¹¥•°•±¥”¡…¸ÍÑ…¹‘¥¹œ½¸„™½É•ÍÐÑÉ…¥°‰•Í¥‘”„‘¥ÍÑ…¹”µ…É­•ÈÁ½ÍÐ¸ˆœ°4(€€€€ˆùY¥•Ü1¥¹­•‘%¸ðˆ°4(€€€€É•³m¢G§²ÚîÆ­y×ith hyphenation and a left
   // last line), but reverted to left alignment on mobile where justification
   // produced severe word gaps at ~375px. Readability wins over strict matching.
   requireFragments([
@@ -198,64 +104,7 @@ test("renders the four-card About bento with exact content", () => {
     ".factor-doc:last-child {",
     "position: static;",
     "inset: auto;",
-    "width: 100%;",
-    "min-height: 0;",
-    ".factor-doc + .factor-doc { margin-top: 0; }",
-    ".tool-track { width: 100%; }",
-    ".tool-set {",
-    "grid-template-columns: repeat(2, minmax(0, 1fr));",
-    "width: 100%;",
-    ".tool-set li {",
-    "min-width: 0;",
-    "min-height: 84px;",
-    "justify-content: center;",
-    "flex-direction: column;",
-    "text-align: center;",
-    "Tools I currently use",
-    'class="tool-marquee"',
-    'class="tool-track"',
-    "animation: tool-marquee 22s linear infinite;",
-    "@keyframes tool-marquee",
-    'class="tool-logo mk-spreadsheet"',
-    'class="tool-logo mk-transform"',
-    'class="tool-logo mk-flow"',
-    'class="tool-logo mk-analytics"',
-    'class="tool-logo mk-assistant"',
-    'class="tool-logo mk-reasoning"',
-    'class="chatgpt-knot"',
-    'class="claude-sunburst"',
-    'class="claude-ray"',
-    'aria-hidden="true" focusable="false"',
-    ">Excel<",
-    ">Power Query<",
-    ">Power Automate<",
-    ">Power BI<",
-    ">ChatGPT<",
-    ">Claude<",
-    "Currently exploring",
-    ".bento-explore {",
-    "min-height: 120px;",
-    "justify-content: center;",
-    ">n8n<",
-    ">SQL<",
-    "Learning in progress, not claimed as working expertise."
-  ]);
-  assert.match(
-    html,
-    /<div class="region-factor-card">[\s\S]*Australia[\s\S]*<span class="region-factor-pill">DCCEEW NGA<\/span>[\s\S]*<\/div>/,
-    "DCCEEW NGA must sit inside the Australia region card"
-  );
-  assert.match(
-    html,
-    /<div class="region-factor-card">[\s\S]*United Kingdom[\s\S]*<span class="region-factor-pill">DEFRA \/ DESNZ<\/span>[\s\S]*<\/div>/,
-    "DEFRA / DESNZ must sit inside the United Kingdom region card"
-  );
-  requireOrder([
-    "regulatory advice.</p>",
-    'class="section-separator"',
-    "Regions and factor sets",
-    'class="region-factor-grid"',
-    "Open to working with Australia and UK-aligned reporting hours."
+    "wYªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬Õ¥‘Ñ è€ÄÀÀ”ìˆ°(€€€€‰µ¥¸µ¡•¥¡Ðè€Àìˆ°(€€€€ˆ¹™…Ñ½Èµ‘½Œ€¬€¹™…Ñ½Èµ‘½Œìµ…É¥¸µÑ½Àè€Àìôˆ°(€€€€ˆ¹Ñ½½°µÑÉ…¬ìÝ¥‘Ñ è€ÄÀÀ”ìôˆ°(€€€€ˆ¹Ñ½½°µÍ•Ðìˆ°(€€€€‰É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ìˆ°(€€€€‰Ý¥‘Ñ è€ÄÀÀ”ìˆ°(€€€€ˆ¹Ñ½½°µÍ•Ð±¤ìˆ°(€€€€‰µ¥¸µÝ¥‘Ñ è€Àìˆ°(€€€€‰µ¥¸µ¡•¥¡Ðè€àÑÁàìˆ°(€€€€‰©ÕÍÑ¥™äµ½¹Ñ•¹Ðè•¹Ñ•Èìˆ°(€€€€‰™±•àµ‘¥É•Ñ¥½¸è½±Õµ¸ìˆ°(€€€€‰Ñ•áÐµ…±¥¸è•¹Ñ•Èìˆ°(€€€€‰Q½½±Ì$ÕÉÉ•¹Ñ±äÕÍ”ˆ°(€€€€±…ÍÌô‰Ñ½½°µµ…ÉÅÕ•”ˆœ°(€€€€±…ÍÌô‰Ñ½½°µÑÉ…¬ˆœ°(€€€€‰…¹¥µ…Ñ¥½¸èÑ½½°µµ…ÉÅÕ•”€ÈÉÌ±¥¹•…È¥¹™¥¹¥Ñ”ìˆ°(€€€€‰­•å™É…µ•ÌÑ½½°µµ…ÉÅÕ•”ˆ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µÍÁÉ•…‘Í¡••Ðˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µÑÉ…¹Í™½É´ˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µ™±½Üˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…¹…±åÑ¥Ìˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…ÍÍ¥ÍÑ…¹Ðˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µÉ•…Í½¹¥¹œˆœ°(€€€€±…ÍÌô‰±…Õ‘”µÍÕ¹‰ÕÉÍÐˆœ°(€€€€±…ÍÌô‰±…Õ‘”µÉ…äˆœ°(€€€€ÍÑÉ½­”ô‰ÕÉÉ•¹Ñ½±½Èˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…ÍÍ¥ÍÑ…¹Ðˆœ°(€€€€±…ÍÌô‰Ñ½½°µ±½¼µ¬µÉ•…Í½¹¥¹œˆœ°(€€€€…É¥„µ¡¥‘‘•¸ô‰ÑÉÕ”ˆ™½ÕÍ…‰±”ô‰™…±Í”ˆœ°(€€€€ˆùá•°ðˆ°(€€€€ˆùA½Ý•ÈEÕ•Éäðˆ°(€€€€ˆùA½Ý•ÈÕÑ½µ…Ñ”ðˆ°(€€€€ˆùA½Ý•È	$ðˆ°(€€€€ˆù¡…ÑAPðˆ°(€€€€ˆù±…Õ‘”ðˆ°(€€€€‰ÕÉÉ•¹Ñ±ä•áÁ±½É¥¹œˆ°(€€€€ˆ¹‰•¹Ñ¼µ•áÁ±½É”ìˆ°(€€€€‰µ¥¸µ¡•¥¡Ðè€ÄÈÁÁàìˆ°(€€€€‰©ÕÍÑ¥™äµ½¹Ñ•¹Ðè•¹Ñ•Èìˆ°(€€€€ˆù¸á¸ðˆ°(€€€€ˆùME0ðˆ°(€€€€‰1•…É¹¥¹œ¥¸ÁÉ½É•ÍÌ°¹½Ð±…¥µ•…ÌÝ½É­¥¹œ•áÁ•ÉÑ¥Í”¸ˆ(€t¤ì(€…ÍÍ•ÉÐ¹µ…Ñ  (€€€¡Ñµ°°(€€€€¼ñ‘¥Ø±…ÍÌô‰É•¥½¸µ™…Ñ½Èµ…ÉˆùmqÍqMt©ÕÍÑÉ…±¥…mqÍqMt¨ñÍÁ…¸±…ÍÌô‰É•¥½¸µ™…Ñ½ÈµÁ¥±°ˆù\9ñp½ÍÁ…¸ùmqÍqMt¨ñp½‘¥Øø¼°(€€€€‰\9µÕÍÐÍ¥Ð¥¹Í¥‘”Ñ¡”ÕÍÑÉ…±¥„É•¥½¸…Éˆ(€€¤ì(€…ÍÍ•ÉÐ¹µ…Ñ  (€€€¡Ñµ°°(€€€€¼ñ‘¥Ø±…ÍÌô‰É•¥½¸µ™…Ñ½Èµ…ÉˆùmqÍqMt©U¹¥Ñ•-¥¹‘½µmqÍqMt¨ñÍÁ…¸±…ÍÌô‰É•¥½¸µ™…Ñ½ÈµÁ¥±°ˆùIp¼M9hñp½ÍÁ…¸ùmqÍqMt¨ñp½‘¥Øø¼°(€€€€‰I€¼M9hµÕÍÐÍ¥Ð¥¹Í¥‘”Ñ¡”U¹¥Ñ•-¥¹‘½´É•¥½¸…Éˆ(€€¤ì(€É•ÅÕ¥É•=É‘•È¡l(€€€€‰É•Õ±…Ñ½Éä…‘Ù¥”¸ð½Àøˆ°(€€€€±…ÍÌ÷m¢G§²ÚîÆ­yÒs."
   ]);
   requireOrder([
     'class="bento"',
@@ -297,30 +146,7 @@ test("renders the four-card About bento with exact content", () => {
 test("tools marquee is pure CSS and duplicated for a seamless loop", () => {
   const firstSet = html.indexOf('class="tool-set"');
   const secondSet = html.indexOf('class="tool-set"', firstSet + 1);
-  assert.ok(firstSet !== -1, "first tool list missing");
-  assert.ok(secondSet !== -1, "second duplicated tool list missing");
-  assert.ok(!/tool-marquee/i.test(scriptBody), "tool marquee must not use JavaScript");
-  requireFragments([
-    ".tool-marquee:hover .tool-track",
-    "animation-play-state: paused;",
-    "mask-image: linear-gradient",
-    ".tool-set:nth-child(2)"
-  ]);
-  assert.equal((html.match(/class="tool-logo mk-spreadsheet"/g) || []).length, 2, "spreadsheet mark should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo mk-transform"/g) || []).length, 2, "transform mark should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo mk-flow"/g) || []).length, 2, "flow mark should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo mk-analytics"/g) || []).length, 2, "analytics mark should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo mk-assistant"/g) || []).length, 2, "assistant mark should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 2, "reasoning mark should exist in both marquee copies");
-  assert.notEqual((html.match(/class="tool-logo mk-assistant"/g) || []).length, 0, "ChatGPT mark must be present");
-  assert.notEqual((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 0, "Claude mark must be present");
-});
-
-test("uses the approved same-origin Philippines map asset", () => {
-  assert.equal(philippinesMap.length, 42956, "approved map byte length changed");
-  assert.equal(philippinesMap.subarray(0, 3).toString("hex"), "ffd8ff", "map must be a JPEG");
-  assert.equal(
-    createHash("sha256").update(philippinesMap).digest("hex").toUpperCase(),
+  assert.ok(firstSet !== -1, "first tool list mYªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬Õ¥ÍÍ¥¹œˆ¤ì(€…ÍÍ•ÉÐ¹½¬¡Í•½¹‘M•Ð€„ôô€´Ä°€‰Í•½¹‘ÕÁ±¥…Ñ•Ñ½½°±¥ÍÐµ¥ÍÍ¥¹œˆ¤ì(€…ÍÍ•ÉÐ¹½¬ „½Ñ½½°µµ…ÉÅÕ•”½¤¹Ñ•ÍÐ¡ÍÉ¥ÁÑ	½‘ä¤°€‰Ñ½½°µ…ÉÅÕ•”µÕÍÐ¹½ÐÕÍ”)…Ù…MÉ¥ÁÐˆ¤ì(€É•ÅÕ¥É•É…µ•¹ÑÌ¡l(€€€€ˆ¹Ñ½½°µµ…ÉÅÕ•”é¡½Ù•È€¹Ñ½½°µÑÉ…¬ˆ°(€€€€‰…¹¥µ…Ñ¥½¸µÁ±…äµÍÑ…Ñ”èÁ…ÕÍ•ìˆ°(€€€€‰µ…Í¬µ¥µ…”è±¥¹•…ÈµÉ…‘¥•¹Ðˆ°(€€€€ˆ¹Ñ½½°µÍ•Ðé¹Ñ µ¡¥± È¤ˆ(€t¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µÍÁÉ•…‘Í¡••Ðˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰ÍÁÉ•…‘Í¡••Ðµ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µÑÉ…¹Í™½É´ˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰ÑÉ…¹Í™½É´µ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µ™±½Üˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰™±½Üµ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…¹…±åÑ¥Ìˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰…¹…±åÑ¥Ìµ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…ÍÍ¥ÍÑ…¹Ðˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰…ÍÍ¥ÍÑ…¹Ðµ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µÉ•…Í½¹¥¹œˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰É•…Í½¹¥¹œµ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰±…Õ‘”µÍÕ¹‰ÕÉÍÐˆ½œ¤ñðmt¤¹±•¹Ñ °€È°€‰±…Õ‘”µ…É¬Í¡½Õ±•á¥ÍÐ¥¸‰½Ñ µ…ÉÅÕ•”½Á¥•Ìˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½ÍÑÉ½­”ô‰ÕÉÉ•¹Ñ½±½Èˆ½œ¤ñðmt¤¹±•¹Ñ €øô€È°ÑÉÕ”°€‰Ñ½½°µ…É­ÌÍ¡½Õ±¥¹¡•É¥ÐÑ¡”¹•ÕÑÉ…°Ñ½½°½±½Èˆ¤ì(€…ÍÍ•ÉÐ¹¹½ÑÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µ…ÍÍ¥ÍÑ…¹Ðˆ½œ¤ñðmt¤¹±•¹Ñ °€À°€‰¡…ÑAPµ…É¬µÕÍÐ‰”ÁÉ•Í•¹Ðˆ¤ì(€…ÍÍ•ÉÐ¹¹½ÑÅÕ…° ¡¡Ñµ°¹µ…Ñ  ½±…ÍÌô‰Ñ½½°µ±½¼µ¬µÉ•…Í½¹¥¹œˆ½œ¤ñðmt¤¹±•¹Ñ °€À°€‰±…Õ‘”µ…É¬µÕÍÐ‰”ÁÉ•Í•¹Ðˆ¤ì)ô¤ì()Ñ•ÍÐ ‰ÕÍ•ÌÑ¡”…ÁÁÉ½Ù•Í…µ”µ½É¥¥¸A¡¥±¥ÁÁ¥¹•Ìµ…À…ÍÍ•Ðˆ°€ ¤€ôøì(€…ÍÍ•ÉÐ¹•ÅÕ…°¡Á¡¥±¥ÁÁ¥¹•Í5…À¹±•¹Ñ °€ÐÈäÔØ°€‰…ÁÁÉ½Ù•µ…À‰åÑ”±•¹Ñ ¡…¹•ˆ¤ì(€…ÍÍ•ÉÐ¹•ÅÕ…°¡Á¡§m¢G§²ÚîÆ­yØ").toUpperCase(),
     "0B754750F3123F64D9ADF59497236BF694BBA3582E7DF8A7D2384AD21A9B11AF"
   );
 });

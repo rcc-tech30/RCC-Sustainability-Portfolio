@@ -1,47 +1,4 @@
-# RCC Sustainability Portfolio - Design Rulebook
-
-Shared design rules for `index.html`. This is the source of truth for layout,
-typography, navigation, motion, and privacy decisions on the homepage. Keep it
-in sync when the homepage changes.
-
-## Voice and direction
-
-- Founder-led sustainability portfolio, not a SaaS dashboard.
-- Human, practical, premium but simple.
-- Avoid AI-slop patterns: purple gradients, excessive equal cards, generic
-  three-column feature grids, heavy animation.
-- No em dashes in public copy.
-
-## Colour
-
-Defined once as CSS custom properties on `:root` in `index.html`.
-
-- Forest `#0b3b31`, forest-deep `#072a24`, emerald `#278963`, mint `#dceee5`.
-- Aurora accents (background only): blue `#5b8def`, mint `#69a781`,
-  amber `#d49a35`. Amber is a restrained interaction accent only.
-- Paper `#f7f8f5`, white `#ffffff`, ink `#17211e`, muted `#607069`,
-  line `#d5ded8`.
-
-The edge-aurora background stays pure CSS (`body::before` / `body::after`).
-No JavaScript names or drives the aurora.
-
-## Typography
-
-- Sans only. Keep the existing RCC font stack
-  (`Avenir, "Avenir Next", "Segoe UI", Arial, sans-serif`). Do not introduce a
-  serif/editorial face.
-- Proportional scale, largest to smallest, so Home reads as the lead and
-  About as the quietest section:
-  - Home heading (`h1`, "Hi, I'm Reiniel."): `clamp(40px, 6vw, 72px)`.
-  - Portfolio section heading ("Featured work"): `clamp(32px, 4.5vw, 52px)`.
-  - Project card titles: `clamp(32px, 4vw, 48px)`.
-  - About heading: `clamp(28px, 4vw, 44px)`.
-- Eyebrow labels and monospace tool/eyebrow labels stay small and uppercase.
-- Justify the founder body on desktop for a clean block edge (guarded with
-  `hyphens: auto`, `text-align-last: left`, ~60ch `max-width`, 1.7
-  `line-height`). On mobile (`<= 820px`) revert the body to left alignment:
-  at ~375px justification produced severe word gaps/rivers that hurt
-  readability. Mobile readability wins over matching the desktop justification.
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬ÔŒIMÕÍÑ…¥¹…‰¥±¥ÑäA½ÉÑ™½±¥¼€´•Í¥¸IÕ±•‰½½¬4(4)M¡…É•‘•Í¥¸ÉÕ±•Ì™½È¥¹‘•à¹¡Ñµ±€¸Q¡¥Ì¥ÌÑ¡”Í½ÕÉ”½˜ÑÉÕÑ ™½È±…å½ÕÐ°4)ÑåÁ½É…Á¡ä°¹…Ù¥…Ñ¥½¸°µ½Ñ¥½¸°…¹ÁÉ¥Ù…ä‘•¥Í¥½¹Ì½¸Ñ¡”¡½µ•Á…”¸-••À¥Ð4)¥¸Íå¹ŒÝ¡•¸Ñ¡”¡½µ•Á…”¡…¹•Ì¸4(4(ŒŒY½¥”…¹‘¥É•Ñ¥½¸4(4(´½Õ¹‘•Èµ±•ÍÕÍÑ…¥¹…‰¥±¥ÑäÁ½ÉÑ™½±¥¼°¹½Ð„M……L‘…Í¡‰½…É¸4(´!Õµ…¸°ÁÉ…Ñ¥…°°ÁÉ•µ¥Õ´‰ÕÐÍ¥µÁ±”¸4(´Ù½¥$µÍ±½ÀÁ…ÑÑ•É¹ÌèÁÕÉÁ±”É…‘¥•¹ÑÌ°•á•ÍÍ¥Ù”•ÅÕ…°…É‘Ì°•¹•É¥Œ4(€Ñ¡É•”µ½±Õµ¸™•…ÑÕÉ”É¥‘Ì°¡•…Ùä…¹¥µ…Ñ¥½¸¸4(´9¼•´‘…Í¡•Ì¥¸ÁÕ‰±¥Œ½Áä¸4(4(ŒŒ½±½ÕÈ4(4)•™¥¹•½¹”…ÌMLÕÍÑ½´ÁÉ½Á•ÉÑ¥•Ì½¸€éÉ½½Ñ€¥¸¥¹‘•à¹¡Ñµ±€¸4(4(´½É•ÍÐ€ŒÁˆÍˆÌÅ€°™½É•ÍÐµ‘••À€ŒÀÜÉ„ÈÑ€°•µ•É…±€ŒÈÜàäØÍ€°µ¥¹Ð€‘••”Õ€¸4(´ÕÉ½É„…•¹ÑÌ€¡‰…­É½Õ¹½¹±ä¤è‰±Õ”€ŒÕˆá‘•™€°µ¥¹Ð€ŒØå„ÜàÅ€°4(€…µ‰•È€Ðå„ÌÕ€¸µ‰•È¥Ì„É•ÍÑÉ…¥¹•¥¹Ñ•É…Ñ¥½¸…•¹Ð½¹±ä¸4(´A…Á•È€˜Ý˜á˜Õ€°Ý¡¥Ñ”€™™™™™™€°¥¹¬€ŒÄÜÈÄÅ•€°µÕÑ•€ŒØÀÜÀØå€°4(€±¥¹”€Õ‘•á€¸4(4)Q¡”•‘”µ…ÕÉ½É„‰…­É½Õ¹ÍÑ…åÌÁÕÉ”ML€¡‰½‘äèé‰•™½É•€€¼‰½‘äèé…™Ñ•É€¤¸4)9¼)…Ù…MÉ¥ÁÐ¹…µ•Ì½È‘É¥Ù•ÌÑ¡”…ÕÉ½É„¸4(4(ŒŒQåÁ½É…Á¡ä4(4(´M…¹Ì½¹±ä¸-••ÀÑ¡”•á¥ÍÑ¥¹œI™½¹ÐÍÑ…¬4(€€¡Ù•¹¥È°€‰Ù•¹¥È9•áÐˆ°€‰M•½”U$ˆ°É¥…°°Í…¹ÌµÍ•É¥™€¤¸¼¹½Ð¥¹ÑÉ½‘Õ”„4(€Í•É¥˜½•‘¥Ñ½É¥…°™…”¸4(´AÉ½Á½ÉÑ¥½¹…°Í…±”°±…É•ÍÐÑ¼Íµ…±±•ÍÐ°Í¼!½µ”É•…‘Ì…ÌÑ¡”±•……¹4(€‰½ÕÐ…ÌÑ¡”ÅÕ¥•Ñ•ÍÐÍ•Ñ¥½¸è4(€€´!½µ”¡•…‘¥¹œ€¡ Å€°€‰!¤°$´I•¥¹¥•°¸ˆ¤è±…µÀ ÐÁÁà°€ÙÙÜ°€ÜÉÁà¥€¸4(€€´A½ÉÑ™½±¥¼Í•Ñ¥½¸¡•…‘¥¹œ€ ‰•…ÑÕÉ•Ý½É¬ˆ¤è±…µÀ ÌÉÁà°€Ð¸ÕÙÜ°€ÔÉÁà¥€¸4(€€´AÉ½©•Ð…ÉÑ¥Ñ±•Ìè±…µÀ ÌÉÁà°€ÑÙÜ°€ÐáÁà¥€¸4(€€´‰½ÕÐ¡•…‘¥¹œè±…µÀ ÈáÁà°€ÑÙÜ°€ÐÑÁà¥€¸4(´å•‰É½Ü±…‰•±Ì…¹µ½¹½ÍÁ…”Ñ½½°½•å•‰É½Ü±…‰•±ÌÍÑ…äÍµ…±°…¹ÕÁÁ•É…Í”¸4(´)ÕÍÑ¥™äÑ¡”™½Õ¹‘•È‰½‘ä½¸‘•Í­Ñ½À™½È„±•…¸‰±½¬•‘”€¡Õ…É‘•Ý¥Ñ 4(€¡åÁ¡•¹Ìè…ÕÑ½€°Ñ•áÐµ…±¥¸µ±…ÍÐè±•™Ñ€°øØÁ µ…àµÝ¥‘Ñ¡€°€Ä¸Ü4(€±¥¹—m¢G§²ÚîÆ­yÔy. Mobile readability wins over matching the desktop justification.
 
 ## Information architecture
 
@@ -77,33 +34,7 @@ footer. `#about` is the last main section and is not a second hero.
   inside one animated track, animate `translateX(0)` to `translateX(-50%)`,
   run it at a calm 22s linear loop, pause on hover, mask the edges with a fade
   gradient, and disable the marquee under reduced motion and on mobile. Do not
-  add a visible bottom scroll bar, progress indicator, or "and more" navigator.
-- At mobile widths (`<= 820px`), the Tools card becomes a non-animated,
-  two-column grid of six compact cards. The duplicate marquee set is hidden;
-  each card uses centered logo and label content with no horizontal overflow.
-- Tool cards should use same-file decorative logo-style SVG marks plus visible
-  text labels. Do not regress to plain letter badges such as `X`, `PQ`, `PA`,
-  `BI`, `â—Ž`, or `*`.
-- The regional card states working experience, not weak familiarity. Country
-  and factor sets are grouped as nested region cards: Australia contains
-  `DCCEEW NGA`; United Kingdom contains `DEFRA / DESNZ`. The grouping must not
-  read as four unrelated pills.
-  - The regional card needs visible breathing room between the body paragraph
-  and `Regions and factor sets`. Keep the factor layout gap generous and the
-  subhead margins larger than ordinary paragraph spacing.
-  Use a thin standalone separator line between the paragraph and
-  `Regions and factor sets`. Do not put the line beside the label. The
-  frameworks subsection is intentionally omitted until there is enough
-  substantive content to justify another visual group.
-- The regional document visuals should fill their side of the large card
-  proportionally. Avoid short floating cards that leave a large unused bottom
-  area; use taller document cards with enough internal stub rows to look
-  intentional.
-- At mobile widths, the regional document cards must leave absolute positioning
-  and stack in normal flow with a fixed gap. No document card may overlap the
-  paragraph, region cards, map, tools card, or footer.
-  - The right column is intentionally uneven but compact: the `Based in` card
-  remains slightly taller than `Currently exploring`, without leaving a large
+  add a visible bottom scroll bar, progressYªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×nuN‹Z–‹­¦ëeŠw¬Ô¥¹‘¥…Ñ½È°½È€‰…¹µ½É”ˆ¹…Ù¥…Ñ½È¸(´Ðµ½‰¥±”Ý¥‘Ñ¡Ì€¡€ðô€àÈÁÁá€¤°Ñ¡”Q½½±Ì…É‰•½µ•Ì„¹½¸µ…¹¥µ…Ñ•°(€ÑÝ¼µ½±Õµ¸É¥½˜Í¥à½µÁ…Ð…É‘Ì¸Q¡”‘ÕÁ±¥…Ñ”µ…ÉÅÕ•”Í•Ð¥Ì¡¥‘‘•¸ì(€•… …ÉÕÍ•Ì•¹Ñ•É•±½¼…¹±…‰•°½¹Ñ•¹ÐÝ¥Ñ ¹¼¡½É¥é½¹Ñ…°½Ù•É™±½Ü¸(´Q½½°…É‘ÌÍ¡½Õ±ÕÍ”Í…µ”µ™¥±”‘•½É…Ñ¥Ù”°¹•ÕÑÉ…°½ÕÑ±¥¹”MYµ…É­ÌÁ±ÕÌ(€Ù¥Í¥‰±”Ñ•áÐ±…‰•±Ì¸-••ÀÑ¡”…ÁÁÉ½Ù•É•™•É•¹”Í•ÐèÍÁÉ•…‘Í¡••ÐÝ¥¹‘½Ü°(€™Õ¹¹•°°¹½‘”™±½Ü°‰…È¡…ÉÐ°…ÍÍ¥ÍÑ…¹Ð‰Õ‰‰±”°…¹ÍÁ…É­±”¸¼¹½ÐÉ•É•ÍÌ(€Ñ¼Á±…¥¸±•ÑÑ•È‰…‘•ÌÍÕ …Ìa€°AE€°A€°	%€°ƒŠ^9€°½È€©€°½ÈÑ¼(€µ¥Íµ…Ñ¡•½±½É•Ù•¹‘½ÈµÍÑå±”…ÁÁÉ½á¥µ…Ñ¥½¹Ì¸(´Q¡”É•¥½¹…°…ÉÍÑ…Ñ•ÌÝ½É­¥¹œ•áÁ•É¥•¹”°¹½ÐÝ•…¬™…µ¥±¥…É¥Ñä¸½Õ¹ÑÉä(€…¹™…Ñ½ÈÍ•ÑÌ…É”É½ÕÁ•…Ì¹•ÍÑ•É•¥½¸…É‘ÌèÕÍÑÉ…±¥„½¹Ñ…¥¹Ì(€\9€ìU¹¥Ñ•-¥¹‘½´½¹Ñ…¥¹ÌI€¼M9i€¸Q¡”É½ÕÁ¥¹œµÕÍÐ¹½Ð(€É•……Ì™½ÕÈÕ¹É•±…Ñ•Á¥±±Ì¸(€€´Q¡”É•¥½¹…°…É¹••‘ÌÙ¥Í¥‰±”‰É•…Ñ¡¥¹œÉ½½´‰•ÑÝ••¸Ñ¡”‰½‘äÁ…É…É…Á (€…¹I•¥½¹Ì…¹™…Ñ½ÈÍ•ÑÍ€¸-••ÀÑ¡”™…Ñ½È±…å½ÕÐ…À•¹•É½ÕÌ…¹Ñ¡”(€ÍÕ‰¡•…µ…É¥¹Ì±…É•ÈÑ¡…¸½É‘¥¹…ÉäÁ…É…É…Á ÍÁ…¥¹œ¸(€UÍ”„Ñ¡¥¸ÍÑ…¹‘…±½¹”Í•Á…É…Ñ½È±¥¹”‰•ÑÝ••¸Ñ¡”Á…É…É…Á …¹(€I•¥½¹Ì…¹™…Ñ½ÈÍ•ÑÍ€¸¼¹½ÐÁÕÐÑ¡”±¥¹”‰•Í¥‘”Ñ¡”±…‰•°¸Q¡”(€™É…µ•Ý½É­ÌÍÕ‰Í•Ñ¥½¸¥Ì¥¹Ñ•¹Ñ¥½¹…±±ä½µ¥ÑÑ•Õ¹Ñ¥°Ñ¡•É”¥Ì•¹½Õ (€ÍÕ‰ÍÑ…¹Ñ¥Ù”½¹Ñ•¹ÐÑ¼©ÕÍÑ¥™ä…¹½Ñ¡•ÈÙ¥ÍÕ…°É½ÕÀ¸(´Q¡”É•¥½¹…°‘½Õµ•¹ÐÙ¥ÍÕ…±ÌÍ¡½Õ±™¥±°Ñ¡•¥ÈÍ¥‘”½˜Ñ¡”±…É”…É(€ÁÉ½Á½ÉÑ¥½¹…±±ä¸Ù½¥Í¡½ÉÐ™±½…Ñ¥¹œ…É‘ÌÑ¡…Ð±•…Ù”„±…É”Õ¹ÕÍ•‰½ÑÑ½´(€…É•„ìÕÍ”Ñ…±±•È‘½Õµ•¹Ð…É‘ÌÝ¥Ñ •¹½Õ ¥¹Ñ•É¹…°ÍÑÕˆÉ½ÝÌÑ¼±½½¬(€¥¹Ñ•¹Ñ¥½¹…°¸(´Ðµ½‰¥±”Ý¥‘Ñ¡Ì°Ñ¡”É•¥½¹…°‘½Õµ•¹Ð…É‘ÌµÕÍÐ±•…Ù”…‰Í½±ÕÑ”Á½Í¥Ñ¥½¹¥¹œ(€…¹ÍÑ…¬¥¸¹½Éµ…°™±½ÜÝ¥Ñ „™¥á•…À¸9¼‘½Õµ•¹Ð…Éµ…ä½Ù•É±…ÀÑ¡”(€Á…É…É…Á °É•¥½¸…É‘Ì°µ…À°Ñ½½±Ì…É°¿m¢G§²ÚîÆ­yÕaving a large
   empty lower area in either card.
 - The location card keeps a professional text-left / image-right composition
   on desktop: `Based in`, `Metro Manila, Philippines`, the approved supporting
