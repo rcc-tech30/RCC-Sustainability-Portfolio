@@ -222,9 +222,11 @@ test("renders the four-card About bento with exact content", () => {
     'class="tool-logo mk-analytics"',
     'class="tool-logo mk-assistant"',
     'class="tool-logo mk-reasoning"',
-    'class="chatgpt-knot"',
     'class="claude-sunburst"',
     'class="claude-ray"',
+    'stroke="currentColor"',
+    'class="tool-logo mk-assistant"',
+    'class="tool-logo mk-reasoning"',
     'aria-hidden="true" focusable="false"',
     ">Excel<",
     ">Power Query<",
@@ -312,6 +314,8 @@ test("tools marquee is pure CSS and duplicated for a seamless loop", () => {
   assert.equal((html.match(/class="tool-logo mk-analytics"/g) || []).length, 2, "analytics mark should exist in both marquee copies");
   assert.equal((html.match(/class="tool-logo mk-assistant"/g) || []).length, 2, "assistant mark should exist in both marquee copies");
   assert.equal((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 2, "reasoning mark should exist in both marquee copies");
+  assert.equal((html.match(/class="claude-sunburst"/g) || []).length, 2, "Claude mark should exist in both marquee copies");
+  assert.equal((html.match(/stroke="currentColor"/g) || []).length >= 2, true, "tool marks should inherit the neutral tool color");
   assert.notEqual((html.match(/class="tool-logo mk-assistant"/g) || []).length, 0, "ChatGPT mark must be present");
   assert.notEqual((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 0, "Claude mark must be present");
 });
