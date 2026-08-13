@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const philippinesMap = readFileSync(new URL("../assets/rcc-philippines-map.jpg", import.meta.url));
 
 function requireFragments(fragments) {
   for (const fragment of fragments) {
@@ -99,6 +101,11 @@ test("orders the page Home -> Portfolio -> About above the footer", () => {
   requireOrder(['id="home"', 'id="portfolio"', 'id="about"', "</main>", "<footer"]);
 });
 
+test("renders the approved footer copyright", () => {
+  requireFragments(["© 2026. All rights reserved."]);
+  refuseFragments(["<footer class=\"shell\">\r\n    <span>Reiniel Celgie Chan</span>"]);
+});
+
 test("provides a Home/Portfolio/About segmented nav of anchor links", () => {
   requireFragments([
     'class="segmented"',
@@ -149,29 +156,150 @@ test("renders the founder introduction with exact copy and CTAs", () => {
   ]);
 });
 
-test("renders the three-card About bento with exact content", () => {
+test("renders the four-card About bento with exact content", () => {
   requireFragments([
     'id="about"',
     'class="bento"',
-    "grid-template-columns: 1.1fr 0.9fr;",
+    "grid-template-columns: 1.45fr 1fr;",
+    "grid-template-rows: minmax(270px, auto) minmax(150px, auto) auto;",
     "Regional emission-factor experience",
+    "Working experience with applying Australia's DCCEEW National Greenhouse Accounts (NGA) Factors",
     "DCCEEW National Greenhouse Accounts (NGA) Factors",
     "DESNZ greenhouse gas reporting conversion factors",
+    'class="region-factor-grid"',
+    'class="region-factor-card"',
+    'class="region-factor-pill"',
+    "gap: 28px;",
+    "align-items: start;",
+    'class="section-separator"',
+    "margin: 22px 0 18px;",
+    "height: 1px;",
+    "background: var(--line);",
+    "margin: 0 0 14px;",
+    "margin-top: 28px;",
+    "min-height: 270px;",
+    "width: min(220px, 100%);",
+    "min-height: 218px;",
+    ".factor-lines i:nth-child(5)",
+    "<i></i><i></i><i></i><i></i><i></i>",
     "Metro Manila, Philippines",
+    ".bento-loc {",
+    "min-height: 270px;",
+    "Based in the Philippines and comfortable supporting Australia and UK-aligned reporting hours.",
+    'src="assets/rcc-philippines-map.jpg"',
+    "max-height: 168px;",
+    "max-height: 215px;",
     "Tools I use",
+    'class="tool-marquee"',
+    'class="tool-track"',
+    "animation: tool-marquee 22s linear infinite;",
+    "@keyframes tool-marquee",
+    'class="tool-logo excel-logo"',
+    'class="tool-logo query-logo"',
+    'class="tool-logo automate-logo"',
+    'class="tool-logo bi-logo"',
+    'class="tool-logo chatgpt-logo"',
+    'class="tool-logo claude-logo"',
+    'class="chatgpt-knot"',
+    'class="claude-sunburst"',
+    'class="claude-ray"',
+    'aria-hidden="true" focusable="false"',
     ">Excel<",
     ">Power Query<",
     ">Power Automate<",
     ">Power BI<",
     ">ChatGPT<",
-    ">Claude<"
+    ">Claude<",
+    "Currently exploring",
+    ".bento-explore {",
+    "min-height: 150px;",
+    "justify-content: center;",
+    ">n8n<",
+    ">SQL<",
+    "Learning in progress, not claimed as working expertise."
+  ]);
+  assert.match(
+    html,
+    /<div class="region-factor-card">[\s\S]*Australia[\s\S]*<span class="region-factor-pill">DCCEEW NGA<\/span>[\s\S]*<\/div>/,
+    "DCCEEW NGA must sit inside the Australia region card"
+  );
+  assert.match(
+    html,
+    /<div class="region-factor-card">[\s\S]*United Kingdom[\s\S]*<span class="region-factor-pill">DEFRA \/ DESNZ<\/span>[\s\S]*<\/div>/,
+    "DEFRA / DESNZ must sit inside the United Kingdom region card"
+  );
+  requireOrder([
+    "regulatory advice.</p>",
+    'class="section-separator"',
+    "Regions and factor sets",
+    'class="region-factor-grid"',
+    "Frameworks I apply",
+    'aria-label="Frameworks I apply"'
   ]);
   requireOrder([
     'class="bento"',
     "Regional emission-factor experience",
     "Metro Manila, Philippines",
+    "Currently exploring",
     "Tools I use"
   ]);
+  refuseFragments([
+    "Working familiarity",
+    "animation: tool-marquee 6s linear infinite;",
+    "animation: tool-marquee 16s linear infinite;",
+    ">and more<",
+    'role="progressbar"',
+    'class="tool-progress"',
+    '<span class="tool-mark">X</span>',
+    '<span class="tool-mark">PQ</span>',
+    '<span class="tool-mark power">PA</span>',
+    '<span class="tool-mark bi">BI</span>',
+    'r="18" fill="#e7f4ee"',
+    '<g stroke="#d97745" stroke-width="3.2" stroke-linecap="round">',
+    'aria-label="Illustrated marker over Metro Manila"',
+    'viewBox="0 0 240 160"',
+    "locGlow",
+    "Working across Australian and UK reporting hours from Luzon."
+  ]);
+  assert.doesNotMatch(
+    html,
+    /\.bento-subhead::after/,
+    "bento subheads must not use side-line pseudo-element separators"
+  );
+  assert.doesNotMatch(
+    html,
+    /Frameworks I apply<\/p>\s*<div class="section-separator"/,
+    "Frameworks I apply should use spacing only, no separator line"
+  );
+});
+
+test("tools marquee is pure CSS and duplicated for a seamless loop", () => {
+  const firstSet = html.indexOf('class="tool-set"');
+  const secondSet = html.indexOf('class="tool-set"', firstSet + 1);
+  assert.ok(firstSet !== -1, "first tool list missing");
+  assert.ok(secondSet !== -1, "second duplicated tool list missing");
+  assert.ok(!/tool-marquee/i.test(scriptBody), "tool marquee must not use JavaScript");
+  requireFragments([
+    ".tool-marquee:hover .tool-track",
+    "animation-play-state: paused;",
+    "mask-image: linear-gradient",
+    ".tool-set:nth-child(2)"
+  ]);
+  assert.equal((html.match(/class="tool-logo excel-logo"/g) || []).length, 2, "Excel logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo query-logo"/g) || []).length, 2, "Power Query logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo automate-logo"/g) || []).length, 2, "Power Automate logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo bi-logo"/g) || []).length, 2, "Power BI logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo chatgpt-logo"/g) || []).length, 2, "ChatGPT logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo claude-logo"/g) || []).length, 2, "Claude logo should exist in both marquee copies");
+});
+
+test("uses the approved same-origin Philippines map asset", () => {
+  assert.equal(philippinesMap.length, 42956, "approved map byte length changed");
+  assert.equal(philippinesMap.subarray(0, 3).toString("hex"), "ffd8ff", "map must be a JPEG");
+  assert.equal(
+    createHash("sha256").update(philippinesMap).digest("hex").toUpperCase(),
+    "0B754750F3123F64D9ADF59497236BF694BBA3582E7DF8A7D2384AD21A9B11AF"
+  );
 });
 
 test("bento interaction is progressive enhancement and CSS only", () => {
@@ -240,7 +368,6 @@ test("keeps a sticky nav dock with only the segmented control, brand outside it"
 test("excludes forbidden content and external map/location data", () => {
   refuseFragments([
     "Carbon Hoshi",
-    "n8n",
     "Muntinlupa",
     "NGER",
     "<iframe",
