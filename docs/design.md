@@ -73,7 +73,7 @@ footer. `#about` is the last main section and is not a second hero.
 - The four-card bento uses an asymmetric editorial grid: dominant regional
   card, location card, full-width tools marquee card, and a smaller currently
   exploring card.
-- The tools card uses a pure-CSS horizontal marquee. Duplicate the tool list
+- The `Tools I currently use` card uses a pure-CSS horizontal marquee. Duplicate the tool list
   inside one animated track, animate `translateX(0)` to `translateX(-50%)`,
   run it at a calm 22s linear loop, pause on hover, mask the edges with a fade
   gradient, and disable the marquee under reduced motion and on mobile. Do not

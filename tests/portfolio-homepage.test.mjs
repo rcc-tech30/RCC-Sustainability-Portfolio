@@ -188,17 +188,17 @@ test("renders the four-card About bento with exact content", () => {
     'src="assets/rcc-philippines-map.jpg"',
     "max-height: 168px;",
     "max-height: 215px;",
-    "Tools I use",
+    "Tools I currently use",
     'class="tool-marquee"',
     'class="tool-track"',
     "animation: tool-marquee 22s linear infinite;",
     "@keyframes tool-marquee",
-    'class="tool-logo excel-logo"',
-    'class="tool-logo query-logo"',
-    'class="tool-logo automate-logo"',
-    'class="tool-logo bi-logo"',
-    'class="tool-logo chatgpt-logo"',
-    'class="tool-logo claude-logo"',
+    'class="tool-logo mk-spreadsheet"',
+    'class="tool-logo mk-transform"',
+    'class="tool-logo mk-flow"',
+    'class="tool-logo mk-analytics"',
+    'class="tool-logo mk-assistant"',
+    'class="tool-logo mk-reasoning"',
     'class="chatgpt-knot"',
     'class="claude-sunburst"',
     'class="claude-ray"',
@@ -239,7 +239,7 @@ test("renders the four-card About bento with exact content", () => {
     "Regional emission-factor experience",
     "Metro Manila, Philippines",
     "Currently exploring",
-    "Tools I use"
+    "Tools I currently use"
   ]);
   refuseFragments([
     "Working familiarity",
@@ -279,12 +279,14 @@ test("tools marquee is pure CSS and duplicated for a seamless loop", () => {
     "mask-image: linear-gradient",
     ".tool-set:nth-child(2)"
   ]);
-  assert.equal((html.match(/class="tool-logo excel-logo"/g) || []).length, 2, "Excel logo should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo query-logo"/g) || []).length, 2, "Power Query logo should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo automate-logo"/g) || []).length, 2, "Power Automate logo should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo bi-logo"/g) || []).length, 2, "Power BI logo should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo chatgpt-logo"/g) || []).length, 2, "ChatGPT logo should exist in both marquee copies");
-  assert.equal((html.match(/class="tool-logo claude-logo"/g) || []).length, 2, "Claude logo should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-spreadsheet"/g) || []).length, 2, "spreadsheet mark should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-transform"/g) || []).length, 2, "transform mark should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-flow"/g) || []).length, 2, "flow mark should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-analytics"/g) || []).length, 2, "analytics mark should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-assistant"/g) || []).length, 2, "assistant mark should exist in both marquee copies");
+  assert.equal((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 2, "reasoning mark should exist in both marquee copies");
+  assert.notEqual((html.match(/class="tool-logo mk-assistant"/g) || []).length, 0, "ChatGPT mark must be present");
+  assert.notEqual((html.match(/class="tool-logo mk-reasoning"/g) || []).length, 0, "Claude mark must be present");
 });
 
 test("uses the approved same-origin Philippines map asset", () => {
