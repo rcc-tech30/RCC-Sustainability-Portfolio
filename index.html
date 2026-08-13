@@ -434,8 +434,8 @@
     }
     .bento {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      grid-auto-rows: 1fr;
+      grid-template-columns: 1.35fr 1fr;
+      grid-template-rows: minmax(230px, auto) minmax(120px, auto) auto;
       gap: 18px;
     }
     .bento-card {
@@ -450,8 +450,23 @@
       transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 200ms ease, border-color 200ms ease;
     }
     .bento-lead { grid-column: 1; grid-row: 1 / span 2; }
-    .bento-loc { grid-column: 2; grid-row: 1; }
-    .bento-tools { grid-column: 2; grid-row: 2; }
+    .bento-loc {
+      display: grid;
+      grid-column: 2;
+      grid-row: 1;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.9fr);
+      align-items: center;
+      column-gap: 20px;
+      min-height: 230px;
+    }
+    .bento-explore {
+      grid-column: 2;
+      grid-row: 2;
+      justify-content: center;
+      min-height: 120px;
+      padding-block: 24px;
+    }
+    .bento-tools { grid-column: 1 / -1; grid-row: 3; }
     .bento-eyebrow {
       margin: 0;
       color: var(--muted);
@@ -460,10 +475,13 @@
       text-transform: uppercase;
     }
     .bento-lead p:not(.bento-eyebrow) { margin: 0; color: var(--ink); line-height: 1.7; }
-    .loc-visual { border-radius: 14px; overflow: hidden; }
-    .loc-visual svg { display: block; width: 100%; height: auto; }
-    .loc-label { margin: 0; color: var(--forest-deep); font-weight: 750; font-size: 18px; }
-    .tool-list {
+    .factor-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(190px, 0.85fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .explore-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -471,12 +489,161 @@
       padding: 0;
       list-style: none;
     }
-    .tool-list li {
-      font: 600 13px ui-monospace, monospace;
-      padding: 6px 10px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+    .explore-list li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      padding: 7px 12px;
       color: var(--forest);
+      background: var(--mint);
+      border: 1px solid rgba(39, 137, 99, 0.22);
+      border-radius: 999px;
+      font: 700 13px ui-monospace, monospace;
+    }
+    .region-factor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+    }
+    .region-factor-card {
+      display: grid;
+      gap: 8px;
+      min-height: 92px;
+      padding: 14px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(240, 247, 242, 0.92));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(7, 42, 36, 0.06);
+    }
+    .region-name {
+      color: var(--forest-deep);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .region-factor-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 30px;
+      padding: 6px 10px;
+      color: var(--forest);
+      background: var(--mint);
+      border: 1px solid rgba(39, 137, 99, 0.24);
+      border-radius: 999px;
+      font: 800 12px ui-monospace, monospace;
+    }
+    .bento-subhead {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font: 700 11px ui-monospace, monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .section-separator {
+      height: 1px;
+      margin: 22px 0 18px;
+      background: var(--line);
+    }
+    .factor-docs {
+      position: relative;
+      min-height: 230px;
+    }
+    .factor-doc {
+      position: absolute;
+      width: min(220px, 100%);
+      min-height: 218px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 16px 34px rgba(7, 42, 36, 0.08);
+    }
+    .factor-doc:first-child { left: 0; top: 40px; z-index: 2; }
+    .factor-doc:last-child { right: 0; top: 0; }
+    .factor-tag {
+      display: inline-flex;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      color: var(--white);
+      background: var(--forest);
+      border-radius: 5px;
+      font: 800 10px ui-monospace, monospace;
+      letter-spacing: 0.06em;
+    }
+    .factor-doc strong { display: block; color: var(--forest-deep); font-size: 15px; line-height: 1.25; }
+    .factor-doc span { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+    .factor-lines {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .factor-lines i {
+      display: block;
+      height: 5px;
+      background: var(--line);
+      border-radius: 999px;
+    }
+    .factor-lines i:nth-child(1) { width: 92%; }
+    .factor-lines i:nth-child(2) { width: 78%; }
+    .factor-lines i:nth-child(3) { width: 55%; }
+    .factor-lines i:nth-child(4) { width: 86%; }
+    .factor-lines i:nth-child(5) { width: 62%; }
+    .loc-copy { display: grid; gap: 10px; }
+    .loc-visual { border-radius: 14px; overflow: hidden; }
+    .loc-visual img {
+      display: block;
+      width: 100%;
+      max-height: 168px;
+      object-fit: contain;
+    }
+    .loc-label { margin: 0; color: var(--forest-deep); font-weight: 750; font-size: 18px; }
+    .loc-note { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .tool-marquee {
+      overflow: hidden;
+      margin-top: 4px;
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+    .tool-track {
+      display: flex;
+      width: max-content;
+      animation: tool-marquee 22s linear infinite;
+    }
+    .tool-marquee:hover .tool-track { animation-play-state: paused; }
+    .tool-set {
+      display: flex;
+      gap: 12px;
+      margin: 0;
+      padding: 0 12px 0 0;
+      list-style: none;
+    }
+    .tool-set:nth-child(2) { pointer-events: none; }
+    .tool-set li {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 150px;
+      padding: 12px 14px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--forest);
+      font-weight: 750;
+      box-shadow: 0 8px 24px rgba(7, 42, 36, 0.06);
+    }
+    .tool-logo {
+      display: block;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      filter: drop-shadow(0 5px 10px rgba(7, 42, 36, 0.08));
+    }
+    .explore-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    @keyframes tool-marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
     /* Lift on hover and keyboard focus; restrained amber accent. */
     .bento-card:hover,
@@ -498,8 +665,16 @@
       /* Mobile: left-align the body; justification made severe word gaps at ~375px. */
       .founder-body { text-align: left; hyphens: manual; }
       .segmented { flex-wrap: wrap; }
-      .bento { grid-template-columns: 1fr; }
-      .bento-lead, .bento-loc, .bento-tools { grid-column: 1; grid-row: auto; }
+      .bento { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .bento-lead, .bento-loc, .bento-explore, .bento-tools { grid-column: 1; grid-row: auto; }
+      .factor-layout { grid-template-columns: 1fr; }
+      .region-factor-grid { grid-template-columns: 1fr; }
+      .factor-docs { min-height: 190px; }
+      .bento-loc { grid-template-columns: 1fr; }
+      .loc-visual img { max-height: 215px; }
+      .tool-set:nth-child(2) { display: none; }
+      .tool-track { animation: none; }
+      .tool-set { flex-wrap: wrap; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -511,6 +686,7 @@
       .bento-card:focus-visible { transform: none; }
       .bento:has(> .bento-card:hover) > .bento-card:not(:hover),
       .bento:has(> .bento-card:focus-within) > .bento-card:not(:focus-within) { opacity: 1; }
+      .tool-track { animation: none; }
     }
   </style>
 </head>
@@ -646,48 +822,85 @@
       <div class="bento">
         <article class="bento-card bento-lead">
           <p class="bento-eyebrow">Regional emission-factor experience</p>
-          <p>Working familiarity with applying Australia's DCCEEW National Greenhouse Accounts (NGA) Factors and the United Kingdom's DESNZ greenhouse gas reporting conversion factors when preparing emissions estimates. This reflects hands-on experience only, not assurance, certification, or regulatory advice.</p>
+          <div class="factor-layout">
+            <div>
+              <p>Working experience with applying Australia's DCCEEW National Greenhouse Accounts (NGA) Factors and the United Kingdom's DESNZ greenhouse gas reporting conversion factors when preparing emissions estimates. This reflects hands-on experience only, not assurance, certification, or regulatory advice.</p>
+              <div class="section-separator" aria-hidden="true"></div>
+              <p class="bento-subhead">Regions and factor sets</p>
+              <div class="region-factor-grid" aria-label="Regions and factor sets">
+                <div class="region-factor-card">
+                  <span class="region-name">Australia</span>
+                  <span class="region-factor-pill">DCCEEW NGA</span>
+                </div>
+                <div class="region-factor-card">
+                  <span class="region-name">United Kingdom</span>
+                  <span class="region-factor-pill">DEFRA / DESNZ</span>
+                </div>
+              </div>
+            </div>
+            <div class="factor-docs" aria-hidden="true">
+              <div class="factor-doc">
+                <span class="factor-tag">DCCEEW</span>
+                <strong>NGA Factors (Australia)</strong>
+                <span>Department of Climate Change, Energy, the Environment and Water</span>
+                <div class="factor-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="factor-doc">
+                <span class="factor-tag">DESNZ</span>
+                <strong>Conversion Factors (UK)</strong>
+                <span>Department for Energy Security and Net Zero</span>
+                <div class="factor-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
         </article>
         <article class="bento-card bento-loc">
-          <p class="bento-eyebrow">Based in</p>
-          <div class="loc-visual" role="img" aria-label="Illustrated marker over Metro Manila">
-            <svg viewBox="0 0 240 160" aria-hidden="true" focusable="false">
-              <defs>
-                <radialGradient id="locGlow" cx="50%" cy="62%" r="60%">
-                  <stop offset="0%" stop-color="#7ed7b4" stop-opacity="0.55"></stop>
-                  <stop offset="100%" stop-color="#7ed7b4" stop-opacity="0"></stop>
-                </radialGradient>
-              </defs>
-              <rect width="240" height="160" rx="14" fill="#eef4f0"></rect>
-              <path d="M28 118 C60 96 78 120 108 108 C140 96 150 122 186 110 C206 103 218 116 224 132 L224 160 L16 160 Z" fill="#dceee5"></path>
-              <path d="M16 132 C64 118 96 140 132 128 C168 116 200 138 224 128" fill="none" stroke="#69a781" stroke-width="2" stroke-opacity="0.5"></path>
-              <circle cx="132" cy="96" r="52" fill="url(#locGlow)"></circle>
-              <g transform="translate(132 92)">
-                <path d="M0 44 C-22 16 -30 6 -30 -12 A30 30 0 1 1 30 -12 C30 6 22 16 0 44 Z" fill="#0b3b31"></path>
-                <circle cx="0" cy="-14" r="17" fill="#f7f8f5"></circle>
-                <path d="M-11 -8 A11 13 0 0 1 11 -8 Z" fill="#278963"></path>
-              </g>
-            </svg>
+          <div class="loc-copy">
+            <p class="bento-eyebrow">Based in</p>
+            <p class="loc-label">Metro Manila, Philippines</p>
+            <p class="loc-note">Open to working with Australia and UK-aligned reporting hours.</p>
           </div>
-          <p class="loc-label">Metro Manila, Philippines</p>
+          <div class="loc-visual">
+            <img src="assets/rcc-philippines-map.jpg" alt="" loading="lazy" decoding="async">
+          </div>
+        </article>
+        <article class="bento-card bento-explore">
+          <p class="bento-eyebrow">Currently exploring</p>
+          <ul class="explore-list">
+            <li>n8n</li>
+            <li>SQL</li>
+          </ul>
+          <p class="explore-note">Learning in progress, not claimed as working expertise.</p>
         </article>
         <article class="bento-card bento-tools">
-          <p class="bento-eyebrow">Tools I use</p>
-          <ul class="tool-list">
-            <li><span>Excel</span></li>
-            <li><span>Power Query</span></li>
-            <li><span>Power Automate</span></li>
-            <li><span>Power BI</span></li>
-            <li><span>ChatGPT</span></li>
-            <li><span>Claude</span></li>
-          </ul>
+          <p class="bento-eyebrow">Tools I currently use</p>
+          <div class="tool-marquee" aria-label="Tools I currently use">
+            <div class="tool-track">
+              <ul class="tool-set">
+                <li><svg class="tool-logo mk-spreadsheet" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="13" y="8" width="27" height="32" rx="4" fill="#1d6f42"/><rect x="19" y="12" width="18" height="24" rx="2" fill="#21a366"/><path d="M27 15h9M27 21h9M27 27h9M27 33h9M22 15v21" stroke="#e8f5ed" stroke-width="2"/><rect x="7" y="13" width="21" height="22" rx="3" fill="#107c41"/><path d="M13 19l9 10M22 19l-9 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg><span>Excel</span></li>
+                <li><svg class="tool-logo mk-transform" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="8" y="9" width="24" height="24" rx="4" fill="#2f946e"/><path d="M13 15h14M13 21h14M13 27h14M18 14v15M24 14v15" stroke="#fff" stroke-width="2"/><ellipse cx="34" cy="17" rx="7" ry="4" fill="#e7f4ee" stroke="#2f946e" stroke-width="2"/><path d="M27 17v14c0 2.2 3.1 4 7 4s7-1.8 7-4V17" fill="none" stroke="#2f946e" stroke-width="2"/><path d="M27 24c0 2.2 3.1 4 7 4s7-1.8 7-4" fill="none" stroke="#2f946e" stroke-width="2"/></svg><span>Power Query</span></li>
+                <li><svg class="tool-logo mk-flow" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 27L24 8h16L24 28h16L23 40H8l17-13z" fill="#2563eb"/><path d="M24 8h16L24 28H8z" fill="#2f7eea"/><path d="M24 28h16L23 40H8z" fill="#48a3ff"/></svg><span>Power Automate</span></li>
+                <li><svg class="tool-logo mk-analytics" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="10" y="25" width="7" height="13" rx="2" fill="#f2c94c"/><rect x="20" y="18" width="7" height="20" rx="2" fill="#f2b705"/><rect x="30" y="10" width="8" height="28" rx="2" fill="#d99904"/><path d="M8 39h32" stroke="#8f6200" stroke-width="2" stroke-linecap="round"/></svg><span>Power BI</span></li>
+                <li><svg class="tool-logo mk-assistant" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><g class="chatgpt-knot" fill="none" stroke="#10a37f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8c5 0 8 3 8 7v5l-8-5-8 5v-5c0-4 3-7 8-7z"/><path d="M36 15c4 2 5 7 3 11l-2 4-8-5 8-5z"/><path d="M39 29c0 5-4 8-8 8h-5l8-5v-9l5 3z"/><path d="M24 40c-5 0-8-3-8-7v-5l8 5 8-5v5c0 4-3 7-8 7z"/><path d="M12 33c-4-2-5-7-3-11l2-4 8 5-8 5z"/><path d="M9 19c0-5 4-8 8-8h5l-8 5v9l-5-3z"/></g><circle cx="24" cy="24" r="3.6" fill="#10a37f"/></svg><span>ChatGPT</span></li>
+                <li><svg class="tool-logo mk-reasoning" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><g class="claude-sunburst" fill="#d97745"><path class="claude-ray" d="M24 5l3.1 13.4L24 22l-3.1-3.6z"/><path class="claude-ray" d="M24 43l-3.1-13.4L24 26l3.1 3.6z"/><path class="claude-ray" d="M5 24l13.4-3.1L22 24l-3.6 3.1z"/><path class="claude-ray" d="M43 24l-13.4 3.1L26 24l3.6-3.1z"/><path class="claude-ray" d="M10.6 10.6l11.7 7.3v5.1h-5.1z"/><path class="claude-ray" d="M37.4 37.4l-11.7-7.3V25h5.1z"/><path class="claude-ray" d="M37.4 10.6l-7.3 11.7H25v-5.1z"/><path class="claude-ray" d="M10.6 37.4l7.3-11.7H23v5.1z"/><circle cx="24" cy="24" r="4.2"/></g></svg><span>Claude</span></li>
+              </ul>
+              <ul class="tool-set" aria-hidden="true">
+                <li><svg class="tool-logo mk-spreadsheet" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="13" y="8" width="27" height="32" rx="4" fill="#1d6f42"/><rect x="19" y="12" width="18" height="24" rx="2" fill="#21a366"/><path d="M27 15h9M27 21h9M27 27h9M27 33h9M22 15v21" stroke="#e8f5ed" stroke-width="2"/><rect x="7" y="13" width="21" height="22" rx="3" fill="#107c41"/><path d="M13 19l9 10M22 19l-9 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg><span>Excel</span></li>
+                <li><svg class="tool-logo mk-transform" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="8" y="9" width="24" height="24" rx="4" fill="#2f946e"/><path d="M13 15h14M13 21h14M13 27h14M18 14v15M24 14v15" stroke="#fff" stroke-width="2"/><ellipse cx="34" cy="17" rx="7" ry="4" fill="#e7f4ee" stroke="#2f946e" stroke-width="2"/><path d="M27 17v14c0 2.2 3.1 4 7 4s7-1.8 7-4V17" fill="none" stroke="#2f946e" stroke-width="2"/><path d="M27 24c0 2.2 3.1 4 7 4s7-1.8 7-4" fill="none" stroke="#2f946e" stroke-width="2"/></svg><span>Power Query</span></li>
+                <li><svg class="tool-logo mk-flow" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 27L24 8h16L24 28h16L23 40H8l17-13z" fill="#2563eb"/><path d="M24 8h16L24 28H8z" fill="#2f7eea"/><path d="M24 28h16L23 40H8z" fill="#48a3ff"/></svg><span>Power Automate</span></li>
+                <li><svg class="tool-logo mk-analytics" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="10" y="25" width="7" height="13" rx="2" fill="#f2c94c"/><rect x="20" y="18" width="7" height="20" rx="2" fill="#f2b705"/><rect x="30" y="10" width="8" height="28" rx="2" fill="#d99904"/><path d="M8 39h32" stroke="#8f6200" stroke-width="2" stroke-linecap="round"/></svg><span>Power BI</span></li>
+                <li><svg class="tool-logo mk-assistant" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><g class="chatgpt-knot" fill="none" stroke="#10a37f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8c5 0 8 3 8 7v5l-8-5-8 5v-5c0-4 3-7 8-7z"/><path d="M36 15c4 2 5 7 3 11l-2 4-8-5 8-5z"/><path d="M39 29c0 5-4 8-8 8h-5l8-5v-9l5 3z"/><path d="M24 40c-5 0-8-3-8-7v-5l8 5 8-5v5c0 4-3 7-8 7z"/><path d="M12 33c-4-2-5-7-3-11l2-4 8 5-8 5z"/><path d="M9 19c0-5 4-8 8-8h5l-8 5v9l-5-3z"/></g><circle cx="24" cy="24" r="3.6" fill="#10a37f"/></svg><span>ChatGPT</span></li>
+                <li><svg class="tool-logo mk-reasoning" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><g class="claude-sunburst" fill="#d97745"><path class="claude-ray" d="M24 5l3.1 13.4L24 22l-3.1-3.6z"/><path class="claude-ray" d="M24 43l-3.1-13.4L24 26l3.1 3.6z"/><path class="claude-ray" d="M5 24l13.4-3.1L22 24l-3.6 3.1z"/><path class="claude-ray" d="M43 24l-13.4 3.1L26 24l3.6-3.1z"/><path class="claude-ray" d="M10.6 10.6l11.7 7.3v5.1h-5.1z"/><path class="claude-ray" d="M37.4 37.4l-11.7-7.3V25h5.1z"/><path class="claude-ray" d="M37.4 10.6l-7.3 11.7H25v-5.1z"/><path class="claude-ray" d="M10.6 37.4l7.3-11.7H23v5.1z"/><circle cx="24" cy="24" r="4.2"/></g></svg><span>Claude</span></li>
+              </ul>
+            </div>
+          </div>
         </article>
       </div>
     </section>
   </main>
 
   <footer class="shell">
-    <span>Reiniel Celgie Chan</span>
+    <span>© 2026. All rights reserved.</span>
     <span>Growing through practical work</span>
   </footer>
 
