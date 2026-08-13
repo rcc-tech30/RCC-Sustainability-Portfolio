@@ -434,8 +434,8 @@
     }
     .bento {
       display: grid;
-      grid-template-columns: 1.45fr 1fr;
-      grid-template-rows: minmax(270px, auto) minmax(150px, auto) auto;
+      grid-template-columns: 1.35fr 1fr;
+      grid-template-rows: minmax(230px, auto) minmax(120px, auto) auto;
       gap: 18px;
     }
     .bento-card {
@@ -457,13 +457,13 @@
       grid-template-columns: minmax(0, 1fr) minmax(150px, 0.9fr);
       align-items: center;
       column-gap: 20px;
-      min-height: 270px;
+      min-height: 230px;
     }
     .bento-explore {
       grid-column: 2;
       grid-row: 2;
       justify-content: center;
-      min-height: 150px;
+      min-height: 120px;
       padding-block: 24px;
     }
     .bento-tools { grid-column: 1 / -1; grid-row: 3; }
@@ -481,7 +481,7 @@
       gap: 28px;
       align-items: start;
     }
-    .bento-pills, .explore-list {
+    .explore-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -489,7 +489,7 @@
       padding: 0;
       list-style: none;
     }
-    .bento-pills li, .explore-list li {
+    .explore-list li {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -542,12 +542,6 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
-    .bento-subhead + .bento-pills {
-      margin-top: 0;
-    }
-    .bento-subhead.frameworks-subhead {
-      margin-top: 28px;
-    }
     .section-separator {
       height: 1px;
       margin: 22px 0 18px;
@@ -555,7 +549,7 @@
     }
     .factor-docs {
       position: relative;
-      min-height: 270px;
+      min-height: 230px;
     }
     .factor-doc {
       position: absolute;
@@ -843,12 +837,6 @@
                   <span class="region-factor-pill">DEFRA / DESNZ</span>
                 </div>
               </div>
-              <p class="bento-subhead frameworks-subhead">Frameworks I apply</p>
-              <ul class="bento-pills" aria-label="Frameworks I apply">
-                <li>GHG Protocol</li>
-                <li>ASRS</li>
-                <li>TCFD</li>
-              </ul>
             </div>
             <div class="factor-docs" aria-hidden="true">
               <div class="factor-doc">
@@ -870,7 +858,7 @@
           <div class="loc-copy">
             <p class="bento-eyebrow">Based in</p>
             <p class="loc-label">Metro Manila, Philippines</p>
-            <p class="loc-note">Based in the Philippines and comfortable supporting Australia and UK-aligned reporting hours.</p>
+            <p class="loc-note">Open to working with Australia and UK-aligned reporting hours.</p>
           </div>
           <div class="loc-visual">
             <img src="assets/rcc-philippines-map.jpg" alt="" loading="lazy" decoding="async">

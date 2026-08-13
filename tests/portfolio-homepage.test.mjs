@@ -160,8 +160,8 @@ test("renders the four-card About bento with exact content", () => {
   requireFragments([
     'id="about"',
     'class="bento"',
-    "grid-template-columns: 1.45fr 1fr;",
-    "grid-template-rows: minmax(270px, auto) minmax(150px, auto) auto;",
+    "grid-template-columns: 1.35fr 1fr;",
+    "grid-template-rows: minmax(230px, auto) minmax(120px, auto) auto;",
     "Regional emission-factor experience",
     "Working experience with applying Australia's DCCEEW National Greenhouse Accounts (NGA) Factors",
     "DCCEEW National Greenhouse Accounts (NGA) Factors",
@@ -176,16 +176,15 @@ test("renders the four-card About bento with exact content", () => {
     "height: 1px;",
     "background: var(--line);",
     "margin: 0 0 14px;",
-    "margin-top: 28px;",
-    "min-height: 270px;",
+    "min-height: 230px;",
     "width: min(220px, 100%);",
     "min-height: 218px;",
     ".factor-lines i:nth-child(5)",
     "<i></i><i></i><i></i><i></i><i></i>",
     "Metro Manila, Philippines",
     ".bento-loc {",
-    "min-height: 270px;",
-    "Based in the Philippines and comfortable supporting Australia and UK-aligned reporting hours.",
+    "min-height: 230px;",
+    "Open to working with Australia and UK-aligned reporting hours.",
     'src="assets/rcc-philippines-map.jpg"',
     "max-height: 168px;",
     "max-height: 215px;",
@@ -212,7 +211,7 @@ test("renders the four-card About bento with exact content", () => {
     ">Claude<",
     "Currently exploring",
     ".bento-explore {",
-    "min-height: 150px;",
+    "min-height: 120px;",
     "justify-content: center;",
     ">n8n<",
     ">SQL<",
@@ -233,8 +232,7 @@ test("renders the four-card About bento with exact content", () => {
     'class="section-separator"',
     "Regions and factor sets",
     'class="region-factor-grid"',
-    "Frameworks I apply",
-    'aria-label="Frameworks I apply"'
+    "Open to working with Australia and UK-aligned reporting hours."
   ]);
   requireOrder([
     'class="bento"',
@@ -266,11 +264,7 @@ test("renders the four-card About bento with exact content", () => {
     /\.bento-subhead::after/,
     "bento subheads must not use side-line pseudo-element separators"
   );
-  assert.doesNotMatch(
-    html,
-    /Frameworks I apply<\/p>\s*<div class="section-separator"/,
-    "Frameworks I apply should use spacing only, no separator line"
-  );
+  assert.doesNotMatch(html, /Frameworks I apply|Frameworks I work with/);
 });
 
 test("tools marquee is pure CSS and duplicated for a seamless loop", () => {

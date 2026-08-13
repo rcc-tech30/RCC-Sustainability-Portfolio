@@ -85,26 +85,25 @@ footer. `#about` is the last main section and is not a second hero.
   and factor sets are grouped as nested region cards: Australia contains
   `DCCEEW NGA`; United Kingdom contains `DEFRA / DESNZ`. The grouping must not
   read as four unrelated pills.
-- The regional card needs visible breathing room between the body paragraph,
-  `Regions and factor sets`, and `Frameworks I apply`. Keep the factor layout
-  gap generous and the subhead margins larger than ordinary paragraph spacing.
+  - The regional card needs visible breathing room between the body paragraph
+  and `Regions and factor sets`. Keep the factor layout gap generous and the
+  subhead margins larger than ordinary paragraph spacing.
   Use a thin standalone separator line between the paragraph and
-  `Regions and factor sets`. Do not put the line beside the label. Do not add a
-  separator for `Frameworks I apply`; push that label slightly lower with
-  spacing only.
+  `Regions and factor sets`. Do not put the line beside the label. The
+  frameworks subsection is intentionally omitted until there is enough
+  substantive content to justify another visual group.
 - The regional document visuals should fill their side of the large card
   proportionally. Avoid short floating cards that leave a large unused bottom
   area; use taller document cards with enough internal stub rows to look
   intentional.
-- The right column is intentionally uneven: the `Based in` card is the taller
-  location/visual card, while `Currently exploring` is compact. Do not let the
-  exploring card inherit a large empty lower area just to match the location
-  card height.
+  - The right column is intentionally uneven but compact: the `Based in` card
+  remains slightly taller than `Currently exploring`, without leaving a large
+  empty lower area in either card.
 - The location card keeps a professional text-left / image-right composition
   on desktop: `Based in`, `Metro Manila, Philippines`, the approved supporting
   sentence, and the same-origin JPG map asset on the right.
-- Location supporting copy:
-  `Based in the Philippines and comfortable supporting Australia and UK-aligned reporting hours.`
+  - Location supporting copy:
+  `Open to working with Australia and UK-aligned reporting hours.`
 - Location visual source: `assets/rcc-philippines-map.jpg`. Do not redraw it
   inline, trace it from a screenshot, replace it with a pin marker, or fetch an
   external map.
