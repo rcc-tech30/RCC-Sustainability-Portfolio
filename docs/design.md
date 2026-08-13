@@ -81,9 +81,11 @@ footer. `#about` is the last main section and is not a second hero.
 - At mobile widths (`<= 820px`), the Tools card becomes a non-animated,
   two-column grid of six compact cards. The duplicate marquee set is hidden;
   each card uses centered logo and label content with no horizontal overflow.
-- Tool cards should use same-file decorative logo-style SVG marks plus visible
-  text labels. Do not regress to plain letter badges such as `X`, `PQ`, `PA`,
-  `BI`, `◎`, or `*`.
+- Tool cards should use same-file decorative, neutral outline SVG marks plus
+  visible text labels. Keep the approved reference set: spreadsheet window,
+  funnel, node flow, bar chart, assistant bubble, and sparkle. Do not regress
+  to plain letter badges such as `X`, `PQ`, `PA`, `BI`, `◎`, or `*`, or to
+  mismatched colored vendor-style approximations.
 - The regional card states working experience, not weak familiarity. Country
   and factor sets are grouped as nested region cards: Australia contains
   `DCCEEW NGA`; United Kingdom contains `DEFRA / DESNZ`. The grouping must not
