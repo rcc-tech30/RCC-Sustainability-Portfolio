@@ -188,6 +188,29 @@ test("renders the four-card About bento with exact content", () => {
     'src="assets/rcc-philippines-map.jpg"',
     "max-height: 168px;",
     "max-height: 215px;",
+    "@media (max-width: 820px)",
+    ".factor-docs {",
+    "display: grid;",
+    "gap: 12px;",
+    "min-height: 0;",
+    ".factor-doc,",
+    ".factor-doc:first-child,",
+    ".factor-doc:last-child {",
+    "position: static;",
+    "inset: auto;",
+    "width: 100%;",
+    "min-height: 0;",
+    ".factor-doc + .factor-doc { margin-top: 0; }",
+    ".tool-track { width: 100%; }",
+    ".tool-set {",
+    "grid-template-columns: repeat(2, minmax(0, 1fr));",
+    "width: 100%;",
+    ".tool-set li {",
+    "min-width: 0;",
+    "min-height: 84px;",
+    "justify-content: center;",
+    "flex-direction: column;",
+    "text-align: center;",
     "Tools I currently use",
     'class="tool-marquee"',
     'class="tool-track"',
@@ -265,6 +288,10 @@ test("renders the four-card About bento with exact content", () => {
     "bento subheads must not use side-line pseudo-element separators"
   );
   assert.doesNotMatch(html, /Frameworks I apply|Frameworks I work with/);
+  assert.match(html, /\.factor-docs \{[\s\S]*display: grid;[\s\S]*gap: 12px;[\s\S]*min-height: 0;/);
+  assert.match(html, /\.factor-doc,[\s\S]*position: static;[\s\S]*inset: auto;[\s\S]*width: 100%;[\s\S]*min-height: 0;/);
+  assert.match(html, /\.tool-set \{[\s\S]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);[\s\S]*width: 100%;/);
+  assert.match(html, /\.tool-set li \{[\s\S]*min-width: 0;[\s\S]*min-height: 84px;[\s\S]*flex-direction: column;[\s\S]*text-align: center;/);
 });
 
 test("tools marquee is pure CSS and duplicated for a seamless loop", () => {
