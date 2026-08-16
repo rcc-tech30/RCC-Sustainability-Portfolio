@@ -526,13 +526,19 @@ test("overview places board interpretation after graphs and errors before KPIs",
   assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
 });
 
+const overviewMarkup = html =>
+  html.slice(html.indexOf('id="view-overview"'), html.indexOf('id="view-inputs"'));
+
 test("overview presents the approved eight-card KPI story in reading order", async () => {
   const { html } = await loadApp();
-  const grid = html.match(/<div class="kpi-grid">([\s\S]*?)<\/div>/)?.[1];
-  assert.ok(grid, "Overview KPI grid exists");
+  const overview = overviewMarkup(html);
+  assert.ok(overview, "Overview view markup exists");
 
-  const valueIds = [...grid.matchAll(/id="(kpi-[^"]+)"/g)].map(match => match[1]);
+  const valueIds = [...overview.matchAll(/id="(kpi-[^"]+)"/g)].map(match => match[1]);
   assert.deepEqual(valueIds, [
+    "kpi-net-emissions",
+    "kpi-net-emissions-sub",
+    "kpi-operating",
     "kpi-fleet",
     "kpi-fleet-sub",
     "kpi-scope1",
@@ -540,18 +546,188 @@ test("overview presents the approved eight-card KPI story in reading order", asy
     "kpi-scope2-increase-sub",
     "kpi-residual",
     "kpi-residual-sub",
-    "kpi-operating",
-    "kpi-payback",
-    "kpi-payback-sub",
-    "kpi-net-emissions",
-    "kpi-net-emissions-sub",
     "kpi-investment",
     "kpi-investment-sub",
+    "kpi-payback",
+    "kpi-payback-sub",
   ]);
 
-  assert.doesNotMatch(grid, /BEV electricity added|Additional certificate cost/);
+  assert.doesNotMatch(overview, /BEV electricity added|Additional certificate cost/);
   assert.match(html, /\["BEV electricity added",`\$\{formatNumber\(result\.bevElectricityAdded\)\} kWh`/);
   assert.match(html, /\["Additional certificate cost",formatMoney\(result\.additionalCertificateCost\)/);
+});
+
+test("overview opens with a live scenario summary band", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  const band = overview.match(/<div class="scenario-band"[\s\S]*?<\/div>\s*<div id="warning-stack"/);
+  assert.ok(band, "scenario summary band sits above the input-error region");
+
+  assert.match(overview, /<div class="scenario-band" id="scenario-band" aria-label="Scenario summary">/);
+  const bandIds = [...band[0].matchAll(/id="(scenario-[a-z-]+)"/g)].map(match => match[1]);
+  assert.deepEqual(bandIds, [
+    "scenario-band",
+    "scenario-company",
+    "scenario-period",
+    "scenario-method",
+    "scenario-data-status",
+  ]);
+  assert.equal((band[0].match(/class="scenario-band-label"/g) || []).length, 4);
+  assert.ok(overview.indexOf('class="scenario-band"') < overview.indexOf('class="metric-primary"'));
+  assert.match(html, /q\("#scenario-period"\)\.textContent = `\$\{scenario\.baselineYear\} to \$\{scenario\.targetYear\}`/);
+  assert.match(html, /q\("#scenario-data-status"\)\.textContent = scenario\.dataStatus/);
+  assert.match(html, /\.scenario-band\{display:grid/);
+});
+
+test("scope 2 supporting card is labelled for the added grid emissions it renders", async () => {
+  const { html, model } = await loadApp();
+  const overview = overviewMarkup(html);
+  assert.match(overview, /<span class="label">Scope 2 added<\/span>/);
+  assert.doesNotMatch(overview, /<span class="label">Scope 2 increase<\/span>/);
+  assert.match(html, /id="kpi-scope2-increase"/, "live binding id is retained");
+  assert.match(html, /q\("#kpi-scope2-increase"\)\.textContent = formatT\(kpiStory\.scope2Increase\)/);
+
+  // The rendered value is toTco2e(bevElectricityAdded * gridEmissionFactor), so it is
+  // never negative while every fuel, distance and efficiency input is non-negative.
+  const cases = [
+    {},
+    { vehiclesTransitioning: 0 },
+    { bevMethod: "Fallback" },
+    { bevMethod: "Fallback", otherFuelGj: 0, dieselLitres: 0, petrolLitres: 0 },
+    { chargingLossPct: 0 },
+  ];
+  for (const override of cases) {
+    const story = model.deriveOverviewKpiStory(
+      model.calculateScenario({ ...model.DEFAULT_SCENARIO, ...override }),
+    );
+    assert.ok(story.scope2Increase >= 0, `non-negative inputs never subtract Scope 2: ${JSON.stringify(override)}`);
+  }
+});
+
+test("overview primary group ranks net emissions above operating impact and fleet transition", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  const primary = overview.match(/<div class="metric-primary">([\s\S]*?)<div class="chart-grid">/)?.[1];
+  assert.ok(primary, "primary metric group precedes the charts");
+
+  const cardIds = [...primary.matchAll(/<article class="kpi[^"]*" id="([^"]+)">/g)].map(match => match[1]);
+  assert.deepEqual(cardIds, ["net-emissions-card", "operating-card", "fleet-card"]);
+  assert.match(primary, /<div class="metric-primary-support">/);
+  assert.match(html, /\.metric-primary\{display:grid;grid-template-columns:minmax\(0,1\.6fr\) minmax\(0,1fr\)/);
+  assert.match(html, /\.metric-primary-support\{display:grid/);
+});
+
+test("net emissions card carries dominant weight without depending on live class rewrites", async () => {
+  const { html } = await loadApp();
+  const dominant = html.match(/#net-emissions-card\{([^}]*)\}/)?.[1];
+  const dominantValue = html.match(/#net-emissions-card \.value\{([^}]*)\}/)?.[1];
+  const secondary = html.match(/#operating-card,#fleet-card\{([^}]*)\}/)?.[1];
+  assert.ok(dominant && dominantValue && secondary, "hierarchy is expressed through stable id selectors");
+
+  const minHeight = Number(dominant.match(/min-height:(\d+)px/)?.[1]);
+  const secondaryMinHeight = Number(secondary.match(/min-height:(\d+)px/)?.[1]);
+  assert.ok(minHeight > secondaryMinHeight * 1.5, "dominant card is materially taller than the secondary cards");
+  assert.match(dominantValue, /font-size:clamp\(42px,/);
+  assert.match(html, /q\("#net-emissions-card"\)\.className = `kpi\$\{kpiStory\.netTone === "neutral" \? "" : ` \$\{kpiStory\.netTone\}`\}`/);
+});
+
+test("supporting metrics sit below the primary row and charts", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  const supportingIndex = overview.indexOf('<section class="metric-supporting"');
+  assert.ok(supportingIndex > overview.indexOf('<div class="chart-grid">'));
+  assert.ok(supportingIndex < overview.indexOf('<section class="board-interpretation"'));
+
+  const supporting = overview.slice(supportingIndex);
+  const grid = supporting.match(/<div class="metric-supporting-grid">([\s\S]*?)<\/div>\s*<div class="metric-extra">/)?.[1];
+  assert.ok(grid, "supporting grid precedes the subordinate extra-context group");
+  assert.deepEqual(
+    [...grid.matchAll(/id="(kpi-[a-z0-9-]+)"/g)].map(match => match[1]).filter(id => !id.endsWith("-sub")),
+    ["kpi-scope1", "kpi-scope2-increase", "kpi-residual", "kpi-investment"],
+  );
+  assert.match(html, /\.metric-supporting-grid\{display:grid;grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+});
+
+test("payback is relabelled indicative and rendered as subordinate extra context", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  assert.match(overview, /<div class="metric-extra">\s*<article class="kpi" id="payback-card">/);
+  assert.match(overview, /<span class="label">Indicative simple payback<\/span>/);
+  assert.doesNotMatch(overview, /<span class="label">Simple payback<\/span>/);
+
+  const extra = html.match(/\.metric-extra \.kpi\{([^}]*)\}/)?.[1];
+  assert.ok(extra, "extra-context card has its own subdued treatment");
+  assert.match(extra, /box-shadow:none/);
+  assert.match(extra, /border-style:dashed/);
+
+  assert.match(html, /id="payback-limitation">Simple payback excludes maintenance, financing, tax, depreciation, battery replacement and time value of money\./);
+  assert.match(html, /\["Simple payback",result\.simplePaybackTransition===null\?"No payback"/);
+});
+
+test("emissions chart outweighs the cost chart", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  assert.match(overview, /<article class="panel chart-priority"><h3 id="emissions-chart-title">/);
+  assert.match(overview, /<article class="panel chart-secondary"><h3>Annual operating cost<\/h3>/);
+
+  const columns = html.match(/\.chart-grid\{display:grid;grid-template-columns:minmax\(0,([\d.]+)fr\) minmax\(0,([\d.]+)fr\)/);
+  assert.ok(columns, "chart grid weights the priority column");
+  assert.ok(Number(columns[1]) > Number(columns[2]));
+
+  const priority = Number(html.match(/\.chart-priority \.chart\{min-height:(\d+)px\}/)?.[1]);
+  const secondary = Number(html.match(/\.chart-secondary \.chart\{min-height:(\d+)px\}/)?.[1]);
+  assert.ok(priority > secondary, "priority chart reserves more vertical space");
+});
+
+test("sidebar uses layered forest surfaces with a restrained mint active state", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /--forest-900:#[0-9a-f]{6};--forest-800:#[0-9a-f]{6};--forest-700:#[0-9a-f]{6}/);
+  assert.match(html, /--mint:#[0-9a-f]{6}/);
+
+  const sidebar = html.match(/\.sidebar\{([^}]*)\}/)?.[1];
+  assert.ok(sidebar, "sidebar keeps a single base rule");
+  assert.match(sidebar, /position:sticky/);
+  assert.match(sidebar, /linear-gradient\(180deg,var\(--forest-900\)/);
+  assert.match(sidebar, /box-shadow:inset -1px 0 0 rgba\(255,255,255,\.07\)/);
+  assert.doesNotMatch(sidebar, /background:var\(--navy\)/);
+
+  const active = html.match(/\.nav button\[aria-current="page"\]\{([^}]*)\}/)?.[1];
+  assert.match(active, /background:var\(--mint-soft\)/);
+  assert.match(active, /color:var\(--mint\)/);
+  assert.match(active, /box-shadow:inset 0 0 0 1px/);
+  assert.match(html, /@media\(max-width:900px\)\{[^@]*\.nav button\[aria-current="page"\]\{background:var\(--mint-soft\);color:var\(--mint\)/);
+});
+
+test("interaction rules stay explicit, quick, pointer-gated and reduced-motion safe", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /--ease-out:cubic-bezier\([\d.,]+\)/);
+  assert.doesNotMatch(html, /transition:\s*all\b/);
+
+  const declarations = [...html.matchAll(/transition:([^;}]+)/g)].map(match => match[1]);
+  assert.ok(declarations.length >= 4, "explicit transitions are declared");
+  for (const declaration of declarations) {
+    if (/\bnone\b/.test(declaration)) continue;
+    assert.doesNotMatch(declaration, /(^|[\s,])all([\s,]|$)/);
+    const durations = [...declaration.matchAll(/(\d*\.?\d+)(ms|s)(?![a-z])/g)]
+      .map(([, value, unit]) => (unit === "s" ? Number(value) * 1000 : Number(value)));
+    assert.ok(durations.length > 0, `transition declares a duration: ${declaration}`);
+    for (const duration of durations) {
+      assert.ok(duration < 300, `transition stays under 300ms: ${declaration}`);
+    }
+  }
+
+  assert.match(html, /@media\(hover:hover\) and \(pointer:fine\)\{/);
+  const gated = html.match(/@media\(hover:hover\) and \(pointer:fine\)\{([\s\S]*?)\}\r?\n/)?.[1] ?? "";
+  assert.match(gated, /\.nav button:hover\{/);
+  assert.match(gated, /\.button:hover\{/);
+  assert.match(gated, /\.kpi:hover\{/);
+  const reducedMotion = html.match(/@media\(prefers-reduced-motion:reduce\)\{([^@]*?)\}\r?\n/)?.[1] ?? "";
+  assert.ok(reducedMotion, "reduced-motion block neutralizes motion");
+  const ungatedHover = html.replace(gated, "").replace(reducedMotion, "");
+  assert.doesNotMatch(ungatedHover, /:hover\{/, "hover styling only exists behind the pointer gate");
+
+  assert.match(html, /\.button:active,\.nav button:active\{transform:scale\(\.97\)\}/);
+  assert.match(html, /@media\(prefers-reduced-motion:reduce\)\{[^@]*transform:none!important/);
 });
 
 test("static numeric payback card starts neutral before live rendering", async () => {
