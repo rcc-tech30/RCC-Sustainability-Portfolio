@@ -717,11 +717,11 @@ test("interaction rules stay explicit, quick, pointer-gated and reduced-motion s
   }
 
   assert.match(html, /@media\(hover:hover\) and \(pointer:fine\)\{/);
-  const gated = html.match(/@media\(hover:hover\) and \(pointer:fine\)\{([\s\S]*?)\}\n/)?.[1] ?? "";
+  const gated = html.match(/@media\(hover:hover\) and \(pointer:fine\)\{([\s\S]*?)\}\r?\n/)?.[1] ?? "";
   assert.match(gated, /\.nav button:hover\{/);
   assert.match(gated, /\.button:hover\{/);
   assert.match(gated, /\.kpi:hover\{/);
-  const reducedMotion = html.match(/@media\(prefers-reduced-motion:reduce\)\{([^@]*?)\}\n/)?.[1] ?? "";
+  const reducedMotion = html.match(/@media\(prefers-reduced-motion:reduce\)\{([^@]*?)\}\r?\n/)?.[1] ?? "";
   assert.ok(reducedMotion, "reduced-motion block neutralizes motion");
   const ungatedHover = html.replace(gated, "").replace(reducedMotion, "");
   assert.doesNotMatch(ungatedHover, /:hover\{/, "hover styling only exists behind the pointer gate");
