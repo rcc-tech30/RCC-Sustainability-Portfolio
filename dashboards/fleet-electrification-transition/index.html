@@ -25,6 +25,44 @@
     .cost-comparison{min-height:202px}.cost-comparison svg{height:auto;overflow:visible}.cost-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:-2px;color:var(--muted);font-size:10px}.cost-legend span{display:inline-flex;align-items:center;gap:6px}.cost-swatch{width:8px;height:8px;border-radius:3px;display:inline-block}.cost-swatch.fuel{background:var(--navy-2)}.cost-swatch.electricity{background:var(--emerald)}.cost-delta{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:4px 10px;margin-top:14px;padding:12px 14px;border:1px solid rgba(8,127,91,.2);border-radius:var(--radius-control);background:var(--emerald-soft)}.cost-delta-label{color:#276453;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.cost-delta strong{color:var(--emerald);font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.cost-delta span:last-child{grid-column:1/-1;color:#52766b;font-size:11px;line-height:1.4}.chart-secondary .chart{min-height:202px}
     @media(max-width:640px){.cost-delta{grid-template-columns:1fr}.cost-delta strong{font-size:17px}.cost-delta span:last-child{grid-column:1}.cost-comparison{min-height:196px}.topbar{flex-wrap:wrap}.top-actions{margin-left:auto}.nav button{flex:1 1 calc(50% - 6px);min-width:0}.hero h1,.hero p{overflow-wrap:anywhere}}
   </style>
+  <style>
+    /* Overview refinement: one-screen SaaS hierarchy. Keep the model and all existing bindings intact. */
+    #view-overview > .hero{align-items:center;margin-bottom:16px}
+    #view-overview > .hero h1{font-size:clamp(28px,2.8vw,40px);max-width:900px}
+    #view-overview > .hero p:last-child{margin:8px 0 0;font-size:13px;line-height:1.45}
+    #view-overview .scenario-band{margin-bottom:14px}
+    .metric-primary{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(0,1fr) minmax(0,1fr);gap:14px}
+    .metric-primary-support{display:contents}
+    #net-emissions-card{min-height:240px;padding:24px}
+    #net-emissions-card .metric-detail{display:block;margin-top:12px;color:var(--emerald);font-size:clamp(18px,1.8vw,26px);font-weight:800;line-height:1.15;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+    #net-emissions-card .sub{margin-top:12px}
+    #operating-card,#fleet-card{min-height:141px}
+    .chart-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) minmax(240px,.72fr);gap:14px;margin-top:16px}
+    .overview-scenario{grid-column:3;display:flex;flex-direction:column}
+    .overview-scenario-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;margin:4px 0 16px}
+    .overview-scenario-list div:first-child{grid-column:1/-1}
+    .overview-scenario-list div{display:grid;gap:4px}
+    .overview-scenario-list dt{color:var(--muted);font-size:10px;font-weight:800}
+    .overview-scenario-list dd{margin:0;color:var(--navy);font-size:13px;font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+    .overview-scenario-edit{width:100%;margin-top:auto;min-height:38px}
+    .metric-supporting{margin-top:18px;padding-top:16px}
+    .metric-supporting-intro{margin-bottom:12px}
+    @media(max-width:1100px){
+      .metric-primary{grid-template-columns:1fr}
+      .metric-primary-support{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:14px}
+      .chart-grid{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
+      .overview-scenario{grid-column:1/-1}
+    }
+    @media(max-width:900px){
+      .chart-grid{grid-template-columns:1fr}
+      .overview-scenario{grid-column:auto}
+    }
+    @media(max-width:640px){
+      #view-overview > .hero h1{font-size:28px}
+      #net-emissions-card .metric-detail{font-size:20px}
+      .overview-scenario-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to assessment</a>
@@ -56,7 +94,7 @@
           </div>
           <div id="warning-stack" class="warning-stack" role="alert" aria-label="Input errors" aria-live="assertive"></div>
           <div class="metric-primary">
-            <article class="kpi good" id="net-emissions-card"><span class="label">Net emissions change</span><strong class="value" id="kpi-net-emissions">21.94 tCO2e</strong><span class="sub" id="kpi-net-emissions-sub">Reduction before certificates</span></article>
+            <article class="kpi good" id="net-emissions-card"><span class="label">Net emissions change</span><strong class="value" id="kpi-net-emissions-percent">−18%</strong><span class="metric-detail" id="kpi-net-emissions">21.94 tCO2e / year</span><span class="sub" id="kpi-net-emissions-sub">Reduction before certificates</span></article>
             <div class="metric-primary-support">
               <article class="kpi good" id="operating-card"><span class="label">Annual operating impact</span><strong class="value" id="kpi-operating">AUD 8,902 savings</strong><span class="sub">Electricity, certificates and avoided fuel</span></article>
               <article class="kpi" id="fleet-card"><span class="label">Fleet transition</span><strong class="value" id="kpi-fleet">10 of 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></article>
@@ -65,6 +103,7 @@
           <div class="chart-grid">
             <article class="panel chart-priority"><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
             <article class="panel chart-secondary"><h3>Annual operating impact</h3><p class="panel-intro">Today versus after transition, with fuel and electricity kept visible.</p><div class="chart" id="cost-chart" role="img" aria-label="Annual operating cost comparison showing fuel and electricity today and after transition"></div><div class="cost-legend" aria-hidden="true"><span><i class="cost-swatch fuel"></i>Fuel</span><span><i class="cost-swatch electricity"></i>Electricity + certificates</span></div><div class="cost-delta" aria-live="polite"><span class="cost-delta-label">Annual change</span><strong id="cost-delta-value">AUD 8,902 lower</strong><span id="cost-delta-context">Fuel savings offset added electricity and certificates.</span></div><div class="chart-summary" id="cost-summary"></div></article>
+            <article class="overview-scenario panel" aria-labelledby="overview-scenario-title"><h3 id="overview-scenario-title">Scenario</h3><p class="panel-intro">Live assumptions used by this overview.</p><dl class="overview-scenario-list"><div><dt>Scenario</dt><dd id="overview-scenario-company">Company X by You</dd></div><div><dt>Vehicles transitioning</dt><dd id="overview-scenario-fleet">10 of 10</dd></div><div><dt>BEV method</dt><dd id="overview-scenario-method">Distance-based</dd></div><div><dt>Reporting period</dt><dd id="overview-scenario-period">FY2025 to FY2030</dd></div><div><dt>Electricity price</dt><dd id="overview-scenario-electricity">AUD 0.28 / kWh</dd></div></dl><button class="button primary overview-scenario-edit" type="button" data-view-target="inputs">Edit scenario</button></article>
           </div>
           <section class="metric-supporting" aria-labelledby="metric-supporting-title">
             <p class="eyebrow">Supporting detail</p>
@@ -673,6 +712,11 @@
         q("#scenario-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
         q("#scenario-method").textContent = `${scenario.bevMethod} method`;
         q("#scenario-data-status").textContent = scenario.dataStatus;
+        q("#overview-scenario-company").textContent = scenario.companyName;
+        q("#overview-scenario-fleet").textContent = `${scenario.vehiclesTransitioning} of ${scenario.totalIceVehicles}`;
+        q("#overview-scenario-method").textContent = scenario.bevMethod;
+        q("#overview-scenario-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
+        q("#overview-scenario-electricity").textContent = `${formatMoney(scenario.electricityRate, 2)} / kWh`;
         const errors = messages.filter(message => message.severity === "error");
         const warnings = messages.filter(message => message.severity === "warning" && message.text !== "No payback under current assumptions.");
         q("#warning-stack").innerHTML = errors.map(message => `<div class="alert error">${escapeHtml(message.text)}</div>`).join("");
@@ -695,6 +739,11 @@
         q("#operating-card").className = `kpi ${savings ? "good" : "warn"}`;
         q("#kpi-operating").textContent = `${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}`;
         q("#net-emissions-card").className = `kpi${kpiStory.netTone === "neutral" ? "" : ` ${kpiStory.netTone}`}`;
+        const netPercent = result.baselineTotalEmissions > 0
+          ? Math.round(Math.abs(kpiStory.netEmissionsChange) / result.baselineTotalEmissions * 100)
+          : 0;
+        const netPercentPrefix = kpiStory.netTone === "good" ? "−" : kpiStory.netTone === "warn" ? "+" : "";
+        q("#kpi-net-emissions-percent").textContent = `${netPercentPrefix}${formatNumber(netPercent)}%`;
         q("#kpi-net-emissions").textContent = formatT(kpiStory.netEmissionsMagnitude);
         q("#kpi-net-emissions-sub").textContent = kpiStory.netSubline;
         const periodLabels = getEmissionsPeriodLabels(scenario.baselineYear, scenario.targetYear);
