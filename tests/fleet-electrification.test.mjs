@@ -203,7 +203,7 @@ test("validation blocks invalid fleet and missing electricity inputs", async () 
 test("application exposes accessible views, controls, and chart summaries", async () => {
   const { html } = await loadApp();
   assert.match(html, /class="skip-link"/);
-  assert.equal((html.match(/data-view-target=/g) || []).length, 5);
+  assert.equal((html.match(/data-view-target=/g) || []).length, 6);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /<label for="\$\{name\}">\$\{label\}<\/label>/);
   assert.match(html, /\["totalIceVehicles", "Total ICE vehicles"/);
@@ -541,6 +541,7 @@ test("overview presents the approved eight-card KPI story in reading order", asy
 
   const valueIds = [...overview.matchAll(/id="(kpi-[^"]+)"/g)].map(match => match[1]);
   assert.deepEqual(valueIds, [
+    "kpi-net-emissions-percent",
     "kpi-net-emissions",
     "kpi-net-emissions-sub",
     "kpi-operating",
@@ -620,6 +621,30 @@ test("overview primary group ranks net emissions above operating impact and flee
   assert.match(primary, /<div class="metric-primary-support">/);
   assert.match(html, /\.metric-primary\{display:grid;grid-template-columns:minmax\(0,1\.6fr\) minmax\(0,1fr\)/);
   assert.match(html, /\.metric-primary-support\{display:grid/);
+});
+
+test("overview uses a compact SaaS hierarchy with live scenario controls", async () => {
+  const { html } = await loadApp();
+  const overview = overviewMarkup(html);
+  assert.match(overview, /id="kpi-net-emissions-percent"/);
+  assert.match(overview, /class="overview-scenario panel"/);
+  assert.match(overview, /id="overview-scenario-company"/);
+  assert.match(overview, /id="overview-scenario-period"/);
+  assert.match(overview, /id="overview-scenario-method"/);
+  assert.match(overview, /id="overview-scenario-electricity"/);
+  assert.match(overview, /data-view-target="inputs"/);
+  assert.match(html, /q\("#kpi-net-emissions-percent"\)\.textContent/);
+  assert.match(html, /q\("#overview-scenario-company"\)\.textContent = scenario\.companyName/);
+  assert.match(html, /q\("#overview-scenario-electricity"\)\.textContent/);
+});
+
+test("overview desktop grid gives the headline and charts a deliberate one-screen rhythm", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /\.metric-primary\{display:grid;grid-template-columns:minmax\(0,2\.1fr\) minmax\(0,1fr\) minmax\(0,1fr\)/);
+  assert.match(html, /\.metric-primary-support\{display:contents/);
+  assert.match(html, /\.chart-grid\{display:grid;grid-template-columns:minmax\(0,1\.45fr\) minmax\(0,1fr\) minmax\(240px,\.72fr\)/);
+  assert.match(html, /\.overview-scenario\{grid-column:3/);
+  assert.match(html, /@media\(max-width:1100px\)\{[\s\S]*?\.metric-primary-support\{display:grid/);
 });
 
 test("net emissions card carries dominant weight without depending on live class rewrites", async () => {
