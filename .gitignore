@@ -22,6 +22,11 @@ coverage/
 *.bak
 *.swp
 
+# Private engineering material (kept in the private source repository)
+/tests/
+/docs/
+/scripts/
+
 # Editors and operating systems
 .vscode/
 .idea/
