@@ -21,6 +21,10 @@
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}.button:active,.nav button:active,.section-filter:active,.section-heading:active,.kpi:hover{transform:none!important}}
     @media print{.sidebar,.topbar,.button,.skip-link{display:none!important}.app-shell{display:block}.content{padding:0}.view{display:block!important;break-after:page}.panel,.kpi{box-shadow:none;break-inside:avoid}.footer{padding:18px 0}}
   </style>
+  <style>
+    .cost-comparison{min-height:202px}.cost-comparison svg{height:auto;overflow:visible}.cost-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:-2px;color:var(--muted);font-size:10px}.cost-legend span{display:inline-flex;align-items:center;gap:6px}.cost-swatch{width:8px;height:8px;border-radius:3px;display:inline-block}.cost-swatch.fuel{background:var(--navy-2)}.cost-swatch.electricity{background:var(--emerald)}.cost-delta{display:grid;grid-template-columns:auto auto;align-items:baseline;gap:4px 10px;margin-top:14px;padding:12px 14px;border:1px solid rgba(8,127,91,.2);border-radius:var(--radius-control);background:var(--emerald-soft)}.cost-delta-label{color:#276453;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.cost-delta strong{color:var(--emerald);font-size:18px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.cost-delta span:last-child{grid-column:1/-1;color:#52766b;font-size:11px;line-height:1.4}.chart-secondary .chart{min-height:202px}
+    @media(max-width:640px){.cost-delta{grid-template-columns:1fr}.cost-delta strong{font-size:17px}.cost-delta span:last-child{grid-column:1}.cost-comparison{min-height:196px}.topbar{flex-wrap:wrap}.top-actions{margin-left:auto}.nav button{flex:1 1 calc(50% - 6px);min-width:0}.hero h1,.hero p{overflow-wrap:anywhere}}
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to assessment</a>
@@ -60,7 +64,7 @@
           </div>
           <div class="chart-grid">
             <article class="panel chart-priority"><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Scope 1 and Scope 2 from baseline to the modelled residual.</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
-            <article class="panel chart-secondary"><h3>Annual operating cost</h3><p class="panel-intro">Current fuel and electricity compared with the projected state.</p><div class="chart" id="cost-chart" role="img" aria-label="Annual operating cost comparison chart"></div><div class="chart-summary" id="cost-summary"></div></article>
+            <article class="panel chart-secondary"><h3>Annual operating impact</h3><p class="panel-intro">Today versus after transition, with fuel and electricity kept visible.</p><div class="chart" id="cost-chart" role="img" aria-label="Annual operating cost comparison showing fuel and electricity today and after transition"></div><div class="cost-legend" aria-hidden="true"><span><i class="cost-swatch fuel"></i>Fuel</span><span><i class="cost-swatch electricity"></i>Electricity + certificates</span></div><div class="cost-delta" aria-live="polite"><span class="cost-delta-label">Annual change</span><strong id="cost-delta-value">AUD 8,902 lower</strong><span id="cost-delta-context">Fuel savings offset added electricity and certificates.</span></div><div class="chart-summary" id="cost-summary"></div></article>
           </div>
           <section class="metric-supporting" aria-labelledby="metric-supporting-title">
             <p class="eyebrow">Supporting detail</p>
@@ -632,14 +636,25 @@
         return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="${left}" y1="${top + innerH}" x2="${width-right}" y2="${top + innerH}" stroke="#cdd7e1"/><path d="${path}" fill="none" stroke="#087f5b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${points.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="6" fill="#fff" stroke="#087f5b" stroke-width="3"/><text x="${p.x}" y="${Math.max(14,p.y-14)}" text-anchor="middle" font-size="12" font-weight="700" fill="#102a48">${formatNumber(p.value,1)}</text><text x="${p.x}" y="${height-30}" text-anchor="middle" font-size="11" font-weight="700" fill="#33445a">${escapeHtml(labels[i].stage)}</text><text x="${p.x}" y="${height-14}" text-anchor="middle" font-size="10" fill="#607087">${escapeHtml(labels[i].year)}</text>`).join("")}</svg>`;
       }
 
-      function barChart(current, projected) {
-        const width = 620, height = 250, base = 205, max = Math.max(current, projected, 1) * 1.15;
-        const bars = [[170,current,"Current"],[390,projected,"Projected"]];
-        const heights = bars.map(([,value]) => value / max * 155);
-        const trendStart = { x: 216, y: base - heights[0] - 4 };
-        const trendEnd = { x: 436, y: base - heights[1] - 4 };
-        const trendControlY = Math.min(trendStart.y, trendEnd.y) - 18;
-        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="70" y1="${base}" x2="570" y2="${base}" stroke="#cdd7e1"/>${bars.map(([x,value,label],i)=>{const h=heights[i];return `<rect x="${x}" y="${base-h}" width="92" height="${h}" rx="6" fill="${i ? "#087f5b" : "#102a48"}"/><text x="${x+46}" y="${base-h-12}" text-anchor="middle" font-size="12" font-weight="700" fill="#102a48">${formatMoney(value)}</text><text x="${x+46}" y="232" text-anchor="middle" font-size="11" fill="#607087">${label}</text>`}).join("")}<path class="cost-trend" d="M${trendStart.x},${trendStart.y} Q326,${trendControlY} ${trendEnd.x},${trendEnd.y}" fill="none" stroke="#607087" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 8"/></svg>`;
+      function costComparisonChart(currentFuel, currentElectricity, projectedFuel, projectedElectricity) {
+        const width = 620, height = 214, left = 132, barWidth = 330, totalX = 490;
+        const rows = [
+          { label: "Today", fuel: currentFuel, electricity: currentElectricity },
+          { label: "After transition", fuel: projectedFuel, electricity: projectedElectricity },
+        ];
+        const max = Math.max(...rows.map(row => row.fuel + row.electricity), 1) * 1.08;
+        const scale = barWidth / max;
+        const segment = (x, y, value, color, key, label) => {
+          const width = Math.max(0, value * scale);
+          return `<rect data-cost-segment="${key}" x="${x}" y="${y}" width="${width}" height="28" rx="${key === "fuel" ? 7 : 0}" fill="${color}"><title>${label}: ${formatMoney(value)}</title></rect>`;
+        };
+        const bars = rows.map((row, index) => {
+          const y = 42 + index * 62;
+          const total = row.fuel + row.electricity;
+          const fuelWidth = row.fuel * scale;
+          return `<text x="0" y="${y + 19}" font-size="12" font-weight="800" fill="#102a48">${row.label}</text><rect x="${left}" y="${y}" width="${barWidth}" height="28" rx="7" fill="#edf1f3"/>${segment(left, y, row.fuel, "#102a48", "fuel", "Fuel")}${segment(left + fuelWidth, y, row.electricity, "#087f5b", "electricity", "Electricity + certificates")}<text x="${totalX}" y="${y + 19}" font-size="13" font-weight="800" fill="#102a48">${formatMoney(total)}</text>`;
+        }).join("");
+        return `<svg class="cost-comparison" viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="${left}" y1="20" x2="${left + barWidth}" y2="20" stroke="#d8e0e8"/>${bars}<text x="${left}" y="188" font-size="10" fill="#607087">Annual energy cost</text><text x="${totalX}" y="188" font-size="10" fill="#607087">${escapeHtml(scenario.currencyCode || "AUD")}</text></svg>`;
       }
 
       function rows(items) {
@@ -689,9 +704,17 @@
         q("#emissions-chart").innerHTML = lineChart(pathway,periodLabels.stages);
         q("#emissions-summary").textContent = `${periodLabels.baselineYear} baseline ${formatT(pathway[0])}; ${periodLabels.targetYear} after fleet electrification ${formatT(pathway[1])}; ${periodLabels.targetYear} after certificate adjustment ${formatT(pathway[2])}.`;
         const currentCost = result.currentElectricityCost + scenario.currentAnnualFuelCost;
-        const projectedCost = result.targetElectricityCost + (scenario.currentAnnualFuelCost-result.fuelCostAvoided);
-        q("#cost-chart").innerHTML = barChart(currentCost, projectedCost);
-        q("#cost-summary").textContent = `Current annual energy cost ${formatMoney(currentCost)}; projected annual energy cost ${formatMoney(projectedCost)}; change ${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}.`;
+        const projectedFuel = scenario.currentAnnualFuelCost - result.fuelCostAvoided;
+        const projectedCost = result.targetElectricityCost + projectedFuel;
+        q("#cost-chart").innerHTML = costComparisonChart(scenario.currentAnnualFuelCost, result.currentElectricityCost, projectedFuel, result.targetElectricityCost);
+        const costDirection = savings ? "lower" : result.annualOperatingChange > 0 ? "higher" : "unchanged";
+        q("#cost-delta-value").textContent = `${formatMoney(Math.abs(result.annualOperatingChange))} ${costDirection}`;
+        q("#cost-delta-context").textContent = savings
+          ? "Fuel savings outweigh added electricity and certificates."
+          : result.annualOperatingChange > 0
+            ? "Added electricity and certificates exceed fuel savings."
+            : "Fuel and electricity costs balance at the current assumptions.";
+        q("#cost-summary").textContent = `Today ${formatMoney(currentCost)}; after transition ${formatMoney(projectedCost)}; annual change ${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}.`;
         q("#emissions-table").innerHTML = rows([
           ["Baseline mobile Scope 1",formatT(result.baselineMobileScope1),"fuel combustion"],["Scope 1 avoided",formatT(result.scope1Avoided),"transition share"],["Remaining Scope 1",formatT(result.remainingScope1),"mobile plus unaffected"],["BEV electricity added",`${formatNumber(result.bevElectricityAdded)} kWh`,scenario.bevMethod],["Baseline grid Scope 2",formatT(result.baselineGridScope2),"grid-based"],["Post-transition grid Scope 2",formatT(result.postTransitionGridScope2),"grid-based"],["Scope 2 after certificate adjustment",formatT(result.scope2AfterEac),scenario.certificateType],["Residual after certificates",formatT(result.residualAfterCertificates),"Scope 1 plus adjusted Scope 2"]
         ]);
