@@ -565,11 +565,43 @@ test("overview opens with a live scenario summary band", async () => {
 
   assert.match(overview, /<div class="scenario-band" id="scenario-band" aria-label="Scenario summary">/);
   const bandIds = [...band[0].matchAll(/id="(scenario-[a-z-]+)"/g)].map(match => match[1]);
-  assert.deepEqual(bandIds, ["scenario-band", "scenario-company", "scenario-period", "scenario-method"]);
-  assert.equal((band[0].match(/class="scenario-band-label"/g) || []).length, 3);
+  assert.deepEqual(bandIds, [
+    "scenario-band",
+    "scenario-company",
+    "scenario-period",
+    "scenario-method",
+    "scenario-data-status",
+  ]);
+  assert.equal((band[0].match(/class="scenario-band-label"/g) || []).length, 4);
   assert.ok(overview.indexOf('class="scenario-band"') < overview.indexOf('class="metric-primary"'));
   assert.match(html, /q\("#scenario-period"\)\.textContent = `\$\{scenario\.baselineYear\} to \$\{scenario\.targetYear\}`/);
+  assert.match(html, /q\("#scenario-data-status"\)\.textContent = scenario\.dataStatus/);
   assert.match(html, /\.scenario-band\{display:grid/);
+});
+
+test("scope 2 supporting card is labelled for the added grid emissions it renders", async () => {
+  const { html, model } = await loadApp();
+  const overview = overviewMarkup(html);
+  assert.match(overview, /<span class="label">Scope 2 added<\/span>/);
+  assert.doesNotMatch(overview, /<span class="label">Scope 2 increase<\/span>/);
+  assert.match(html, /id="kpi-scope2-increase"/, "live binding id is retained");
+  assert.match(html, /q\("#kpi-scope2-increase"\)\.textContent = formatT\(kpiStory\.scope2Increase\)/);
+
+  // The rendered value is toTco2e(bevElectricityAdded * gridEmissionFactor), so it is
+  // never negative while every fuel, distance and efficiency input is non-negative.
+  const cases = [
+    {},
+    { vehiclesTransitioning: 0 },
+    { bevMethod: "Fallback" },
+    { bevMethod: "Fallback", otherFuelGj: 0, dieselLitres: 0, petrolLitres: 0 },
+    { chargingLossPct: 0 },
+  ];
+  for (const override of cases) {
+    const story = model.deriveOverviewKpiStory(
+      model.calculateScenario({ ...model.DEFAULT_SCENARIO, ...override }),
+    );
+    assert.ok(story.scope2Increase >= 0, `non-negative inputs never subtract Scope 2: ${JSON.stringify(override)}`);
+  }
 });
 
 test("overview primary group ranks net emissions above operating impact and fleet transition", async () => {
