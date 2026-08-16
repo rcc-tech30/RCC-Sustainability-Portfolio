@@ -293,7 +293,12 @@ test("charts use smooth curves and compact navigation keeps every view visible",
   assert.match(html, /\.nav\{display:flex;flex-wrap:wrap;overflow-x:visible/);
   assert.match(html, /\.content:focus\{outline:none\}/);
   assert.match(html, /const path = `M\$\{points\[0\]\.x\},\$\{points\[0\]\.y\} C/);
-  assert.match(html, /class="cost-trend"/);
+  assert.match(html, /class="cost-comparison"/);
+  assert.match(html, /class="cost-delta"/);
+  assert.match(html, /function costComparisonChart\(/);
+  assert.match(html, /data-cost-segment="\$\{key\}"/);
+  assert.match(html, /aria-label="Annual operating cost comparison showing fuel and electricity today and after transition"/);
+  assert.doesNotMatch(html, /class="cost-trend"/);
 });
 
 test("fallback-only BEV inputs explain and expose their active state", async () => {
@@ -668,7 +673,7 @@ test("emissions chart outweighs the cost chart", async () => {
   const { html } = await loadApp();
   const overview = overviewMarkup(html);
   assert.match(overview, /<article class="panel chart-priority"><h3 id="emissions-chart-title">/);
-  assert.match(overview, /<article class="panel chart-secondary"><h3>Annual operating cost<\/h3>/);
+  assert.match(overview, /<article class="panel chart-secondary"><h3>Annual operating impact<\/h3>/);
 
   const columns = html.match(/\.chart-grid\{display:grid;grid-template-columns:minmax\(0,([\d.]+)fr\) minmax\(0,([\d.]+)fr\)/);
   assert.ok(columns, "chart grid weights the priority column");
