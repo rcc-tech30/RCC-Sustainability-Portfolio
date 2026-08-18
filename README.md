@@ -57,6 +57,14 @@ Capabilities demonstrated:
 - Sustainability data communication
 - Executive-ready visual presentation
 
+### Canadian GHG Inventory 2026
+
+**[Download the Canadian GHG inventory workbook](dashboards/canadian-ghg-inventory/Canadian_GHG_Inventory_2026_Scope1_Scope2.xlsx)**
+
+[Read the project notes and workbook boundaries](dashboards/canadian-ghg-inventory/)
+
+A formula-driven Excel sample demonstrating Scope 1 and Scope 2 greenhouse-gas accounting with Canadian emission-factor references, GWP tables, dashboard summaries, and traceable methodology notes. The company, facilities, activity quantities, and figures are fictional and created for portfolio demonstration purposes.
+
 ## Portfolio areas
 
 - Sustainability dashboards
@@ -73,3 +81,4 @@ This project is not client work, external assurance, certification, an official 
 ## Connect
 
 [LinkedIn — Reiniel Celgie Chan](https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/)
+
