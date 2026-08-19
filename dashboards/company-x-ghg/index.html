@@ -813,11 +813,128 @@
     }
 
     .netzero-grid .lever-list {
+      grid-template-columns: repeat(4, 1fr);
       height: auto;
     }
 
     .netzero-grid .lever h4 {
       margin: 6px 0 3px;
+    }
+
+    .netzero-grid .lever p {
+      line-height: 1.3;
+    }
+
+    .nz-chart-wrap {
+      width: 100%;
+      height: calc(100% - 38px);
+      min-height: 0;
+    }
+
+    .nz-chart-wrap svg {
+      width: 100%;
+      height: calc(100% - 18px);
+      overflow: visible;
+    }
+
+    .nz-legend {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: -4px;
+      color: var(--ink-500);
+      font-size: 8.5px;
+    }
+
+    .nz-legend-item {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .nz-line-swatch {
+      width: 24px;
+      border-top: 3px solid var(--forest-700);
+    }
+
+    .nz-line-swatch.target {
+      border-top-style: dashed;
+      border-top-color: var(--emerald-500);
+    }
+
+    .milestone-progress {
+      display: grid;
+      gap: 14px;
+      padding-top: 6px;
+    }
+
+    .milestone-value {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+    }
+
+    .milestone-value strong {
+      color: var(--forest-950);
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .milestone-value span {
+      color: var(--ink-500);
+      font-size: 10px;
+      font-weight: 650;
+    }
+
+    .milestone-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #e7edea;
+    }
+
+    .milestone-track > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--forest-700), var(--emerald-500));
+    }
+
+    .milestone-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .milestone-stat {
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--mint-50);
+    }
+
+    .milestone-stat strong,
+    .milestone-stat span {
+      display: block;
+    }
+
+    .milestone-stat strong {
+      color: var(--forest-950);
+      font-size: 13px;
+    }
+
+    .milestone-stat span {
+      margin-top: 3px;
+      color: var(--ink-500);
+      font-size: 8px;
+    }
+
+    .milestone-note {
+      margin: 0;
+      color: var(--ink-500);
+      font-size: 8.5px;
+      line-height: 1.4;
     }
 
     .footer {
@@ -1240,6 +1357,11 @@
         const reductionAchieved = baseline - current;
         const reductionPercent = baseline ? (reductionAchieved / baseline) * 100 : 0;
         const target2030 = TARGETS.find((target) => target.fy === "FY2030").emissions;
+        const totalReductionRequired = Math.max(0, baseline - target2030);
+        const gapTo2030 = Math.max(0, current - target2030);
+        const progressTo2030 = totalReductionRequired
+          ? Math.max(0, Math.min(100, reductionAchieved / totalReductionRequired * 100))
+          : 0;
         const actualPoints = [
           { label: "FY2025", note: "Baseline", value: baseline }
         ];
@@ -1260,7 +1382,10 @@
           currentLabel: financialYear === "All" ? "Latest actual" : `${financialYear} actual`,
           reductionAchieved,
           reductionPercent,
-          gapTo2030: Math.max(0, current - target2030),
+          target2030,
+          totalReductionRequired,
+          gapTo2030,
+          progressTo2030,
           points: [...actualPoints, ...targetPoints],
           highlightLabel: financialYear === "FY2025" ? "FY2025" : "FY2026"
         };
@@ -1516,6 +1641,74 @@
           </div>`;
       }
 
+      function netZeroPathwayChart(view) {
+        const width = 720;
+        const height = 250;
+        const left = 54;
+        const top = 28;
+        const plotWidth = 620;
+        const plotHeight = 166;
+        const max = Math.max(1500, niceMax(Math.max(...view.points.map((point) => point.value), 100)));
+        const coords = view.points.map((point, index) => ({
+          ...point,
+          type: point.label === "FY2025" || point.label === "FY2026" ? "actual" : "target",
+          x: left + (index * plotWidth) / Math.max(1, view.points.length - 1),
+          y: top + plotHeight - (point.value / max) * plotHeight
+        }));
+        const actualPoints = coords.filter((point) => point.type === "actual");
+        const futureTargets = coords.filter((point) => point.type === "target");
+        const targetPoints = actualPoints.length ? [actualPoints.at(-1), ...futureTargets] : futureTargets;
+        const pathFor = (points) => points.length > 1
+          ? points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ")
+          : "";
+        const actualPath = pathFor(actualPoints);
+        const targetPath = pathFor(targetPoints);
+        const targetArea = targetPath
+          ? `${targetPath} L ${targetPoints.at(-1).x} ${top + plotHeight} L ${targetPoints[0].x} ${top + plotHeight} Z`
+          : "";
+        const grid = [0, 0.3333, 0.6667, 1].map((ratio) => {
+          const value = max * ratio;
+          const y = top + plotHeight - ratio * plotHeight;
+          return `<line x1="${left}" y1="${y}" x2="${left + plotWidth}" y2="${y}" class="chart-grid-line"/><text x="${left - 10}" y="${y + 4}" text-anchor="end" class="chart-axis">${formatNumber(value)}</text>`;
+        }).join("");
+        const dots = coords.map((point) => {
+          const isCurrent = point.label === view.highlightLabel;
+          return `
+            <line x1="${point.x}" y1="${point.y}" x2="${point.x}" y2="${top + plotHeight}" stroke="#dce5e0" stroke-dasharray="3 5"/>
+            <circle cx="${point.x}" cy="${point.y}" r="${isCurrent ? 7 : 5}" fill="${point.type === "actual" ? (isCurrent ? "#24a877" : "#0b3b31") : "white"}" stroke="${point.type === "actual" ? "white" : "#24a877"}" stroke-width="3" tabindex="0" data-tip="${escapeHtml(point.label)}: ${formatNumber(point.value)} tCO2e">
+              <title>${escapeHtml(point.label)}: ${formatNumber(point.value)} tCO2e</title>
+            </circle>
+            <text x="${point.x}" y="${point.y - 13}" text-anchor="middle" class="chart-value">${formatNumber(point.value)}</text>
+            <text x="${point.x}" y="${top + plotHeight + 20}" text-anchor="middle" class="chart-label">${escapeHtml(point.label)}</text>
+            <text x="${point.x}" y="${top + plotHeight + 34}" text-anchor="middle" class="chart-axis">${escapeHtml(point.note)}</text>`;
+        }).join("");
+        const lastActual = actualPoints.at(-1);
+        const target2030Point = futureTargets.find((point) => point.label === "FY2030");
+        const calloutX = lastActual && target2030Point ? (lastActual.x + target2030Point.x) / 2 : 311;
+        return `
+          <div class="nz-chart-wrap">
+            <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Actual emissions and net-zero target pathway">
+              <defs>
+                <linearGradient id="netzeroPathwayGradient" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#7ed7b4" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#7ed7b4" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              ${grid}
+              ${targetArea ? `<path d="${targetArea}" fill="url(#netzeroPathwayGradient)"/>` : ""}
+              ${actualPath ? `<path d="${actualPath}" fill="none" stroke="#176b55" stroke-width="3" stroke-linecap="round"/>` : ""}
+              ${targetPath ? `<path d="${targetPath}" fill="none" stroke="#24a877" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 7"/>` : ""}
+              <rect x="500" y="4" width="174" height="34" rx="8" fill="#e8f7ef" stroke="#cceede"/>
+              <text x="587" y="17" text-anchor="middle" class="chart-value" style="font-size:8.5px">FY2050 NET TARGET: 0 tCO2e</text>
+              <text x="587" y="29" text-anchor="middle" class="chart-axis" style="font-size:7.5px">90% gross cut + 10% neutralization</text>
+              <rect x="${calloutX - 61}" y="72" width="122" height="22" rx="7" fill="#fff4d9" stroke="#f0d59a"/>
+              <text x="${calloutX}" y="86" text-anchor="middle" class="chart-value" style="font-size:8px">${formatNumber(view.gapTo2030)} tCO2e remaining</text>
+              ${dots}
+            </svg>
+            <div class="nz-legend"><span class="nz-legend-item"><span class="nz-line-swatch"></span>Reported actual</span><span class="nz-legend-item"><span class="nz-line-swatch target"></span>Approved target pathway</span></div>
+          </div>`;
+      }
+
       function methodMixChart(items) {
         const visibleItems = items.filter((item) => item.value > 0).sort((a, b) => b.value - a.value);
         if (!visibleItems.length) return emptyState();
@@ -1698,22 +1891,20 @@
         const fy2025Total = core.getSummary(comparableRecords("FY2025")).total;
         const fy2026Total = core.getSummary(comparableRecords("FY2026")).total;
         const view = core.getNetZeroView(state.filters.fy, fy2025Total, fy2026Total);
-        const isFY2025 = state.filters.fy === "FY2025";
-        const thirdCard = isFY2025
-          ? kpiCard("FY2030 target", "806", "tCO2e", "35% reduction", { text: "Near-term target" })
-          : kpiCard("Reduction achieved", formatNumber(view.reductionAchieved), "tCO2e", "Since FY2025", { text: `${oneDecimal.format(view.reductionPercent)}% below baseline` });
+        const currentPeriod = state.filters.fy === "FY2025" ? "FY2025 baseline" : "FY2026 actual";
+        const achievedReduction = Math.max(0, view.reductionAchieved);
         return `
           <section class="page active" id="page-netzero">
             <div class="page-shell">
-              ${pageHeading("Net Zero Pathway", "FY2025 baseline, current performance and FY2030, FY2040 and FY2050 targets")}
+              ${pageHeading("Net Zero Pathway", "Current performance, approved milestones and the pathway to net zero by FY2050")}
               <div class="page-grid netzero-grid">
-                ${kpiCard("FY2025 baseline", formatNumber(view.baseline), "tCO2e", "Reference year", { text: "100% baseline" }, "neutral")}
-                ${kpiCard(view.currentLabel, formatNumber(view.current), "tCO2e", state.filters.fy === "All" ? "FY2026 reported performance" : "Reported performance", { text: view.reductionPercent === 0 ? "No change from baseline" : `↓ ${oneDecimal.format(view.reductionPercent)}% vs baseline` })}
-                ${thirdCard}
-                ${kpiCard("Reduction required", formatNumber(view.gapTo2030), "tCO2e", "To FY2030 target", { text: view.gapTo2030 === 0 ? "On pathway" : "Action required", bad: view.gapTo2030 > 0 }, "warning")}
-                ${panel("Corporate emissions pathway", "Annual actuals and approved target milestones", lineChart(view.points, { highlightLabel: view.highlightLabel, gradientId: "netzeroGradient" }), "wide-panel", "Net zero by FY2050")}
-                ${panel("Pathway progress", "Reduction achieved against FY2025 baseline", `<div class="progress-list"><div class="progress-row"><span>Current reduction</span><div class="progress-track"><div class="progress-fill" style="width:${Math.max(0, Math.min(100, view.reductionPercent))}%"></div></div><span class="progress-value">${oneDecimal.format(Math.max(0, view.reductionPercent))}%</span></div><div class="progress-row"><span>FY2030 target</span><div class="progress-track"><div class="progress-fill" style="width:35%"></div></div><span class="progress-value">35%</span></div><div class="progress-row"><span>FY2040 target</span><div class="progress-track"><div class="progress-fill" style="width:75%"></div></div><span class="progress-value">75%</span></div><div class="progress-row"><span>FY2050 target</span><div class="progress-track"><div class="progress-fill" style="width:100%"></div></div><span class="progress-value">100%</span></div></div>`, "narrow-panel")}
-                ${panel("Primary reduction levers", "", `<div class="lever-list"><article class="lever"><span class="lever-number">01</span><h4>100% fleet electrification</h4><p>Replace combustion vehicles through planned asset cycles and verified charging data.</p></article><article class="lever"><span class="lever-number">02</span><h4>RE100</h4><p>Use 100% renewable electricity for facilities with credible contractual evidence.</p></article><article class="lever"><span class="lever-number">03</span><h4>Supplier screening and engagement</h4><p>Prioritise suppliers that commit to decarbonising services offered to Company X.</p></article></div>`, "full-panel")}
+                ${kpiCard("Current emissions", formatNumber(view.current), "tCO2e", currentPeriod, { text: "Reported performance" }, "neutral")}
+                ${kpiCard("Reduction from baseline", `${oneDecimal.format(Math.max(0, view.reductionPercent))}%`, "", `${formatNumber(achievedReduction)} tCO2e below FY2025`, { text: "Reduction achieved" })}
+                ${kpiCard("FY2030 target", formatNumber(view.target2030), "tCO2e", "35% below baseline", { text: "Next milestone" })}
+                ${kpiCard("Gap to FY2030", formatNumber(view.gapTo2030), "tCO2e", "Remaining reduction", { text: view.gapTo2030 === 0 ? "Target reached" : "Action required", bad: view.gapTo2030 > 0 }, "warning")}
+                ${panel("Corporate emissions pathway", "Reported actuals and approved target milestones", netZeroPathwayChart(view), "wide-panel", "Net zero by FY2050")}
+                ${panel("Progress to FY2030", "Share of the required reduction already achieved", `<div class="milestone-progress"><div class="milestone-value"><strong>${oneDecimal.format(view.progressTo2030)}%</strong><span>of required reduction achieved</span></div><div class="milestone-track"><span style="width:${view.progressTo2030}%"></span></div><div class="milestone-stats"><div class="milestone-stat"><strong>${formatNumber(achievedReduction)}</strong><span>tCO2e achieved</span></div><div class="milestone-stat"><strong>${formatNumber(view.gapTo2030)}</strong><span>tCO2e remaining</span></div><div class="milestone-stat"><strong>${formatNumber(view.totalReductionRequired)}</strong><span>tCO2e total required</span></div></div><p class="milestone-note">Progress equals ${formatNumber(achievedReduction)} tCO2e achieved divided by the ${formatNumber(view.totalReductionRequired)} tCO2e reduction required for FY2030.</p></div>`, "narrow-panel")}
+                ${panel("Priority decarbonization actions", "", `<div class="lever-list"><article class="lever"><span class="lever-number">01</span><h4>100% fleet electrification</h4><p><strong>Scope 1.</strong> Replace combustion vehicles through planned asset cycles and verified charging data.</p></article><article class="lever"><span class="lever-number">02</span><h4>RE100</h4><p><strong>Scope 2.</strong> Use 100% renewable electricity with credible contractual evidence.</p></article><article class="lever"><span class="lever-number">03</span><h4>Supplier decarbonization</h4><p><strong>Scope 3.</strong> Prioritize suppliers with credible emissions reduction commitments.</p></article><article class="lever"><span class="lever-number">04</span><h4>Carbon capture, utilization and storage (CCUS)</h4><p><strong>Final 10%.</strong> Neutralize residual emissions through verified capture and permanent storage.</p></article></div>`, "full-panel")}
               </div>
             </div>
           </section>`;
