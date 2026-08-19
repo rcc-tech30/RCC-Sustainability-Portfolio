@@ -253,6 +253,14 @@
       font-weight: 650;
     }
 
+    .filter-field.filter-disabled {
+      opacity: 0.5;
+    }
+
+    .filter-field.filter-disabled select {
+      cursor: not-allowed;
+    }
+
     .reset-button {
       height: 42px;
       padding: 0 17px;
@@ -1351,6 +1359,17 @@
         return financialYear === "All" ? "FY2025 + FY2026 combined" : financialYear;
       }
 
+      function hasSubsetFilter(filters) {
+        return ["entity", "facility", "method"].some((field) => filters[field] && filters[field] !== "All");
+      }
+
+      function getActualTrendPoints(fy2025Total, fy2026Total) {
+        return [
+          { label: "FY2025", note: "Baseline", value: Number(fy2025Total) || 0 },
+          { label: "FY2026", note: "Latest actual", value: Number(fy2026Total) || 0 }
+        ];
+      }
+
       function getNetZeroView(financialYear, fy2025Total, fy2026Total) {
         const baseline = Number(fy2025Total) || 0;
         const current = financialYear === "FY2025" ? baseline : Number(fy2026Total) || 0;
@@ -1391,7 +1410,7 @@
         };
       }
 
-      return { DATA, TARGETS, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, getNetZeroView };
+      return { DATA, TARGETS, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView };
     })();
   </script>
 
@@ -1454,6 +1473,27 @@
 
       function comparableRecords(fy) {
         return filterBaseRecords(false).filter((record) => record.fy === fy);
+      }
+
+      function corporateCurrentRecords() {
+        return core.recordsForPeriod(core.DATA, state.filters.fy);
+      }
+
+      function corporateComparableRecords(fy) {
+        return core.DATA.filter((record) => record.fy === fy);
+      }
+
+      function syncFilterAvailability() {
+        const corporatePathway = state.page === "netzero";
+        const heading = document.querySelector(".filter-heading");
+        heading.querySelector("strong").textContent = corporatePathway ? "Corporate pathway view" : "Reporting view";
+        heading.querySelector("span").textContent = corporatePathway ? "Only Financial Year applies" : "Filters update connected visuals";
+        ["entity", "facility", "method"].forEach((field) => {
+          const select = document.querySelector(`[data-filter="${field}"]`);
+          select.disabled = corporatePathway;
+          select.title = corporatePathway ? "This filter is not applied to the corporate Net Zero pathway" : "";
+          select.closest(".filter-field").classList.toggle("filter-disabled", corporatePathway);
+        });
       }
 
       function sampleBadge() {
@@ -1739,16 +1779,6 @@
         return `<div class="method-mix"><svg viewBox="0 0 640 ${height}" role="img" aria-label="Emissions-weighted calculation method mix">${rows}</svg></div>`;
       }
 
-      function baselinePath(currentValue, currentLabel) {
-        return [
-          { label: "FY2025", note: "Baseline", value: 1240 },
-          { label: currentLabel, note: "Current", value: currentValue },
-          { label: "FY2030", note: "35% reduction", value: 806 },
-          { label: "FY2040", note: "75% reduction", value: 310 },
-          { label: "FY2050", note: "Net zero", value: 0 }
-        ];
-      }
-
       function scopedPath(scope, currentValue, currentLabel) {
         const base = core.sum(comparableRecords("FY2025").filter((record) => record.scope === scope), "emissions");
         const share = base / 1240;
@@ -1764,22 +1794,47 @@
       function renderOverview(records) {
         const summary = core.getSummary(records);
         const baseline = core.getSummary(comparableRecords("FY2025"));
-        const change = core.pctChange(summary.total, baseline.total);
+        const latestActual = core.getSummary(comparableRecords("FY2026"));
+        const comparisonTotal = state.filters.fy === "FY2025" ? baseline.total : latestActual.total;
+        const change = core.pctChange(comparisonTotal, baseline.total);
         const currentLabel = selectedYear();
+        const hasSubsetFilter = core.hasSubsetFilter(state.filters);
+        const corporateView = core.getNetZeroView(
+          state.filters.fy,
+          core.sum(corporateComparableRecords("FY2025"), "emissions"),
+          core.sum(corporateComparableRecords("FY2026"), "emissions")
+        );
+        const pathwayPoints = hasSubsetFilter
+          ? core.getActualTrendPoints(baseline.total, latestActual.total)
+          : corporateView.points;
+        const pathwayTitle = hasSubsetFilter ? "Selected view: baseline and actual" : "Corporate baseline, actual and pathway";
+        const pathwaySubtitle = hasSubsetFilter
+          ? "Comparable annual actuals; no target is allocated to this filtered view"
+          : "Historical baseline and future target trajectory";
+        const pathwayTag = hasSubsetFilter ? "No allocated target" : "FY2050 net zero";
+        const totalDelta = state.filters.fy === "All"
+          ? { text: "Combined reporting periods" }
+          : { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 };
+        const targetCard = hasSubsetFilter
+          ? kpiCard("FY2030 gap", "N/A", "", "Selected view", { text: "Corporate target only" }, "neutral")
+          : kpiCard("Reduction to FY2030", formatNumber(corporateView.gapTo2030), "tCO2e", "Remaining", { text: "Target 806 tCO2e", bad: corporateView.gapTo2030 > 0 }, "warning");
         const composition = ["Scope 1", "Scope 2", "Scope 3"].map((scope) => ({ label: scope, value: summary.byScope[scope] || 0 }));
         const insightScope = composition.slice().sort((a, b) => b.value - a.value)[0];
+        const executiveReading = hasSubsetFilter
+          ? `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. FY2026 emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the comparable FY2025 baseline. No reduction target is allocated to this filtered view. Reset Entity, Facility and Calculation Method to see the corporate pathway.</p>`
+          : `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. Current emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the FY2025 baseline. The next decision point is closing the <strong>${formatNumber(corporateView.gapTo2030)} tCO2e</strong> gap to the FY2030 pathway.</p>`;
         return `
           <section class="page active" id="page-overview">
             <div class="page-shell">
-              ${pageHeading("Executive Overview", `Reported GHG performance for ${currentLabel} compared with the FY2025 baseline and approved pathway`)}
+              ${pageHeading("Executive Overview", hasSubsetFilter ? `Reported GHG performance for ${currentLabel} compared with the equivalent FY2025 view` : `Reported GHG performance for ${currentLabel} compared with the FY2025 baseline and approved pathway`)}
               <div class="page-grid overview-grid">
-                ${kpiCard("Total reported emissions", formatNumber(summary.total), "tCO2e", currentLabel, { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 })}
+                ${kpiCard("Total reported emissions", formatNumber(summary.total), "tCO2e", currentLabel, totalDelta)}
                 ${kpiCard("Renewable electricity", `${oneDecimal.format(summary.renewable)}%`, "", "Facilities", { text: `${summary.renewable >= 50 ? "Above" : "Below"} halfway` }, "neutral")}
                 ${kpiCard("Data coverage", `${oneDecimal.format(summary.coverage)}%`, "", "Emissions weighted", { text: summary.coverage >= 90 ? "Strong coverage" : "Needs attention" })}
-                ${kpiCard("Reduction to FY2030", formatNumber(Math.max(0, summary.total - 806)), "tCO2e", "Remaining", { text: "Target 806 tCO2e", bad: summary.total > 806 }, "warning")}
+                ${targetCard}
                 ${panel("GHG emissions composition", "Reported emissions by scope", donutChart(composition, "tCO2e", formatNumber(summary.total)), "chart-panel")}
-                ${panel("Baseline, current and pathway", "Historical baseline and future target trajectory", lineChart(baselinePath(summary.total, currentLabel), { highlightCurrent: true, gradientId: "overviewGradient" }), "chart-panel", "FY2050 net zero")}
-                ${panel("Executive reading", "", `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. Current emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the FY2025 baseline. The next decision point is closing the <strong>${formatNumber(Math.max(0, summary.total - 806))} tCO2e</strong> gap to the FY2030 pathway.</p>`, "narrow-panel insight-panel")}
+                ${panel(pathwayTitle, pathwaySubtitle, lineChart(pathwayPoints, { highlightLabel: hasSubsetFilter ? "FY2026" : corporateView.highlightLabel, gradientId: "overviewGradient" }), "chart-panel", pathwayTag)}
+                ${panel("Executive reading", "", executiveReading, "narrow-panel insight-panel")}
                 ${panel("Reporting boundary", "", `<div class="note-list"><div class="note-item">Scope 1 covers controlled fuel use and refrigerants.</div><div class="note-item">Scope 2 uses market-based results for the reported total.</div><div class="note-item">Scope 3 categories shown are those relevant to this illustrative company.</div></div>`, "wide-panel note-panel")}
               </div>
             </div>
@@ -1888,8 +1943,8 @@
       }
 
       function renderNetZero(records) {
-        const fy2025Total = core.getSummary(comparableRecords("FY2025")).total;
-        const fy2026Total = core.getSummary(comparableRecords("FY2026")).total;
+        const fy2025Total = core.getSummary(corporateComparableRecords("FY2025")).total;
+        const fy2026Total = core.getSummary(corporateComparableRecords("FY2026")).total;
         const view = core.getNetZeroView(state.filters.fy, fy2025Total, fy2026Total);
         const currentPeriod = state.filters.fy === "FY2025" ? "FY2025 baseline" : "FY2026 actual";
         const achievedReduction = Math.max(0, view.reductionAchieved);
@@ -1911,7 +1966,7 @@
       }
 
       function renderApp() {
-        const records = currentRecords();
+        const records = state.page === "netzero" ? corporateCurrentRecords() : currentRecords();
         if (!records.length) {
           content.innerHTML = `<section class="page active"><div class="page-shell">${pageHeading(pageNames[state.page], "The selected filters do not return any illustrative records")}<div>${emptyState()}</div></div></section>`;
         } else {
@@ -1934,6 +1989,7 @@
         document.getElementById("pageCounter").textContent = `${index + 1} of ${pages.length}`;
         document.getElementById("previousPage").disabled = index === 0;
         document.getElementById("nextPage").disabled = index === pages.length - 1;
+        syncFilterAvailability();
         document.title = `${pageNames[state.page]} | Company X by RCC`;
       }
 
