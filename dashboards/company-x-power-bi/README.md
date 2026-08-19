@@ -2,11 +2,11 @@
 
 This project is a native Microsoft Power BI dashboard created as a portfolio example. It is separate from the browser-based Company X GHG Dashboard in this repository and uses a different illustrative dataset.
 
-## Download and open
+## Request and open
 
-**[Download the Power BI dashboard](https://github.com/rcc-tech30/RCC-Sustainability-Portfolio/raw/refs/heads/main/dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix)**
+The native `.pbix` file is available by request through the Project 03 card on the [portfolio website](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/). A company email is required so requests can be reviewed before access is provided.
 
-Open the downloaded `.pbix` file in Microsoft Power BI Desktop. GitHub cannot preview the dashboard interactively, and Power BI Desktop is required to explore its pages, visuals, filters, and underlying model.
+After receiving an approved copy, open the `.pbix` file in Microsoft Power BI Desktop. Power BI Desktop is required to explore its pages, visuals, filters, and underlying model.
 
 ## What this project demonstrates
 
