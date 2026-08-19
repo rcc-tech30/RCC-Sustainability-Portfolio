@@ -81,3 +81,23 @@ test("net-zero progress measures achievement against the FY2030 reduction requir
   assert.equal(view.points.at(-1).label, "FY2050");
   assert.equal(view.points.at(-1).value, 0);
 });
+
+test("entity, facility, and method selections are treated as subset filters", () => {
+  const core = loadCore();
+
+  assert.equal(core.hasSubsetFilter({ fy: "FY2026", entity: "All", facility: "All", method: "All" }), false);
+  assert.equal(core.hasSubsetFilter({ fy: "FY2026", entity: "All", facility: "All", method: "Spend-based" }), true);
+  assert.equal(core.hasSubsetFilter({ fy: "FY2026", entity: "Operations", facility: "All", method: "All" }), true);
+});
+
+test("filtered overview trend contains comparable annual actuals without corporate targets", () => {
+  const core = loadCore();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(core.getActualTrendPoints(540, 550))),
+    [
+      { label: "FY2025", note: "Baseline", value: 540 },
+      { label: "FY2026", note: "Latest actual", value: 550 }
+    ]
+  );
+});
