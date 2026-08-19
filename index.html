@@ -314,6 +314,137 @@
     .button span:last-child { font-size: 19px; }
     .viewing-note { margin-top: 14px !important; font-size: 12px; }
 
+    .button-trigger {
+      width: 100%;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .pbix-dialog {
+      width: min(520px, calc(100% - 32px));
+      max-height: calc(100vh - 32px);
+      padding: 0;
+      overflow: auto;
+      border: 0;
+      border-radius: 22px;
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 28px 80px rgba(7, 42, 36, 0.28);
+    }
+
+    .pbix-dialog::backdrop {
+      background: rgba(7, 42, 36, 0.62);
+      backdrop-filter: blur(5px);
+    }
+
+    .request-card { padding: clamp(26px, 5vw, 40px); }
+
+    .request-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .request-kicker {
+      margin: 0 0 9px;
+      color: var(--emerald);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .request-title {
+      margin: 0;
+      color: var(--forest-deep);
+      font-size: clamp(26px, 5vw, 34px);
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    .request-close {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--forest);
+      background: var(--white);
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .request-intro {
+      margin: 18px 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .request-form { display: grid; gap: 12px; }
+    .request-form label { color: var(--forest-deep); font-size: 13px; font-weight: 750; }
+
+    .request-input {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 15px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink);
+      background: var(--paper);
+      font: inherit;
+    }
+
+    .request-input:focus {
+      border-color: var(--emerald);
+      outline: 3px solid rgba(39, 137, 99, 0.14);
+    }
+
+    .request-help,
+    .request-privacy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .request-error {
+      min-height: 18px;
+      margin: 0;
+      color: #a13f3f;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .request-submit { margin-top: 2px; }
+    .request-submit:disabled { cursor: wait; opacity: 0.72; }
+
+    .request-success {
+      margin-top: 24px;
+      padding: 18px;
+      border: 1px solid #b9dfcc;
+      border-radius: 12px;
+      color: var(--forest);
+      background: #eff9f3;
+      line-height: 1.6;
+    }
+
+    .request-success strong { display: block; margin-bottom: 4px; }
+
+    .request-frame {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
     footer {
       display: flex;
       justify-content: space-between;
@@ -833,10 +964,10 @@
           </div>
           <div>
             <div class="actions">
-              <a class="button button-primary" href="dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix" download><span>Download PBIX</span><span aria-hidden="true">↓</span></a>
+              <button class="button button-primary button-trigger" type="button" data-open-pbix-request><span>Request PBIX file</span><span aria-hidden="true">→</span></button>
               <a class="button button-secondary" href="https://github.com/rcc-tech30/RCC-Sustainability-Portfolio/tree/main/dashboards/company-x-power-bi"><span>Read project notes</span><span aria-hidden="true">↗</span></a>
             </div>
-            <p class="viewing-note">Native Power BI file · Requires Power BI Desktop</p>
+            <p class="viewing-note">Available by request · Work email required · Requires Power BI Desktop</p>
           </div>
         </div>
       </article>
@@ -961,6 +1092,32 @@
     <span>Growing through practical work</span>
   </footer>
 
+  <dialog class="pbix-dialog" id="pbixRequestDialog" aria-labelledby="pbix-request-title">
+    <div class="request-card">
+      <div class="request-head">
+        <div>
+          <p class="request-kicker">Project 03</p>
+          <h2 class="request-title" id="pbix-request-title">Request the PBIX file</h2>
+        </div>
+        <button class="request-close" type="button" data-close-pbix-request aria-label="Close request form">×</button>
+      </div>
+      <p class="request-intro">Enter your company email and I will review the request before sharing the Power BI file.</p>
+      <form class="request-form" id="pbixRequestForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdSHNiOAYjsEya3rSv6M4NiqowcGOIuG-0f8-KWHWUOEjAE6w/formResponse" method="post" target="pbixRequestFrame">
+        <label for="pbixWorkEmail">Work email</label>
+        <input class="request-input" id="pbixWorkEmail" name="entry.308624725" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" required>
+        <p class="request-help">Public email providers such as Gmail, Hotmail, Outlook, Yahoo and iCloud are not accepted.</p>
+        <p class="request-error" id="pbixRequestError" aria-live="polite"></p>
+        <button class="button button-primary button-trigger request-submit" type="submit"><span>Submit request</span><span aria-hidden="true">→</span></button>
+        <p class="request-privacy">Your email will only be used to review and respond to your PBIX file request. It will not be added to a mailing list.</p>
+      </form>
+      <div class="request-success" id="pbixRequestSuccess" role="status" tabindex="-1" hidden>
+        <strong>Request received.</strong>
+        If approved, the PBIX access details will be sent to your work email.
+      </div>
+      <iframe class="request-frame" name="pbixRequestFrame" title="PBIX request submission"></iframe>
+    </div>
+  </dialog>
+
   <script>
     (function () {
       var nav = document.querySelector('.segmented');
@@ -1027,7 +1184,98 @@
 
       movePill(initial);
     })();
+
+    (function () {
+      var dialog = document.getElementById('pbixRequestDialog');
+      var form = document.getElementById('pbixRequestForm');
+      var frame = document.querySelector('iframe[name="pbixRequestFrame"]');
+      var input = document.getElementById('pbixWorkEmail');
+      var error = document.getElementById('pbixRequestError');
+      var success = document.getElementById('pbixRequestSuccess');
+      var submit = form ? form.querySelector('button[type="submit"]') : null;
+      var submitted = false;
+      var lastFocused = null;
+      var freeDomains = [
+        'gmail.com', 'googlemail.com', 'gmai.com', 'gmial.com',
+        'hotmail.com', 'hotmail.co.uk', 'outlook.com', 'outlook.ph', 'live.com', 'live.co.uk', 'msn.com',
+        'yahoo.com', 'yahoo.co.uk', 'yahoo.com.au', 'ymail.com', 'rocketmail.com',
+        'icloud.com', 'me.com', 'mac.com', 'aol.com',
+        'proton.me', 'protonmail.com', 'gmx.com', 'gmx.net', 'mail.com', 'zoho.com', 'fastmail.com'
+      ];
+
+      if (!dialog || !form || !frame || !input || !error || !success || !submit) return;
+
+      function domainIsBlocked(domain) {
+        return freeDomains.some(function (blocked) {
+          return domain === blocked || domain.endsWith('.' + blocked);
+        });
+      }
+
+      function resetRequest() {
+        submitted = false;
+        form.hidden = false;
+        success.hidden = true;
+        error.textContent = '';
+        submit.disabled = false;
+        submit.querySelector('span:first-child').textContent = 'Submit request';
+        form.reset();
+      }
+
+      function openRequest(trigger) {
+        lastFocused = trigger;
+        resetRequest();
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+        window.setTimeout(function () { input.focus(); }, 0);
+      }
+
+      function closeRequest() {
+        if (typeof dialog.close === 'function') dialog.close();
+        else dialog.removeAttribute('open');
+        if (lastFocused) lastFocused.focus();
+      }
+
+      document.querySelectorAll('[data-open-pbix-request]').forEach(function (trigger) {
+        trigger.addEventListener('click', function () { openRequest(trigger); });
+      });
+
+      dialog.querySelector('[data-close-pbix-request]').addEventListener('click', closeRequest);
+      dialog.addEventListener('click', function (event) {
+        if (event.target === dialog) closeRequest();
+      });
+
+      form.addEventListener('submit', function (event) {
+        var email = input.value.trim().toLowerCase();
+        var validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        var domain = validEmail ? email.split('@').pop() : '';
+
+        error.textContent = '';
+        if (!validEmail) {
+          event.preventDefault();
+          error.textContent = 'Enter a valid company email address.';
+          input.focus();
+          return;
+        }
+        if (domainIsBlocked(domain)) {
+          event.preventDefault();
+          error.textContent = 'Please use your company email instead of a public email provider.';
+          input.focus();
+          return;
+        }
+
+        input.value = email;
+        submitted = true;
+        submit.disabled = true;
+        submit.querySelector('span:first-child').textContent = 'Sending request';
+      });
+
+      frame.addEventListener('load', function () {
+        if (!submitted) return;
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      });
+    })();
   </script>
 </body>
 </html>
-
