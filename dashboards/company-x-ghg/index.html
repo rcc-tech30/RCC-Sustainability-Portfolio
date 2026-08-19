@@ -1080,8 +1080,8 @@
           <select id="facilityFilter" data-filter="facility" aria-label="Facility filter"></select>
         </div>
         <div class="filter-field">
-          <label for="methodFilter">Reporting method</label>
-          <select id="methodFilter" data-filter="method" aria-label="Reporting method filter"></select>
+          <label for="methodFilter">Calculation method</label>
+          <select id="methodFilter" data-filter="method" aria-label="Calculation method filter"></select>
         </div>
         <button class="reset-button" id="resetFilters" type="button">Reset filters</button>
       </section>
@@ -1115,39 +1115,39 @@
   <script id="dashboard-core">
     globalThis.CompanyXDashboard = (() => {
       const DATA = [
-        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Activity-based", emissions: 48, energy: 612, renewable: 0, coverage: 96 },
-        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Activity-based", emissions: 34, energy: 438, renewable: 0, coverage: 94 },
-        { fy: "FY2025", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 1", source: "Stationary combustion", category: "Backup generation", method: "Activity-based", emissions: 32, energy: 401, renewable: 0, coverage: 100 },
-        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Fugitive emissions", category: "Refrigerants", method: "Hybrid", emissions: 26, energy: 0, renewable: 0, coverage: 82 },
+        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 48, energy: 612, renewable: 0, coverage: 96 },
+        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 34, energy: 438, renewable: 0, coverage: 94 },
+        { fy: "FY2025", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 1", source: "Stationary combustion", category: "Backup generation", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 32, energy: 401, renewable: 0, coverage: 100 },
+        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Fugitive emissions", category: "Refrigerants", method: "Refrigerant mass-balance", dataBasis: "Mixed data", supplierSpecific: false, emissions: 26, energy: 0, renewable: 0, coverage: 82 },
 
-        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Activity-based", emissions: 112, locationEmissions: 134, energy: 1120, renewable: 28, coverage: 100 },
-        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Activity-based", emissions: 103, locationEmissions: 121, energy: 980, renewable: 24, coverage: 100 },
-        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Hybrid", emissions: 85, locationEmissions: 97, energy: 810, renewable: 20, coverage: 91 },
+        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 112, locationEmissions: 134, energy: 1120, renewable: 28, coverage: 100 },
+        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 103, locationEmissions: 121, energy: 980, renewable: 24, coverage: 100 },
+        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Mixed data", supplierSpecific: false, emissions: 85, locationEmissions: 97, energy: 810, renewable: 20, coverage: 91 },
 
-        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Purchased goods", category: "Category 1", method: "Spend-based", emissions: 300, energy: 0, renewable: 0, coverage: 88 },
-        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 3", source: "Capital goods", category: "Category 2", method: "Spend-based", emissions: 140, energy: 0, renewable: 0, coverage: 85 },
-        { fy: "FY2025", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 3", source: "Fuel and energy activities", category: "Category 3", method: "Hybrid", emissions: 70, energy: 0, renewable: 0, coverage: 90 },
-        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Waste generated", category: "Category 5", method: "Activity-based", emissions: 30, energy: 0, renewable: 0, coverage: 74 },
-        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Business travel", category: "Category 6", method: "Activity-based", emissions: 90, energy: 0, renewable: 0, coverage: 97 },
-        { fy: "FY2025", entity: "Corporate", facility: "Sydney Operations", scope: "Scope 3", source: "Employee commuting", category: "Category 7", method: "Hybrid", emissions: 70, energy: 0, renewable: 0, coverage: 76 },
-        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Downstream transport", category: "Category 9", method: "Spend-based", emissions: 100, energy: 0, renewable: 0, coverage: 80 },
+        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Purchased goods", category: "Category 1", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 300, energy: 0, renewable: 0, coverage: 88 },
+        { fy: "FY2025", entity: "Operations", facility: "Sydney Operations", scope: "Scope 3", source: "Capital goods", category: "Category 2", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 140, energy: 0, renewable: 0, coverage: 85 },
+        { fy: "FY2025", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 3", source: "Fuel and energy activities", category: "Category 3", method: "Supplier-specific", dataBasis: "Mixed data", supplierSpecific: true, emissions: 70, energy: 0, renewable: 0, coverage: 90 },
+        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Waste generated", category: "Category 5", method: "Waste-type-specific", dataBasis: "Physical activity data", supplierSpecific: true, emissions: 30, energy: 0, renewable: 0, coverage: 74 },
+        { fy: "FY2025", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Business travel", category: "Category 6", method: "Distance-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 90, energy: 0, renewable: 0, coverage: 97 },
+        { fy: "FY2025", entity: "Corporate", facility: "Sydney Operations", scope: "Scope 3", source: "Employee commuting", category: "Category 7", method: "Distance-based", dataBasis: "Mixed data", supplierSpecific: false, emissions: 70, energy: 0, renewable: 0, coverage: 76 },
+        { fy: "FY2025", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Downstream transport", category: "Category 9", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 100, energy: 0, renewable: 0, coverage: 80 },
 
-        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Activity-based", emissions: 41, energy: 524, renewable: 0, coverage: 98 },
-        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Activity-based", emissions: 31, energy: 397, renewable: 0, coverage: 96 },
-        { fy: "FY2026", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 1", source: "Stationary combustion", category: "Backup generation", method: "Activity-based", emissions: 24, energy: 302, renewable: 0, coverage: 100 },
-        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Fugitive emissions", category: "Refrigerants", method: "Hybrid", emissions: 20, energy: 0, renewable: 0, coverage: 88 },
+        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 41, energy: 524, renewable: 0, coverage: 98 },
+        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 1", source: "Mobile combustion", category: "Fleet fuel", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 31, energy: 397, renewable: 0, coverage: 96 },
+        { fy: "FY2026", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 1", source: "Stationary combustion", category: "Backup generation", method: "Fuel consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 24, energy: 302, renewable: 0, coverage: 100 },
+        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 1", source: "Fugitive emissions", category: "Refrigerants", method: "Refrigerant mass-balance", dataBasis: "Mixed data", supplierSpecific: false, emissions: 20, energy: 0, renewable: 0, coverage: 88 },
 
-        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Activity-based", emissions: 90, locationEmissions: 126, energy: 1060, renewable: 68, coverage: 100 },
-        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Activity-based", emissions: 74, locationEmissions: 112, energy: 930, renewable: 64, coverage: 100 },
-        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Hybrid", emissions: 60, locationEmissions: 91, energy: 770, renewable: 54, coverage: 95 },
+        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 90, locationEmissions: 126, energy: 1060, renewable: 68, coverage: 100 },
+        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 74, locationEmissions: 112, energy: 930, renewable: 64, coverage: 100 },
+        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 2", source: "Purchased electricity", category: "Electricity", method: "Electricity consumption-based", dataBasis: "Mixed data", supplierSpecific: false, emissions: 60, locationEmissions: 91, energy: 770, renewable: 54, coverage: 95 },
 
-        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Purchased goods", category: "Category 1", method: "Spend-based", emissions: 285, energy: 0, renewable: 0, coverage: 91 },
-        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 3", source: "Capital goods", category: "Category 2", method: "Spend-based", emissions: 140, energy: 0, renewable: 0, coverage: 88 },
-        { fy: "FY2026", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 3", source: "Fuel and energy activities", category: "Category 3", method: "Hybrid", emissions: 60, energy: 0, renewable: 0, coverage: 93 },
-        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Waste generated", category: "Category 5", method: "Activity-based", emissions: 25, energy: 0, renewable: 0, coverage: 81 },
-        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Business travel", category: "Category 6", method: "Activity-based", emissions: 80, energy: 0, renewable: 0, coverage: 99 },
-        { fy: "FY2026", entity: "Corporate", facility: "Sydney Operations", scope: "Scope 3", source: "Employee commuting", category: "Category 7", method: "Hybrid", emissions: 65, energy: 0, renewable: 0, coverage: 84 },
-        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Downstream transport", category: "Category 9", method: "Spend-based", emissions: 125, energy: 0, renewable: 0, coverage: 83 }
+        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Purchased goods", category: "Category 1", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 285, energy: 0, renewable: 0, coverage: 91 },
+        { fy: "FY2026", entity: "Operations", facility: "Sydney Operations", scope: "Scope 3", source: "Capital goods", category: "Category 2", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 140, energy: 0, renewable: 0, coverage: 88 },
+        { fy: "FY2026", entity: "Operations", facility: "Brisbane Hub", scope: "Scope 3", source: "Fuel and energy activities", category: "Category 3", method: "Supplier-specific", dataBasis: "Mixed data", supplierSpecific: true, emissions: 60, energy: 0, renewable: 0, coverage: 93 },
+        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Waste generated", category: "Category 5", method: "Waste-type-specific", dataBasis: "Physical activity data", supplierSpecific: true, emissions: 25, energy: 0, renewable: 0, coverage: 81 },
+        { fy: "FY2026", entity: "Corporate", facility: "Melbourne HQ", scope: "Scope 3", source: "Business travel", category: "Category 6", method: "Distance-based", dataBasis: "Physical activity data", supplierSpecific: false, emissions: 80, energy: 0, renewable: 0, coverage: 99 },
+        { fy: "FY2026", entity: "Corporate", facility: "Sydney Operations", scope: "Scope 3", source: "Employee commuting", category: "Category 7", method: "Distance-based", dataBasis: "Mixed data", supplierSpecific: false, emissions: 65, energy: 0, renewable: 0, coverage: 84 },
+        { fy: "FY2026", entity: "Retail", facility: "Brisbane Hub", scope: "Scope 3", source: "Downstream transport", category: "Category 9", method: "Spend-based", dataBasis: "Financial activity data", supplierSpecific: false, emissions: 125, energy: 0, renewable: 0, coverage: 83 }
       ];
 
       const TARGETS = [
@@ -1194,6 +1194,19 @@
           locationEmissions: sum(records, "locationEmissions"),
           renewable: weightedAverage(records.filter((record) => record.scope === "Scope 2"), "renewable"),
           coverage: weightedAverage(records, "coverage")
+        };
+      }
+
+      function getQualityMetrics(records) {
+        const total = sum(records, "emissions");
+        const scope3Records = records.filter((record) => record.scope === "Scope 3");
+        const scope3Total = sum(scope3Records, "emissions");
+        return {
+          inventoryCoverage: records.length ? sum(records, "coverage") / records.length : 0,
+          physicalShare: total ? sum(records.filter((record) => record.dataBasis === "Physical activity data"), "emissions") / total * 100 : 0,
+          spendShare: total ? sum(records.filter((record) => record.dataBasis === "Financial activity data"), "emissions") / total * 100 : 0,
+          supplierSpecificShare: scope3Total ? sum(scope3Records.filter((record) => record.supplierSpecific), "emissions") / scope3Total * 100 : null,
+          methodMix: groupSum(records, "method", "emissions")
         };
       }
 
@@ -1253,7 +1266,7 @@
         };
       }
 
-      return { DATA, TARGETS, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, getNetZeroView };
+      return { DATA, TARGETS, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, getNetZeroView };
     })();
   </script>
 
@@ -1266,7 +1279,7 @@
         scope1: "Scope 1",
         scope2: "Scope 2",
         scope3: "Scope 3",
-        quality: "Data Quality",
+        quality: "Data Quality & Methodology",
         netzero: "Net Zero Pathway"
       };
       const state = {
@@ -1504,20 +1517,33 @@
       }
 
       function methodMixChart(items) {
-        if (!items.length) return emptyState();
-        const total = items.reduce((sum, item) => sum + item.value, 0);
-        const colors = ["#176b55", "#d89528", "#c65656"];
-        let x = 24;
-        const segments = items.map((item, index) => {
-          const width = total ? (item.value / total) * 620 : 0;
-          const segment = `<rect x="${x}" y="66" width="${width}" height="46" rx="${index === 0 || index === items.length - 1 ? 8 : 0}" fill="${colors[index]}" tabindex="0" data-tip="${escapeHtml(item.label)}: ${oneDecimal.format(total ? item.value / total * 100 : 0)}%">
-            <title>${escapeHtml(item.label)}: ${oneDecimal.format(total ? item.value / total * 100 : 0)}%</title>
-          </rect>`;
-          x += width;
-          return segment;
+        const visibleItems = items.filter((item) => item.value > 0).sort((a, b) => b.value - a.value);
+        if (!visibleItems.length) return emptyState();
+        const total = visibleItems.reduce((sum, item) => sum + item.value, 0);
+        const max = Math.max(...visibleItems.map((item) => item.value), 1);
+        const height = visibleItems.length * 30 + 12;
+        const colors = {
+          "Supplier-specific": "#176b55",
+          "Electricity consumption-based": "#4a7188",
+          "Distance-based": "#5f8f79",
+          "Fuel consumption-based": "#8b7554",
+          "Waste-type-specific": "#786b9b",
+          "Refrigerant mass-balance": "#b27b59",
+          "Spend-based": "#c65656"
+        };
+        const rows = visibleItems.map((item, index) => {
+          const y = index * 30 + 4;
+          const width = item.value / max * 350;
+          const share = total ? item.value / total * 100 : 0;
+          return `
+            <text x="8" y="${y + 16}" class="chart-label">${escapeHtml(item.label)}</text>
+            <rect x="218" y="${y + 3}" width="350" height="16" rx="8" fill="#edf1ef"/>
+            <rect x="218" y="${y + 3}" width="${width}" height="16" rx="8" fill="${colors[item.label] || "#4a7188"}" tabindex="0" data-tip="${escapeHtml(item.label)}: ${oneDecimal.format(share)}%">
+              <title>${escapeHtml(item.label)}: ${oneDecimal.format(share)}%</title>
+            </rect>
+            <text x="622" y="${y + 16}" text-anchor="end" class="chart-value">${oneDecimal.format(share)}%</text>`;
         }).join("");
-        const labels = items.map((item, index) => `<div class="legend-item"><span class="legend-dot" style="background:${colors[index]}"></span>${escapeHtml(item.label)} ${oneDecimal.format(total ? item.value / total * 100 : 0)}%</div>`).join("");
-        return `<div class="method-mix"><svg viewBox="0 0 680 150" role="img" aria-label="Calculation method mix">${segments}<text x="24" y="47" class="chart-label">Emissions-weighted method mix</text></svg><div class="legend">${labels}</div></div>`;
+        return `<div class="method-mix"><svg viewBox="0 0 640 ${height}" role="img" aria-label="Emissions-weighted calculation method mix">${rows}</svg></div>`;
       }
 
       function baselinePath(currentValue, currentLabel) {
@@ -1622,50 +1648,47 @@
       function renderScope3(records) {
         const scopeRecords = records.filter((record) => record.scope === "Scope 3");
         const summary = core.getSummary(scopeRecords);
+        const quality = core.getQualityMetrics(scopeRecords);
         const baselineRecords = comparableRecords("FY2025").filter((record) => record.scope === "Scope 3");
         const baseline = core.sum(baselineRecords, "emissions");
         const change = core.pctChange(summary.total, baseline);
         const categories = Object.entries(summary.bySource).map(([label, value]) => ({ label: label.length > 22 ? `${label.slice(0, 20)}...` : label, value })).sort((a, b) => b.value - a.value);
         const topTwo = categories.slice(0, 2).reduce((total, item) => total + item.value, 0);
-        const methods = ["Activity-based", "Hybrid", "Spend-based"].map((method) => ({ label: method, value: summary.byMethod[method] || 0 }));
+        const methods = Object.entries(quality.methodMix).map(([label, value]) => ({ label, value }));
         return `
           <section class="page active" id="page-scope3">
             <div class="page-shell">
-              ${pageHeading("Scope 3", `Scope 3 emissions, category concentration and calculation-method maturity for ${selectedYear()}`)}
+              ${pageHeading("Scope 3", `Scope 3 emissions, category concentration and calculation methods for ${selectedYear()}`)}
               <div class="page-grid scope3-grid">
                 ${kpiCard("Scope 3 emissions", formatNumber(summary.total), "tCO2e", selectedYear(), { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 })}
                 ${kpiCard("Largest category", categories[0] ? formatNumber(categories[0].value) : "0", "tCO2e", categories[0]?.label || "No data", { text: `${oneDecimal.format(summary.total && categories[0] ? categories[0].value / summary.total * 100 : 0)}% of Scope 3` }, "neutral")}
                 ${kpiCard("Top two concentration", `${oneDecimal.format(summary.total ? topTwo / summary.total * 100 : 0)}%`, "", "Priority categories", { text: "Engagement focus" }, "warning")}
-                ${kpiCard("Activity-based share", `${oneDecimal.format(summary.total ? (summary.byMethod["Activity-based"] || 0) / summary.total * 100 : 0)}%`, "", "Emissions weighted", { text: "Method maturity" })}
+                ${kpiCard("Physical activity data", `${oneDecimal.format(quality.physicalShare)}%`, "", "Emissions weighted", { text: "Nonfinancial units" })}
                 ${panel("Scope 3 category profile", "Highest-emitting categories in the selected view", barChart(categories.slice(0, 7), { horizontal: true, ariaLabel: "Scope 3 emissions by category" }), "wide-panel")}
-                ${panel("Calculation-method mix", "Activity, hybrid and spend-based results", methodMixChart(methods), "narrow-panel")}
+                ${panel("Calculation method mix", "Detailed emissions-weighted distribution", methodMixChart(methods), "narrow-panel")}
                 ${panel("Priority improvements", "", `<div class="note-list"><div class="note-item"><strong>Purchased goods:</strong> request supplier-specific quantities and product carbon data.</div><div class="note-item"><strong>Capital goods:</strong> establish project-level asset and embodied-carbon records.</div><div class="note-item"><strong>Downstream transport:</strong> obtain route, mass and distance data from providers.</div></div>`, "wide-panel note-panel")}
-                ${panel("Interpretation", "", `<p class="insight-copy">Spend-based estimates remain useful for screening, but the improvement priority is to move material categories toward activity data where decision-making and supplier engagement can change outcomes.</p>`, "narrow-panel insight-panel")}
+                ${panel("Interpretation", "", `<p class="insight-copy">Spend-based estimates remain useful for screening, but the improvement priority is to move material categories toward physical activity data and supplier-specific information where decisions and engagement can change outcomes.</p>`, "narrow-panel insight-panel")}
               </div>
             </div>
           </section>`;
       }
 
       function renderDataQuality(records) {
-        const summary = core.getSummary(records);
-        const methods = ["Activity-based", "Hybrid", "Spend-based"].map((method) => ({ label: method, value: summary.byMethod[method] || 0 }));
-        const total = summary.total;
-        const activityShare = total ? (summary.byMethod["Activity-based"] || 0) / total * 100 : 0;
-        const hybridShare = total ? (summary.byMethod["Hybrid"] || 0) / total * 100 : 0;
-        const spendShare = total ? (summary.byMethod["Spend-based"] || 0) / total * 100 : 0;
-        const score = Math.round(summary.coverage * 0.55 + activityShare * 0.45);
+        const quality = core.getQualityMetrics(records);
+        const methods = Object.entries(quality.methodMix).map(([label, value]) => ({ label, value }));
+        const coverageFor = (scope) => core.getQualityMetrics(records.filter((record) => record.scope === scope)).inventoryCoverage;
         return `
           <section class="page active" id="page-quality">
             <div class="page-shell">
-              ${pageHeading("Data Quality", `Emissions-weighted completeness and methodology maturity for ${selectedYear()}`)}
+              ${pageHeading("Data Quality & Methodology", `Coverage, data specificity and calculation methods for ${selectedYear()}`)}
               <div class="page-grid quality-grid">
-                ${kpiCard("Overall data-quality score", `${score}`, "/100", "Coverage and method", { text: score >= 80 ? "Strong foundation" : "Improvement needed" })}
-                ${kpiCard("Activity-based", `${oneDecimal.format(activityShare)}%`, "", "Emissions weighted", { text: "Preferred method" })}
-                ${kpiCard("Hybrid", `${oneDecimal.format(hybridShare)}%`, "", "Emissions weighted", { text: "Transition method" }, "warning")}
-                ${kpiCard("Spend-based", `${oneDecimal.format(spendShare)}%`, "", "Emissions weighted", { text: "Screening method", bad: spendShare > 50 }, "neutral")}
-                ${panel("Methodology maturity", "Current calculation-method distribution", methodMixChart(methods), "chart-panel")}
-                ${panel("Coverage by reporting area", "Emissions-weighted source-data completeness", `<div class="progress-list"><div class="progress-row"><span>Scope 1</span><div class="progress-track"><div class="progress-fill" style="width:${core.weightedAverage(records.filter((r) => r.scope === "Scope 1"), "coverage")}%"></div></div><span class="progress-value">${oneDecimal.format(core.weightedAverage(records.filter((r) => r.scope === "Scope 1"), "coverage"))}%</span></div><div class="progress-row"><span>Scope 2</span><div class="progress-track"><div class="progress-fill" style="width:${core.weightedAverage(records.filter((r) => r.scope === "Scope 2"), "coverage")}%"></div></div><span class="progress-value">${oneDecimal.format(core.weightedAverage(records.filter((r) => r.scope === "Scope 2"), "coverage"))}%</span></div><div class="progress-row"><span>Scope 3</span><div class="progress-track"><div class="progress-fill" style="width:${core.weightedAverage(records.filter((r) => r.scope === "Scope 3"), "coverage")}%"></div></div><span class="progress-value">${oneDecimal.format(core.weightedAverage(records.filter((r) => r.scope === "Scope 3"), "coverage"))}%</span></div></div>`, "chart-panel")}
-                ${panel("Improvement priority list", "", `<div class="priority-scroll" tabindex="0" aria-label="Scrollable improvement priority list"><table class="quality-table"><thead><tr><th>Priority source</th><th>Current method</th><th>Impact</th><th>Recommended action</th></tr></thead><tbody><tr><td>Purchased goods</td><td>Spend-based</td><td><span class="status high">High</span></td><td>Supplier-specific quantities and carbon data</td></tr><tr><td>Downstream transport</td><td>Spend-based</td><td><span class="status high">High</span></td><td>Mass, distance and route information</td></tr><tr><td>Employee commuting</td><td>Hybrid</td><td><span class="status medium">Medium</span></td><td>Improve response rate and work-pattern data</td></tr><tr><td>Electricity</td><td>Activity-based</td><td><span class="status ontrack">On track</span></td><td>Maintain invoice and certificate evidence</td></tr></tbody></table></div>`, "full-panel")}
+                ${kpiCard("Inventory coverage", `${oneDecimal.format(quality.inventoryCoverage)}%`, "", "Required source-period data", { text: `${oneDecimal.format(Math.max(0, 100 - quality.inventoryCoverage))} pts gap` }, quality.inventoryCoverage < 95 ? "warning" : "")}
+                ${kpiCard("Supplier-specific share", quality.supplierSpecificShare === null ? "N/A" : `${oneDecimal.format(quality.supplierSpecificShare)}%`, "", "Scope 3 emissions weighted", { text: quality.supplierSpecificShare === null ? "No Scope 3 in view" : "Value-chain specific" })}
+                ${kpiCard("Physical activity data", `${oneDecimal.format(quality.physicalShare)}%`, "", "Emissions weighted", { text: "Nonfinancial units" })}
+                ${kpiCard("Spend-based reliance", `${oneDecimal.format(quality.spendShare)}%`, "", "Emissions weighted", { text: "Improvement focus", bad: quality.spendShare > 50 }, "neutral")}
+                ${panel("Calculation method mix", "Emissions-weighted distribution of detailed methods", methodMixChart(methods), "chart-panel")}
+                ${panel("Data coverage by scope", "Required source-period data captured", `<div class="progress-list"><div class="progress-row"><span>Scope 1</span><div class="progress-track"><div class="progress-fill" style="width:${coverageFor("Scope 1")}%"></div></div><span class="progress-value">${oneDecimal.format(coverageFor("Scope 1"))}%</span></div><div class="progress-row"><span>Scope 2</span><div class="progress-track"><div class="progress-fill" style="width:${coverageFor("Scope 2")}%"></div></div><span class="progress-value">${oneDecimal.format(coverageFor("Scope 2"))}%</span></div><div class="progress-row"><span>Scope 3</span><div class="progress-track"><div class="progress-fill" style="width:${coverageFor("Scope 3")}%"></div></div><span class="progress-value">${oneDecimal.format(coverageFor("Scope 3"))}%</span></div></div>`, "chart-panel")}
+                ${panel("Priority data improvements", "", `<div class="priority-scroll" tabindex="0" aria-label="Scrollable priority data improvements"><table class="quality-table"><thead><tr><th>Priority source</th><th>Current approach</th><th>Main data gap</th><th>Recommended action</th><th>Priority</th></tr></thead><tbody><tr><td>Purchased goods</td><td>Financial | Spend-based</td><td>Product quantities and supplier carbon data unavailable</td><td>Collect quantities for material purchases and request supplier carbon data</td><td><span class="status high">High</span></td></tr><tr><td>Downstream transport</td><td>Financial | Spend-based</td><td>No mass, distance, route or fuel information</td><td>Collect tonne-km, route and fuel information</td><td><span class="status high">High</span></td></tr><tr><td>Employee commuting</td><td>Mixed | Distance-based</td><td>Incomplete survey and work-pattern information</td><td>Improve participation and collect office and remote-working days</td><td><span class="status medium">Medium</span></td></tr><tr><td>Business travel</td><td>Physical | Distance-based</td><td>Incomplete route and travel-class data</td><td>Obtain booking-level distance and travel-class information</td><td><span class="status medium">Medium</span></td></tr></tbody></table></div>`, "full-panel")}
               </div>
             </div>
           </section>`;
