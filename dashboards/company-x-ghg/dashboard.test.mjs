@@ -67,3 +67,17 @@ test("supplier-specific share is not applicable when the filtered view has no Sc
 
   assert.equal(metrics.supplierSpecificShare, null);
 });
+
+test("net-zero progress measures achievement against the FY2030 reduction requirement", () => {
+  const core = loadCore();
+  const view = core.getNetZeroView("FY2026", 1240, 1120);
+
+  assert.equal(view.reductionAchieved, 120);
+  assert.equal(view.reductionPercent.toFixed(1), "9.7");
+  assert.equal(view.target2030, 806);
+  assert.equal(view.totalReductionRequired, 434);
+  assert.equal(view.gapTo2030, 314);
+  assert.equal(view.progressTo2030.toFixed(1), "27.6");
+  assert.equal(view.points.at(-1).label, "FY2050");
+  assert.equal(view.points.at(-1).value, 0);
+});
