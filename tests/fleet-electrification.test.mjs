@@ -82,12 +82,31 @@ test("overview emissions pathway renders dynamic year-aware labels", async () =>
   assert.match(html, /const periodLabels = getEmissionsPeriodLabels\(scenario\.baselineYear, scenario\.targetYear\)/);
   assert.match(html, /q\("#emissions-chart-title"\)\.textContent = periodLabels\.title/);
   assert.match(html, /q\("#emissions-chart"\)\.setAttribute\("aria-label", periodLabels\.ariaLabel\)/);
-  assert.match(html, /escapeHtml\(labels\[i\]\.stage\)/);
-  assert.match(html, /escapeHtml\(labels\[i\]\.year\)/);
+  assert.match(html, /escapeHtml\(label\.stage\)/);
+  assert.match(html, /escapeHtml\(label\.year\)/);
   assert.match(html, /#emissions-chart-title,#emissions-summary\{[^}]*overflow-wrap:anywhere/);
-  assert.match(html, /lineChart\(pathway,periodLabels\.stages\)/);
+  assert.match(html, /lineChart\(pathwaySeries,periodLabels\.stages\)/);
   assert.match(html, /periodLabels\.baselineYear/);
-  assert.match(html, /periodLabels\.targetYear/);
+});
+
+test("overview preserves the sidebar and renders the approved two-line pathway", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<aside class="sidebar" aria-label="Assessment navigation">/);
+  assert.doesNotMatch(html, /<nav class="top-nav"/);
+  assert.match(html, /id="kpi-net-emissions-percent"/);
+  assert.match(html, /id="kpi-net-emissions"/);
+  assert.match(html, /Baseline/);
+  assert.match(html, /Transition/);
+  assert.match(html, /Baseline and transition pathways to target/);
+  assert.doesNotMatch(html, /Three scenario pathways/);
+  assert.doesNotMatch(html, /Transition without EAC/);
+  assert.doesNotMatch(html, /Transition with EAC/);
+  assert.match(html, /function lineChart\(series, labels\)/);
+  assert.match(html, /pathwaySeries = \[/);
+  assert.match(html, /Annual operating impact/);
+  assert.match(html, /operating-baseline-bar/);
+  assert.match(html, /operating-transition-bar/);
+  assert.doesNotMatch(html, /id="cost-chart"/);
 });
 
 test("sample scenario reproduces workbook headline results", async () => {
@@ -203,11 +222,11 @@ test("validation blocks invalid fleet and missing electricity inputs", async () 
 test("application exposes accessible views, controls, and chart summaries", async () => {
   const { html } = await loadApp();
   assert.match(html, /class="skip-link"/);
-  assert.equal((html.match(/data-view-target=/g) || []).length, 5);
+  assert.equal((html.match(/data-view-target=/g) || []).length, 6);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /<label for="\$\{name\}">\$\{label\}<\/label>/);
   assert.match(html, /\["totalIceVehicles", "Total ICE vehicles"/);
-  assert.equal((html.match(/class="chart-summary"/g) || []).length, 2);
+  assert.equal((html.match(/class="chart-summary"/g) || []).length, 1);
   assert.match(html, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
   assert.match(html, /Scope 3 well-to-tank/);
   assert.match(html, /illustrative planning estimate/i);
@@ -290,7 +309,7 @@ test("section announcements use stable concise labels", async () => {
 
 test("charts use smooth curves and compact navigation keeps every view visible", async () => {
   const { html } = await loadApp();
-  assert.match(html, /\.nav\{display:flex;flex-wrap:wrap;overflow-x:visible/);
+  assert.match(html, /\.nav\{display:grid;/);
   assert.match(html, /\.content:focus\{outline:none\}/);
   assert.match(html, /const path = `M\$\{points\[0\]\.x\},\$\{points\[0\]\.y\} C/);
   assert.match(html, /class="cost-trend"/);
@@ -526,37 +545,20 @@ test("overview places board interpretation after graphs and errors before KPIs",
   assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
 });
 
-test("overview presents the approved eight-card KPI story in reading order", async () => {
+test("overview presents the decision-first KPI story in reading order", async () => {
   const { html } = await loadApp();
-  const grid = html.match(/<div class="kpi-grid">([\s\S]*?)<\/div>/)?.[1];
-  assert.ok(grid, "Overview KPI grid exists");
+  const overview = html.match(/<section class="view" id="view-overview"[\s\S]*?<section class="view" id="view-inputs"/)?.[0] || html;
+  assert.match(html, /<div class="decision-grid">[\s\S]*id="operating-card"[\s\S]*id="fleet-card"[\s\S]*<\/div>\s*<div class="analysis-grid">/);
+  assert.ok(html.indexOf('id="kpi-net-emissions-percent"') < html.indexOf('id="kpi-net-emissions"'));
 
-  const valueIds = [...grid.matchAll(/id="(kpi-[^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(valueIds, [
-    "kpi-fleet",
-    "kpi-fleet-sub",
-    "kpi-scope1",
-    "kpi-scope2-increase",
-    "kpi-scope2-increase-sub",
-    "kpi-residual",
-    "kpi-residual-sub",
-    "kpi-operating",
-    "kpi-payback",
-    "kpi-payback-sub",
-    "kpi-net-emissions",
-    "kpi-net-emissions-sub",
-    "kpi-investment",
-    "kpi-investment-sub",
-  ]);
-
-  assert.doesNotMatch(grid, /BEV electricity added|Additional certificate cost/);
+  assert.doesNotMatch(overview, /BEV electricity added|Additional certificate cost/);
   assert.match(html, /\["BEV electricity added",`\$\{formatNumber\(result\.bevElectricityAdded\)\} kWh`/);
   assert.match(html, /\["Additional certificate cost",formatMoney\(result\.additionalCertificateCost\)/);
 });
 
 test("static numeric payback card starts neutral before live rendering", async () => {
   const { html } = await loadApp();
-  assert.match(html, /<article class="kpi" id="payback-card">/);
+  assert.match(html, /<article class="metric-card" id="payback-card">/);
 });
 
 test("overview payback explanation uses live interpretation values", async () => {
