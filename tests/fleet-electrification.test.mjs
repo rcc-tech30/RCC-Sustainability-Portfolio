@@ -76,37 +76,85 @@ test("emissions period labels preserve full long and adversarial values outside 
   ]);
 });
 
-test("overview emissions pathway renders dynamic year-aware labels", async () => {
+test("overview emissions pathway renders exactly two EAC-labelled series", async () => {
   const { html } = await loadApp();
   assert.match(html, /<h3 id="emissions-chart-title">Emissions pathway<\/h3>/);
   assert.match(html, /const periodLabels = getEmissionsPeriodLabels\(scenario\.baselineYear, scenario\.targetYear\)/);
-  assert.match(html, /q\("#emissions-chart-title"\)\.textContent = periodLabels\.title/);
+  assert.match(html, /const pathway = buildEmissionsPathway\(result, periodLabels\)/);
   assert.match(html, /q\("#emissions-chart"\)\.setAttribute\("aria-label", periodLabels\.ariaLabel\)/);
-  assert.match(html, /escapeHtml\(label\.stage\)/);
-  assert.match(html, /escapeHtml\(label\.year\)/);
+  assert.match(html, /q\("#emissions-chart-period"\)\.textContent/);
   assert.match(html, /#emissions-chart-title,#emissions-summary\{[^}]*overflow-wrap:anywhere/);
-  assert.match(html, /lineChart\(pathwaySeries,periodLabels\.stages\)/);
+  assert.match(html, /q\("#emissions-chart"\)\.innerHTML = pathwayChart\(pathway, isCompactChart\(\)\)/);
+  assert.match(html, /q\("#emissions-legend"\)\.innerHTML = pathway\.series\.map/);
   assert.match(html, /periodLabels\.baselineYear/);
+  assert.match(html, /periodLabels\.targetYear/);
+  // The pathway carries no literal emissions numbers of its own.
+  assert.doesNotMatch(html, /170\.5\b/);
 });
 
-test("overview preserves the sidebar and renders the approved two-line pathway", async () => {
-  const { html } = await loadApp();
-  assert.match(html, /<aside class="sidebar" aria-label="Assessment navigation">/);
-  assert.doesNotMatch(html, /<nav class="top-nav"/);
-  assert.match(html, /id="kpi-net-emissions-percent"/);
-  assert.match(html, /id="kpi-net-emissions"/);
-  assert.match(html, /Baseline/);
-  assert.match(html, /Transition/);
-  assert.match(html, /Baseline and transition pathways to target/);
-  assert.doesNotMatch(html, /Three scenario pathways/);
-  assert.doesNotMatch(html, /Transition without EAC/);
-  assert.doesNotMatch(html, /Transition with EAC/);
-  assert.match(html, /function lineChart\(series, labels\)/);
-  assert.match(html, /pathwaySeries = \[/);
-  assert.match(html, /Annual operating impact/);
-  assert.match(html, /operating-baseline-bar/);
-  assert.match(html, /operating-transition-bar/);
-  assert.doesNotMatch(html, /id="cost-chart"/);
+test("emissions pathway derives one shared start and two certificate-aware endpoints", async () => {
+  const { model } = await loadApp();
+  const result = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const labels = model.getEmissionsPeriodLabels("FY2025", "FY2030");
+  const pathway = model.buildEmissionsPathway(result, labels);
+
+  assert.equal(pathway.series.length, 2, "exactly two trendlines");
+  assert.deepEqual(toHostRecord(pathway.series.map(series => series.label)), ["Before EAC", "After EAC"]);
+  assert.deepEqual(toHostRecord(pathway.series.map(series => series.key)), ["before", "after"]);
+
+  // One FY sequence, FY2030 present exactly once.
+  assert.deepEqual(toHostRecord(pathway.points.map(point => point.year)),
+    ["FY2025", "FY2026", "FY2027", "FY2028", "FY2029", "FY2030"]);
+  assert.equal(pathway.points.filter(point => point.year === "FY2030").length, 1);
+
+  // Shared FY2025 start comes from the calculated baseline, endpoints from the calculated residuals.
+  assert.equal(pathway.points[0].before, result.baselineTotalEmissions);
+  assert.equal(pathway.points[0].after, result.baselineTotalEmissions);
+  assert.equal(pathway.startValue, result.baselineTotalEmissions);
+  assert.ok(close(pathway.points.at(-1).before, result.residualBeforeCertificates));
+  assert.ok(close(pathway.points.at(-1).after, result.residualAfterCertificates));
+  assert.ok(close(pathway.beforeEnd, result.residualBeforeCertificates));
+  assert.ok(close(pathway.afterEnd, result.residualAfterCertificates));
+
+  // Before EAC never sits below After EAC when certificates reduce Scope 2.
+  pathway.points.forEach(point => assert.ok(point.before >= point.after - 1e-9));
+});
+
+test("emissions pathway tracks scenario inputs instead of fixed numbers", async () => {
+  const { model } = await loadApp();
+  const labels = model.getEmissionsPeriodLabels("FY2025", "FY2030");
+  const base = model.buildEmissionsPathway(
+    model.calculateScenario(model.DEFAULT_SCENARIO), labels);
+  const halved = model.buildEmissionsPathway(
+    model.calculateScenario({ ...model.DEFAULT_SCENARIO, vehiclesTransitioning: 5 }), labels);
+
+  assert.notEqual(base.beforeEnd, halved.beforeEnd);
+  assert.notDeepEqual(
+    toHostRecord(base.series[0].values.map(value => value.toFixed(4))),
+    toHostRecord(halved.series[0].values.map(value => value.toFixed(4))));
+
+  const noCertificates = model.buildEmissionsPathway(
+    model.calculateScenario({ ...model.DEFAULT_SCENARIO, targetCertificateCoverage: 0 }), labels);
+  assert.ok(close(noCertificates.beforeEnd, noCertificates.afterEnd),
+    "with no certificate coverage both pathways converge");
+});
+
+test("emissions pathway year sequence degrades safely for unparsable periods", async () => {
+  const { model } = await loadApp();
+  assert.deepEqual(toHostRecord(model.buildEmissionsYearSequence("FY2025", "FY2030")),
+    ["FY2025", "FY2026", "FY2027", "FY2028", "FY2029", "FY2030"]);
+  assert.deepEqual(toHostRecord(model.buildEmissionsYearSequence("2025", "2027")), ["2025", "2026", "2027"]);
+  assert.equal(model.buildEmissionsYearSequence("FY2030", "FY2025"), null, "no backwards periods");
+  assert.equal(model.buildEmissionsYearSequence("FY2025", "FY2025"), null, "no zero-length periods");
+  assert.equal(model.buildEmissionsYearSequence("FY2025", "CY2030"), null, "prefixes must match");
+  assert.equal(model.buildEmissionsYearSequence("FY2025", "FY2999"), null, "spans stay chartable");
+  assert.equal(model.buildEmissionsYearSequence("Baseline year", "Target year"), null);
+
+  const result = model.calculateScenario(model.DEFAULT_SCENARIO);
+  const fallback = model.buildEmissionsPathway(
+    result, model.getEmissionsPeriodLabels("Baseline year", "Target year"));
+  assert.deepEqual(toHostRecord(fallback.points.map(point => point.year)), ["Baseline year", "Target year"]);
+  assert.ok(close(fallback.points.at(-1).after, result.residualAfterCertificates));
 });
 
 test("sample scenario reproduces workbook headline results", async () => {
@@ -135,6 +183,7 @@ test("overview KPI story derives live Scope 2 and net emissions changes", async 
   assert.ok(close(story.netEmissionsMagnitude, 21.937536));
   assert.equal(story.netTone, "good");
   assert.equal(story.netSubline, "Reduction before certificates");
+  assert.ok(close(story.netEmissionsPct, 21.937536 / result.baselineTotalEmissions * 100));
 });
 
 test("overview KPI story communicates increase and exact-zero states", async () => {
@@ -153,6 +202,7 @@ test("overview KPI story communicates increase and exact-zero states", async () 
     netEmissionsMagnitude: 20,
     netTone: "warn",
     netSubline: "Increase before certificates",
+    netEmissionsPct: -20 / 150 * 100,
   });
 
   const noChange = model.deriveOverviewKpiStory({
@@ -168,6 +218,7 @@ test("overview KPI story communicates increase and exact-zero states", async () 
     netEmissionsMagnitude: 0,
     netTone: "neutral",
     netSubline: "No change before certificates",
+    netEmissionsPct: 0,
   });
 });
 
@@ -222,6 +273,9 @@ test("validation blocks invalid fleet and missing electricity inputs", async () 
 test("application exposes accessible views, controls, and chart summaries", async () => {
   const { html } = await loadApp();
   assert.match(html, /class="skip-link"/);
+  // Five sidebar nav targets, plus the overview rail's edit shortcut.
+  const navMarkup = html.match(/<nav class="nav">([\s\S]*?)<\/nav>/)?.[1] ?? "";
+  assert.equal((navMarkup.match(/data-view-target=/g) || []).length, 5);
   assert.equal((html.match(/data-view-target=/g) || []).length, 6);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /<label for="\$\{name\}">\$\{label\}<\/label>/);
@@ -307,12 +361,12 @@ test("section announcements use stable concise labels", async () => {
   assert.equal(model.formatInputSectionAnnouncement("general", false), "General section collapsed.");
 });
 
-test("charts use smooth curves and compact navigation keeps every view visible", async () => {
+test("pathway chart geometry is explicit and compact navigation keeps every view visible", async () => {
   const { html } = await loadApp();
-  assert.match(html, /\.nav\{display:grid;/);
+  assert.match(html, /\.nav\{display:flex;flex-wrap:wrap;overflow-x:visible/);
   assert.match(html, /\.content:focus\{outline:none\}/);
-  assert.match(html, /const path = `M\$\{points\[0\]\.x\},\$\{points\[0\]\.y\} C/);
-  assert.match(html, /class="cost-trend"/);
+  assert.match(html, /const line = points => `M\$\{points\.map/);
+  assert.match(html, /stroke="\$\{item\.stroke\}"/);
 });
 
 test("fallback-only BEV inputs explain and expose their active state", async () => {
@@ -545,15 +599,67 @@ test("overview places board interpretation after graphs and errors before KPIs",
   assert.match(html, /const warnings = messages\.filter\(message => message\.severity === "warning"/);
 });
 
-test("overview presents the decision-first KPI story in reading order", async () => {
+test("overview ranks the eight-card KPI story into primary and subordinate groups", async () => {
   const { html } = await loadApp();
-  const overview = html.match(/<section class="view" id="view-overview"[\s\S]*?<section class="view" id="view-inputs"/)?.[0] || html;
-  assert.match(html, /<div class="decision-grid">[\s\S]*id="operating-card"[\s\S]*id="fleet-card"[\s\S]*<\/div>\s*<div class="analysis-grid">/);
-  assert.ok(html.indexOf('id="kpi-net-emissions-percent"') < html.indexOf('id="kpi-net-emissions"'));
 
-  assert.doesNotMatch(overview, /BEV electricity added|Additional certificate cost/);
+  // Three dominant KPIs, net emissions change first and visually led.
+  const grid = html.match(/<div class="kpi-grid">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(grid, "Overview KPI grid exists");
+  assert.deepEqual([...grid.matchAll(/id="(kpi-[^"]+)"/g)].map(m => m[1]), [
+    "kpi-net-emissions",
+    "kpi-net-emissions-sub",
+    "kpi-operating",
+    "kpi-fleet",
+    "kpi-fleet-sub",
+  ]);
+  assert.match(grid, /class="kpi kpi-lead good" id="net-emissions-card"/);
+
+  // Five subordinate metrics, payback last and never presented as the headline.
+  const strip = html.match(/<div class="metric-row">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(strip, "Overview subordinate metric row exists");
+  assert.deepEqual([...strip.matchAll(/id="(kpi-[^"]+)"/g)].map(m => m[1]), [
+    "kpi-scope1",
+    "kpi-scope2-increase",
+    "kpi-scope2-increase-sub",
+    "kpi-residual",
+    "kpi-residual-sub",
+    "kpi-investment",
+    "kpi-investment-sub",
+    "kpi-payback",
+    "kpi-payback-sub",
+  ]);
+  // Payback stays qualified wherever it is surfaced.
+  assert.match(strip, /Indicative simple payback/);
+  assert.ok(html.indexOf('<div class="kpi-grid">') < html.indexOf('<div class="metric-row">'),
+    "primary KPIs precede the subordinate metric row");
+
+  assert.doesNotMatch(grid, /BEV electricity added|Additional certificate cost/);
   assert.match(html, /\["BEV electricity added",`\$\{formatNumber\(result\.bevElectricityAdded\)\} kWh`/);
   assert.match(html, /\["Additional certificate cost",formatMoney\(result\.additionalCertificateCost\)/);
+});
+
+test("overview keeps a compact scenario summary and an editable scenario rail", async () => {
+  const { html } = await loadApp();
+
+  // Compact summary strip near the top, before the KPIs.
+  const strip = html.match(/<div class="summary-strip">([\s\S]*?)<\/section>/)?.[1];
+  assert.ok(strip, "Overview exposes a scenario summary strip");
+  for (const id of ["scenario-company", "overview-period", "scenario-method", "overview-status"]) {
+    assert.match(strip, new RegExp(`id="${id}"`), `summary strip states ${id}`);
+  }
+  assert.ok(html.indexOf('<div class="summary-strip">') < html.indexOf('<div class="kpi-grid">'),
+    "summary strip sits above the KPIs");
+
+  // Scenario rail stays visible with a direct route into the inputs view.
+  assert.match(html, /id="scenario-rail"/);
+  assert.match(html, /id="edit-scenario-button"[^>]*data-view-target="inputs"/);
+  assert.match(html, /id="rail-fleet"/);
+  assert.match(html, /id="rail-period"/);
+  assert.match(html, /id="rail-method"/);
+
+  // Mirrors are populated by the same render pass as the header fields.
+  assert.match(html, /q\("#overview-period"\)\.textContent/);
+  assert.match(html, /q\("#overview-status"\)\.textContent/);
 });
 
 test("static numeric payback card starts neutral before live rendering", async () => {
@@ -570,4 +676,122 @@ test("overview payback explanation uses live interpretation values", async () =>
   assert.match(html, /Based on \$\{formatMoney\(interpretation\.annualSavings\)\} annual savings/);
   assert.match(html, /Annual operating cost increases by \$\{formatMoney\(interpretation\.annualCostIncrease\)\}/);
   assert.match(html, /holding other assumptions constant/);
+});
+
+test("overview cards stay independent and icon-led without placeholder glyphs", async () => {
+  const { html } = await loadApp();
+
+  // Every overview card carries its own border, radius and shadow.
+  assert.match(html, /\.kpi\{[^}]*border:1px solid var\(--line\)/);
+  assert.match(html, /\.kpi\{[^}]*border-radius:var\(--radius-panel\)/);
+  assert.match(html, /\.kpi\{[^}]*box-shadow:var\(--shadow-card\)/);
+  assert.match(html, /\.metric-card\{[^}]*border:1px solid var\(--line\)/);
+  assert.match(html, /\.metric-card\{[^}]*box-shadow:var\(--shadow-card\)/);
+  assert.match(html, /\.panel\{[^}]*border:1px solid var\(--line\)/);
+  assert.match(html, /\.panel\{[^}]*box-shadow:var\(--shadow-card\)/);
+  assert.match(html, /\.scenario-rail\{[^}]*box-shadow:var\(--shadow-card\)/);
+
+  // Icons are inline stroked SVG symbols, not text glyphs.
+  const sprite = html.match(/<svg class="icon-sprite"[\s\S]*?<\/svg>/)?.[0] ?? "";
+  assert.ok(sprite, "overview ships an inline icon sprite");
+  for (const id of ["icon-trend-down", "icon-truck", "icon-factory", "icon-bolt",
+                    "icon-cloud", "icon-coin", "icon-clock", "icon-pencil", "icon-info"]) {
+    assert.match(sprite, new RegExp(`<symbol id="${id}"`), `sprite defines ${id}`);
+  }
+  assert.equal((html.match(/<use href="#icon-/g) || []).length,
+    (html.match(/<use href="#icon-/g) || []).length);
+  assert.doesNotMatch(html.match(/<div class="metric-row">[\s\S]*?<\/div>/)?.[0] ?? "",
+    /[\u2192\u25B2\u25BC\u26A1\u2B50\uD83D]/, "no emoji or arrow glyphs stand in for icons");
+});
+
+test("overview keeps a single visible axis sequence and one scale", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /function pathwayChart\(pathway, compact = false\)/);
+  assert.match(html, /compactChartQuery\.addEventListener\("change", render\)/);
+  // Axis labels come from the shared point list, so a year cannot be drawn twice.
+  assert.match(html, /pathway\.points\.map\(\(point, index\) =>/);
+  assert.match(html, /escapeHtml\(point\.visualYear\)/);
+  // Endpoint callouts live in the right gutter, never as extra axis ticks.
+  assert.match(html, /class="pathway-endpoint"/);
+  assert.match(html, /const PATHWAY_STROKES = /);
+});
+
+test("overview desktop sidebar spans the full viewport height", async () => {
+  const { html } = await loadApp();
+  // Shell reserves a full viewport row, and the rail itself fills it.
+  assert.match(html, /\.app-shell\{min-height:100dvh;/);
+  assert.match(html, /\.sidebar\{position:sticky;top:0;height:100dvh;/);
+  // Mobile/tablet collapse is untouched: the sidebar returns to auto height.
+  assert.match(html, /\.sidebar\{position:relative;height:auto;/);
+});
+
+test("analysis row stretches the pathway and scenario cards to equal height", async () => {
+  const { html } = await loadApp();
+  const rule = html.match(/#view-overview \.chart-grid\{[^}]*\}/)?.[0];
+  assert.ok(rule, "overview chart grid rule exists");
+  assert.match(rule, /align-items:stretch/);
+  assert.doesNotMatch(rule, /align-items:start/);
+  // Both stay independent surfaces: each keeps its own border, radius and shadow.
+  assert.match(html, /\.scenario-rail\{display:flex;flex-direction:column;border:1px solid var\(--line\);border-radius:var\(--radius-panel\);background:var\(--white\);box-shadow:var\(--shadow-card\)\}/);
+  // Edit action is pinned to the bottom of the rail rather than trailing the list.
+  assert.match(html, /\.rail-edit\{margin-top:auto/);
+});
+
+test("scenario rail states the modelled EAC rate and keeps it live", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<dt>EAC rate<\/dt><dd id="rail-eac">/);
+  // Derived from the existing scenario input, never hard-coded.
+  assert.match(html, /q\("#rail-eac"\)\.textContent = `\$\{formatMoney\(scenario\.certificateCostPerKwh, 3\)\}\/kWh`/);
+  // Formatted like the other per-unit rail rows.
+  assert.match(html, /q\("#rail-grid"\)\.textContent = `\$\{formatNumber\(scenario\.gridEmissionFactor,2\)\} kgCO2e\/kWh`/);
+});
+
+test("approved emissions chart semantics stay put", async () => {
+  const { html } = await loadApp();
+  // Exactly two series, labelled as approved.
+  assert.equal(html.split("Before EAC").length - 1, 1, "one Before EAC label");
+  assert.equal(html.split("After EAC").length - 1, 1, "one After EAC label");
+  assert.match(html, /id="emissions-legend"/);
+});
+
+test("topbar carries only the sample-data status, no report actions", async () => {
+  const { html } = await loadApp();
+  const topbar = html.match(/<header class="topbar">[\s\S]*?<\/header>/)?.[0];
+  assert.ok(topbar, "topbar exists");
+  // The free dashboard exposes no Save, Export or Print control.
+  for (const fragment of ['id="save-button"', 'id="export-button"', 'id="print-button"',
+                          ">Save<", "Export report", "Print report"]) {
+    assert.ok(!topbar.includes(fragment), `topbar must not contain ${fragment}`);
+  }
+  // Their click handlers go with them.
+  for (const handler of ['q("#save-button")', 'q("#export-button")', 'q("#print-button")']) {
+    assert.ok(!html.includes(handler), `dangling handler ${handler}`);
+  }
+  // Status stays, as a status and not as a button.
+  assert.match(topbar, /<span class="status" id="data-status">Sample Data<\/span>/);
+  assert.ok(!/<button/.test(topbar), "topbar exposes no buttons at all");
+  // Scenario reset and the rail's edit action are untouched.
+  assert.match(html, /id="reset-button"/);
+  assert.match(html, /id="edit-scenario-button"[^>]*data-view-target="inputs"/);
+});
+
+test("decision overview states the approved supporting sentence", async () => {
+  const { html } = await loadApp();
+  assert.match(html, /<p class="eyebrow">Decision overview<\/p>/);
+  assert.match(html, /<p class="overview-lede">Emissions, investments, and operating impact for the selected scenario\.<\/p>/);
+  // Retired wording must not linger.
+  assert.ok(!html.includes("Emissions, investment and annual operating impact of replacing"),
+    "previous lede must be gone");
+});
+
+test("empty alert region does not open a gap above the summary card", async () => {
+  const { html } = await loadApp();
+  // The alert region keeps its spacing only when it actually holds messages.
+  assert.match(html, /\.warning-stack:empty\{margin:0\}/);
+  // It stays in the DOM and stays announced: never display:none, or the live
+  // region can stop announcing validation errors.
+  assert.ok(!/\.warning-stack:empty\{[^}]*display:none/.test(html), "live region must not be hidden");
+  assert.match(html, /id="warning-stack"[^>]*aria-live="assertive"/);
+  // Deliberate desktop gap between the supporting sentence and the first card.
+  assert.match(html, /\.overview-head\{display:block;margin:0 0 18px\}/);
 });

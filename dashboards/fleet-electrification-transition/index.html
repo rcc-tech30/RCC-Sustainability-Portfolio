@@ -7,55 +7,41 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23081b33'/%3E%3Cpath d='M35 7 18 35h13l-3 22 18-31H33z' fill='%23087f5b'/%3E%3C/svg%3E">
   <meta name="description" content="Interactive fleet electrification planning assessment for emissions, investment, operating cost and payback scenarios.">
   <style>
-    :root{--navy:#081b33;--navy-2:#102a48;--ink:#152033;--muted:#607087;--line:#d8e0e8;--surface:#f4f7f9;--white:#fff;--emerald:#087f5b;--emerald-soft:#e6f5ef;--orange:#b85c00;--orange-soft:#fff1df;--red:#b42318;--red-soft:#ffebe9;--radius-panel:12px;--radius-control:8px;--shadow:0 12px 34px rgba(8,27,51,.08);font-family:Arial,"Helvetica Neue",sans-serif;color:var(--ink);background:var(--surface);font-synthesis:none}
+    :root{--navy:#081b33;--navy-2:#102a48;--ink:#152033;--muted:#607087;--line:#e2e8f0;--line-soft:#eef2f7;--surface:#f6f8fb;--white:#fff;--emerald:#087f5b;--emerald-soft:#e7f4ee;--emerald-line:#bfdccf;--slate:#94a3b8;--slate-soft:#eff2f6;--orange:#b85c00;--orange-soft:#fff1df;--red:#b42318;--red-soft:#ffebe9;--radius-panel:12px;--radius-control:8px;--shadow:0 12px 34px rgba(8,27,51,.08);--shadow-card:0 1px 2px rgba(8,27,51,.05),0 2px 6px rgba(8,27,51,.04);font-family:Arial,"Helvetica Neue",sans-serif;color:var(--ink);background:var(--surface);font-synthesis:none}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--surface);color:var(--ink)}button,input,select{font:inherit}.skip-link{position:fixed;z-index:100;left:12px;top:12px;transform:translateY(-180%);background:var(--white);color:var(--navy);padding:10px 14px;border-radius:var(--radius-control);box-shadow:var(--shadow)}.skip-link:focus{transform:none}
-    .app-shell{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100dvh;overflow-y:auto;padding:28px 18px;background:var(--navy);color:#fff;display:flex;flex-direction:column}.brand{padding:0 10px 26px;border-bottom:1px solid rgba(255,255,255,.14)}.brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:10px;font-weight:800;letter-spacing:-.04em}.brand strong{display:block;margin-top:16px;font-size:15px;line-height:1.25}.brand span{display:block;margin-top:6px;color:#a9b9ca;font-size:12px;line-height:1.45}.nav{display:grid;gap:6px;margin-top:24px}.nav button{min-height:44px;border:0;border-radius:8px;background:transparent;color:#b9c6d5;text-align:left;padding:0 12px;cursor:pointer;font-weight:700}.nav button:hover{background:rgba(255,255,255,.08);color:#fff}.nav button[aria-current="page"]{background:#fff;color:var(--navy)}.sidebar-note{margin-top:auto;padding:14px 10px 0;color:#9fb0c3;font-size:11px;line-height:1.5}.main{min-width:0}.topbar{min-height:76px;padding:16px clamp(20px,4vw,54px);border-bottom:1px solid var(--line);background:rgba(244,247,249,.94);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}.page-title{min-width:0;font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere}.page-title small{display:block;margin-top:4px;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:0}.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.status{border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px;background:var(--orange-soft);color:var(--orange)}.button{min-height:40px;padding:0 13px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.button:hover{border-color:#98a8ba}.button:active{transform:translateY(1px)}.button.primary{background:var(--emerald);border-color:var(--emerald);color:#fff}.content{padding:34px clamp(20px,4vw,54px) 64px;max-width:1520px;margin:0 auto}.view[hidden]{display:none}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}.eyebrow{margin:0 0 9px;color:var(--emerald);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1,.view-heading h2{margin:0;color:var(--navy);letter-spacing:-.045em;line-height:1.03}.hero h1{font-size:clamp(32px,4vw,56px);max-width:760px}.hero p,.view-heading p{max-width:68ch;color:var(--muted);line-height:1.6}.scenario-meta{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}.warning-stack{display:grid;gap:8px;margin:18px 0}.alert{padding:12px 14px;border-radius:var(--radius-control);font-size:13px;font-weight:650}.alert.warning{background:var(--orange-soft);color:#743b00}.alert.error{background:var(--red-soft);color:var(--red)}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.kpi{min-height:140px;padding:18px;border-radius:var(--radius-panel);border:1px solid var(--line);background:var(--white);box-shadow:0 8px 22px rgba(8,27,51,.04);display:flex;flex-direction:column}.kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.04em;text-transform:uppercase}.kpi .value{margin-top:16px;font-size:clamp(22px,2.1vw,32px);line-height:1;font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-.035em}.kpi.good .value{color:var(--emerald)}.kpi.warn .value{color:var(--orange)}.kpi .sub{margin-top:auto;padding-top:14px;color:var(--muted);font-size:11px;line-height:1.35}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{min-width:0;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow);padding:20px}.panel h3{margin:0;color:var(--navy);font-size:15px}.panel-intro{margin:6px 0 18px;color:var(--muted);font-size:12px}.chart{min-height:260px}.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.5}.board-interpretation{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}.board-interpretation-heading{margin-bottom:8px}.board-interpretation-heading h2{margin:0;color:var(--navy);font-size:20px;letter-spacing:-.025em}.board-note{display:grid;grid-template-columns:minmax(150px,.25fr) minmax(0,1fr);gap:10px 24px;padding:16px 0;border-bottom:1px solid var(--line)}.board-note[hidden]{display:none}.board-note:last-child{border-bottom:0}.board-note strong{color:var(--navy);font-size:12px}.board-note p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.board-note p+p{grid-column:2}.board-note ul{grid-column:2;margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.55}.view-heading{margin-bottom:24px}.view-heading h2{font-size:clamp(28px,3vw,42px)}.form-section{margin-top:18px;border-top:1px solid var(--line);padding-top:22px}.form-section h3{margin:0 0 14px;color:var(--navy);font-size:15px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:800;color:#33445a}.field input,.field select{width:100%;height:44px;border:1px solid #b9c5d2;border-radius:var(--radius-control);background:#fff;padding:0 12px;color:var(--ink);font-variant-numeric:tabular-nums}.field input:focus,.field select:focus,.button:focus-visible,.nav button:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px;border-color:var(--emerald)}.field small{min-height:14px;color:var(--muted);font-size:10px;line-height:1.35}.field.has-error input,.field.has-error select{border-color:var(--red)}.field .field-error{color:var(--red)}.metric-table{width:100%;border-collapse:collapse}.metric-table th,.metric-table td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.metric-table th{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}.metric-table td:nth-child(2){font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums}.metric-table tr:last-child td{border-bottom:0}.two-col{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px}.stack{display:grid;gap:18px}.callout{padding:18px;border-left:4px solid var(--emerald);background:var(--emerald-soft);border-radius:0 var(--radius-control) var(--radius-control) 0;color:#174d3e;line-height:1.55;font-size:13px}.callout.warning{border-color:var(--orange);background:var(--orange-soft);color:#6b3d09}.method-list{display:grid;gap:14px}.method-item{padding-bottom:14px;border-bottom:1px solid var(--line)}.method-item:last-child{border-bottom:0;padding-bottom:0}.method-item strong{display:block;color:var(--navy);margin-bottom:5px}.method-item p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.source-link{color:var(--emerald);word-break:break-word}.footer{padding:22px clamp(20px,4vw,54px);border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-    #emissions-chart-title,#emissions-summary{overflow-wrap:anywhere;word-break:break-word}#emissions-chart svg{overflow:hidden}
+    .app-shell{min-height:100dvh;display:grid;grid-template-columns:248px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100dvh;overflow-y:auto;padding:28px 18px;background:var(--navy);color:#fff;display:flex;flex-direction:column}.brand{padding:0 10px 26px;border-bottom:1px solid rgba(255,255,255,.14)}.brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:10px;font-weight:800;letter-spacing:-.04em}.brand strong{display:block;margin-top:16px;font-size:15px;line-height:1.25}.brand span{display:block;margin-top:6px;color:#a9b9ca;font-size:12px;line-height:1.45}.nav{display:grid;gap:6px;margin-top:24px}.nav button{min-height:44px;border:0;border-radius:8px;background:transparent;color:#b9c6d5;text-align:left;padding:0 12px;cursor:pointer;font-weight:700}.nav button:hover{background:rgba(255,255,255,.08);color:#fff}.nav button[aria-current="page"]{background:#fff;color:var(--navy)}.sidebar-note{margin-top:auto;padding:14px 10px 0;color:#9fb0c3;font-size:11px;line-height:1.5}.main{min-width:0}.topbar{min-height:76px;padding:16px clamp(20px,4vw,54px);border-bottom:1px solid var(--line);background:rgba(244,247,249,.94);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}.page-title{min-width:0;font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere}.page-title small{display:block;margin-top:4px;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:0}.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.status{border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px;background:var(--orange-soft);color:var(--orange)}.button{min-height:40px;padding:0 13px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.button:hover{border-color:#98a8ba}.button:active{transform:translateY(1px)}.button.primary{background:var(--emerald);border-color:var(--emerald);color:#fff}.content{padding:34px clamp(20px,4vw,54px) 64px;max-width:1520px;margin:0 auto}.content:has(#view-overview:not([hidden])){padding-top:16px;padding-bottom:8px}.main:has(#view-overview:not([hidden])) .footer{padding-top:10px;padding-bottom:10px}.view[hidden]{display:none}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}.eyebrow{margin:0 0 9px;color:var(--emerald);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1,.view-heading h2{margin:0;color:var(--navy);letter-spacing:-.045em;line-height:1.03}.hero h1{font-size:clamp(32px,4vw,56px);max-width:760px}.hero p,.view-heading p{max-width:68ch;color:var(--muted);line-height:1.6}.scenario-meta{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}.warning-stack{display:grid;gap:8px;margin:18px 0}.warning-stack:empty{margin:0}.alert{padding:12px 14px;border-radius:var(--radius-control);font-size:13px;font-weight:650}.alert.warning{background:var(--orange-soft);color:#743b00}.alert.error{background:var(--red-soft);color:var(--red)}.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.kpi{min-height:140px;padding:18px;border-radius:var(--radius-panel);border:1px solid var(--line);background:var(--white);box-shadow:var(--shadow-card);display:flex;flex-direction:column}.kpi .label{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.04em;text-transform:uppercase}.kpi .value{margin-top:16px;font-size:clamp(22px,2.1vw,32px);line-height:1;font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-.035em}.kpi.good .value{color:var(--emerald)}.kpi.warn .value{color:var(--orange)}.kpi .sub{margin-top:auto;padding-top:14px;color:var(--muted);font-size:11px;line-height:1.35}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{min-width:0;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow-card);padding:20px}.panel h3{margin:0;color:var(--navy);font-size:15px}.panel-intro{margin:6px 0 18px;color:var(--muted);font-size:12px}.chart{min-height:260px}.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.5}.board-interpretation{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}.board-interpretation-heading{margin-bottom:8px}.board-interpretation-heading h2{margin:0;color:var(--navy);font-size:20px;letter-spacing:-.025em}.board-note{display:grid;grid-template-columns:minmax(150px,.25fr) minmax(0,1fr);gap:10px 24px;padding:16px 0;border-bottom:1px solid var(--line)}.board-note[hidden]{display:none}.board-note:last-child{border-bottom:0}.board-note strong{color:var(--navy);font-size:12px}.board-note p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.board-note p+p{grid-column:2}.board-note ul{grid-column:2;margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.55}.view-heading{margin-bottom:24px}.view-heading h2{font-size:clamp(28px,3vw,42px)}.form-section{margin-top:18px;border-top:1px solid var(--line);padding-top:22px}.form-section h3{margin:0 0 14px;color:var(--navy);font-size:15px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:800;color:#33445a}.field input,.field select{width:100%;height:44px;border:1px solid #b9c5d2;border-radius:var(--radius-control);background:#fff;padding:0 12px;color:var(--ink);font-variant-numeric:tabular-nums}.field input:focus,.field select:focus,.button:focus-visible,.nav button:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px;border-color:var(--emerald)}.field small{min-height:14px;color:var(--muted);font-size:10px;line-height:1.35}.field.has-error input,.field.has-error select{border-color:var(--red)}.field .field-error{color:var(--red)}.metric-table{width:100%;border-collapse:collapse}.metric-table th,.metric-table td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.metric-table th{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}.metric-table td:nth-child(2){font-weight:850;color:var(--navy);font-variant-numeric:tabular-nums}.metric-table tr:last-child td{border-bottom:0}.two-col{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px}.stack{display:grid;gap:18px}.callout{padding:18px;border-left:4px solid var(--emerald);background:var(--emerald-soft);border-radius:0 var(--radius-control) var(--radius-control) 0;color:#174d3e;line-height:1.55;font-size:13px}.callout.warning{border-color:var(--orange);background:var(--orange-soft);color:#6b3d09}.method-list{display:grid;gap:14px}.method-item{padding-bottom:14px;border-bottom:1px solid var(--line)}.method-item:last-child{border-bottom:0;padding-bottom:0}.method-item strong{display:block;color:var(--navy);margin-bottom:5px}.method-item p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.source-link{color:var(--emerald);word-break:break-word}.footer{padding:22px clamp(20px,4vw,54px);border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+    #emissions-chart-title,#emissions-summary{overflow-wrap:anywhere;word-break:break-word}#emissions-chart svg{overflow:visible;display:block;width:100%;height:auto}.icon-sprite{position:absolute;width:0;height:0;overflow:hidden}.icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.icon-hint{width:16px;height:16px;color:#a6b3c4}
     .input-section-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.section-filter{display:flex;align-items:center;gap:7px;min-height:38px;padding:0 12px;border:1px solid #b9c5d2;border-radius:999px;background:var(--white);color:var(--navy);font-weight:800;cursor:pointer}.section-filter small{color:var(--muted);font-size:10px;font-weight:700}.section-filter[aria-expanded="true"]{border-color:var(--emerald);background:var(--emerald);color:#fff}.section-filter[aria-expanded="true"] small{color:#d9f3e9}.section-filter:active,.section-heading:active{transform:translateY(1px)}.form-section .section-heading-wrap{margin:0}.section-heading{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 0 14px;border:0;background:transparent;color:var(--navy);text-align:left;cursor:pointer}.section-heading strong,.section-heading small{display:block}.section-heading strong{font-size:15px}.section-heading small{margin-top:4px;color:var(--muted);font-size:11px;font-weight:500}.section-heading [data-section-action]{color:var(--emerald);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.section-content{opacity:1;transform:translateY(0);transition:opacity .18s ease,transform .18s ease}.section-content[hidden]{display:none}.section-filter:focus-visible,.section-heading:focus-visible{outline:3px solid rgba(8,127,91,.3);outline-offset:2px}
     .field-label-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.field-status{color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}.field[data-method][data-applicable="false"]{opacity:.66}.field[data-method][data-applicable="false"] input{border-style:dashed;background:#edf1f3;color:var(--muted);cursor:not-allowed}.field[data-method][data-applicable="true"] .field-status{color:var(--emerald)}
+    /* Overview: independent cards on a light canvas. Each block owns its border, radius and shadow; nothing is merged into a continuous table. */#view-overview{padding-bottom:10px}.overview-head{display:block;margin:0 0 18px}.overview-head .eyebrow{margin:0 0 4px}.overview-lede{margin:0;max-width:74ch;color:var(--muted);font-size:13px;line-height:1.5}.summary-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding:16px 20px;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow-card);overflow:visible}.summary-item{display:flex;align-items:center;gap:12px;margin:0;padding:0;border:0;min-width:0}.summary-icon{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:9px;background:var(--slate-soft);color:#5a6b81}.summary-text{display:flex;flex-direction:column;gap:2px;min-width:0}.summary-item .k{color:var(--muted);font-size:11px;line-height:1.3}.summary-item .v{color:var(--navy);font-size:13px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}#view-overview .kpi-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.22fr) minmax(0,1fr);gap:14px;margin-top:14px;align-items:stretch}#view-overview .kpi{min-height:0;padding:18px 20px;display:flex;flex-direction:row;gap:14px;align-items:center}.kpi-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:50%;background:var(--slate-soft);color:#5a6b81}.kpi-icon .icon{width:22px;height:22px}.kpi.good .kpi-icon{background:var(--emerald-soft);color:var(--emerald)}.kpi.warn .kpi-icon{background:var(--orange-soft);color:var(--orange)}.kpi-body{display:flex;flex-direction:column;gap:4px;min-width:0}#view-overview .kpi .label{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}#view-overview .kpi .value{margin:0;font-size:clamp(24px,2.3vw,30px);line-height:1.1;font-weight:850;letter-spacing:-.03em}#view-overview .kpi .sub{margin:0;padding:0;font-size:12px;line-height:1.35;color:var(--muted)}#view-overview .kpi-lead{border-color:var(--emerald-line)}#view-overview .kpi-lead .value{font-size:clamp(30px,3vw,38px);letter-spacing:-.04em}#view-overview #fleet-card .value{color:var(--emerald)}#view-overview .kpi-fleet-figure em{font-style:normal;font-size:.6em;font-weight:700;color:var(--muted);padding:0 .1em}#view-overview .kpi-operating{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 16px;padding:16px 20px}#view-overview .kpi-operating>.kpi-head,#view-overview .kpi-operating>.value{grid-column:1 / -1}#view-overview .kpi-operating>.compare{grid-column:1}.kpi-head{display:flex;align-items:center;justify-content:space-between;gap:10px}#view-overview .kpi-operating .value{font-size:clamp(26px,2.6vw,34px)}.compare{display:flex;flex-direction:column;gap:6px;margin-top:2px}.compare-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:10px}.compare-label{color:var(--muted);font-size:11px}.compare-track{height:10px;border-radius:5px;background:var(--line-soft);overflow:hidden}.compare-fill{display:block;height:100%;border-radius:5px;min-width:3px}.compare-fill.base{background:var(--slate)}.compare-fill.trans{background:var(--emerald)}.compare-value{color:var(--navy);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}.compare-delta{grid-column:2;display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding-left:16px;border-left:1px solid var(--line-soft)}.delta-value{color:var(--emerald);font-size:15px;font-weight:850;font-variant-numeric:tabular-nums;white-space:nowrap}.kpi.warn .delta-value{color:var(--orange)}.delta-unit{color:var(--muted);font-size:11px}#view-overview .chart-grid{grid-template-columns:minmax(0,1.9fr) minmax(260px,1fr);gap:14px;margin-top:14px;align-items:stretch}#view-overview .panel{padding:18px 20px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}#view-overview .panel h3{font-size:15px;letter-spacing:-.01em}#view-overview .panel-intro{margin:4px 0 10px;font-size:11px;line-height:1.4;color:var(--muted)}#view-overview .chart{min-height:0}.chart-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:2px 0 0;padding:0;list-style:none}.legend-item{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:12px;font-weight:700}.legend-swatch{display:block;width:20px;height:3px;border-radius:2px}#view-overview .chart-summary{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line-soft);font-size:11px;line-height:1.45;color:var(--muted)}.scenario-rail{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow-card)}.rail-list{margin:10px 0 14px;display:flex;flex-direction:column}.rail-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft)}.rail-row:last-child{border-bottom:0}.rail-row dt{color:var(--muted);font-size:12px}.rail-row dd{margin:0;color:var(--navy);font-size:12px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.rail-edit{margin-top:auto;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px}.button.dark{background:var(--navy);border-color:var(--navy);color:#fff}.button.dark:hover{background:var(--navy-2);border-color:var(--navy-2)}.metric-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}.metric-card{min-width:0;padding:14px;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:9px}.metric-card .label{color:var(--navy);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;line-height:1.3}.metric-body{display:flex;align-items:center;gap:10px;min-width:0}.metric-icon{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;background:var(--slate-soft);color:#5a6b81}.metric-card.good .metric-icon{background:var(--emerald-soft);color:var(--emerald)}.metric-card.warn .metric-icon{background:var(--orange-soft);color:var(--orange)}.metric-figures{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto}.metric-card .value{color:var(--navy);font-size:clamp(16px,1.5vw,20px);font-weight:850;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.035em;overflow-wrap:anywhere}.metric-card.good .value{color:var(--emerald)}.metric-card.warn .value{color:var(--orange)}.metric-card .unit{color:var(--muted);font-size:11px;line-height:1.3}.metric-card .unit:empty{display:none}.metric-card .value{white-space:nowrap}.metric-card.money .value{font-size:clamp(15px,1.35vw,18px);white-space:nowrap}.metric-card .sub{margin-top:0;color:var(--muted);font-size:11px;line-height:1.35}#view-overview .board-interpretation{margin-top:14px;padding-top:0;border-top:0}.board-interpretation-heading h2{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}.board-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}#view-overview .board-note[hidden]{display:none}#view-overview .board-note{display:block;padding:16px;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--white);box-shadow:var(--shadow-card)}#view-overview .board-note strong{display:block;margin-bottom:6px;color:var(--navy);font-size:12px}#view-overview .board-note p,#view-overview .board-note ul{grid-column:auto;font-size:12px;line-height:1.5}#view-overview .board-note p+p{margin-top:6px}.board-note[hidden]{display:none}.footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+    .topbar{min-height:64px;padding-top:12px;padding-bottom:12px}#view-overview .metric-card .sub{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}#view-overview #emissions-chart svg{overflow:visible}.pathway-endpoint text{font-family:inherit}
     .content:focus{outline:none}
-    @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:900px){.app-shell{display:block}.sidebar{position:relative;height:auto;overflow:visible;padding:14px 18px;display:block}.brand{display:flex;align-items:center;gap:12px;padding:0;border:0}.brand-mark{width:38px;height:38px}.brand strong{margin:0}.brand span,.sidebar-note{display:none}.nav{display:flex;flex-wrap:wrap;overflow-x:visible;margin:14px -2px 0;padding-bottom:2px}.nav button{white-space:nowrap;flex:1 1 auto;text-align:center}.nav button[aria-current="page"]{background:rgba(255,255,255,.14);color:#fff}.topbar{top:0}.chart-grid,.two-col{grid-template-columns:1fr}}
-    @media(max-width:640px){.topbar{align-items:flex-start}.top-actions .button:not(.primary){display:none}.content{padding-top:24px}.hero{display:block}.scenario-meta{text-align:left;margin-top:14px;white-space:normal}.kpi-grid,.form-grid{grid-template-columns:1fr}.kpi{min-height:126px}.chart{min-height:220px}.panel{padding:16px}.board-note{grid-template-columns:1fr;gap:7px}.board-note p+p,.board-note ul{grid-column:1}.metric-table th:nth-child(3),.metric-table td:nth-child(3){display:none}}
+    @media(max-width:1240px){#view-overview .metric-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#view-overview .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#view-overview .kpi-operating{order:3;grid-column:1 / -1}#view-overview .chart-grid{grid-template-columns:minmax(0,1fr)}#view-overview .scenario-rail{grid-column:1 / -1}#view-overview .rail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}.summary-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}}
+    @media(max-width:900px){.app-shell{display:block}.sidebar{position:relative;height:auto;overflow:visible;padding:14px 18px;display:block}.brand{display:flex;align-items:center;gap:12px;padding:0;border:0}.brand-mark{width:38px;height:38px}.brand strong{margin:0}.brand span,.sidebar-note{display:none}.nav{display:flex;flex-wrap:wrap;overflow-x:visible;margin:14px -2px 0;padding-bottom:2px}.nav button{white-space:nowrap;flex:1 1 auto;text-align:center}.nav button[aria-current="page"]{background:rgba(255,255,255,.14);color:#fff}.topbar{top:0}.chart-grid,.two-col{grid-template-columns:1fr}#view-overview .chart-grid{grid-template-columns:minmax(0,1fr)}.summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}#view-overview .metric-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:640px){.topbar{align-items:flex-start}.content{padding-top:24px}.hero{display:block}.scenario-meta{text-align:left;margin-top:14px;white-space:normal}.kpi-grid,.form-grid{grid-template-columns:1fr}#view-overview .kpi-grid,#view-overview .chart-grid,.summary-strip,.metric-row,#view-overview .metric-row,#view-overview .rail-list{grid-template-columns:1fr}#view-overview .kpi-operating{grid-template-columns:minmax(0,1fr)}.compare-delta{grid-column:1;flex-direction:row;align-items:baseline;gap:8px;padding:8px 0 0;border-left:0;border-top:1px solid var(--line-soft)}#view-overview .kpi{padding:14px 16px}.compare-row{grid-template-columns:56px minmax(0,1fr) auto;gap:8px}.chart-legend{gap:14px}#view-overview .metric-card .sub{-webkit-line-clamp:3}.overview-head{display:block}.overview-lede{margin-top:6px}.chart{min-height:220px}.panel{padding:16px}.board-note{grid-template-columns:1fr;gap:7px}.board-note p+p,.board-note ul{grid-column:1}.metric-table th:nth-child(3),.metric-table td:nth-child(3){display:none}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-    @media print{.sidebar,.topbar,.button,.skip-link{display:none!important}.app-shell{display:block}.content{padding:0}.view{display:block!important;break-after:page}.panel,.kpi{box-shadow:none;break-inside:avoid}.footer{padding:18px 0}}
-
-    /* Overview refinement: compact, decision-first SaaS presentation. */
-    .app-shell{display:block;min-height:100dvh}.main{width:100%;min-width:0;overflow:hidden}.topbar{width:100%;min-height:68px;padding:12px clamp(18px,3vw,42px);display:grid;grid-template-columns:minmax(190px,.9fr) minmax(380px,1.6fr) auto;align-items:center;gap:18px;background:rgba(248,250,251,.92)}.topbar-identity{display:flex;align-items:center;gap:11px;min-width:0}.topbar-identity .brand-mark{flex:0 0 36px;width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;font-size:12px}.top-nav{display:flex;justify-content:center;gap:4px;min-width:0}.top-nav button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:9px 13px;white-space:nowrap;font-size:12px;font-weight:800;cursor:pointer}.top-nav button:hover,.top-nav button[aria-current="page"]{background:var(--emerald-soft);color:var(--navy)}.top-actions{justify-content:flex-end}.top-actions .status{white-space:nowrap}.content{width:100%;min-width:0;max-width:1500px;padding:28px clamp(18px,3vw,42px) 54px}.dashboard-hero{margin-bottom:18px;align-items:center}.dashboard-hero h1{font-size:clamp(28px,3vw,42px)}.dashboard-hero p{margin:8px 0 0;font-size:13px}.dashboard-hero .eyebrow{margin-bottom:5px}.scenario-summary{width:100%;min-width:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 18px;border:1px solid var(--line);border-radius:12px;background:var(--white);box-shadow:0 6px 18px rgba(8,27,51,.035)}.scenario-summary>div{padding:13px 16px;border-right:1px solid var(--line);min-width:0}.scenario-summary>div:last-child{border-right:0}.summary-label{display:block;color:var(--muted);font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.scenario-summary strong{display:block;margin-top:5px;color:var(--navy);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.decision-grid{width:100%;min-width:0;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(210px,.85fr) minmax(210px,.85fr);gap:14px}.kpi{min-width:0;min-height:146px;padding:20px;border-radius:14px}.kpi-heading{display:flex;align-items:flex-start;justify-content:flex-start;gap:12px;min-width:0}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.kpi .label{padding-top:5px;min-width:0;overflow-wrap:anywhere}.icon-tile{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--emerald-soft);color:var(--emerald);font-weight:900;font-size:18px;line-height:1;flex:0 0 auto}.icon-tile.subtle{background:#edf3f7;color:#6f8499;width:28px;height:28px;font-size:15px}.kpi-lead{min-height:178px;border-color:#a7d6c5;background:linear-gradient(135deg,#fff 55%,#f2faf6)}.kpi-lead .value{margin-top:18px;font-size:clamp(42px,5vw,72px);color:var(--emerald);letter-spacing:-.065em}.kpi-lead .absolute-value{display:block;margin-top:5px;color:#165c49;font-size:clamp(18px,2vw,26px);letter-spacing:-.035em}.kpi-secondary .value{margin-top:auto;font-size:clamp(28px,2.6vw,42px)}.kpi .sub{margin-top:9px;padding-top:0}.progress-track{height:6px;margin:14px 0 2px;border-radius:999px;background:#e7ecef;overflow:hidden}.progress-track span{display:block;height:100%;border-radius:inherit;background:var(--emerald);transition:width .2s ease}.analysis-grid{width:100%;min-width:0;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.88fr) minmax(220px,.72fr);gap:14px;margin-top:14px}.analysis-grid .panel{min-width:0;min-height:320px;padding:18px;border-radius:14px}.panel-heading .panel-intro{margin:5px 0 0}.chart{min-height:235px}.emissions-panel .chart{min-height:260px}.scenario-panel{display:flex;flex-direction:column}.scenario-list{margin:4px 0 18px}.scenario-list>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.scenario-list dt{color:var(--muted)}.scenario-list dd{margin:0;color:var(--navy);font-weight:850;text-align:right}.scenario-edit{width:100%;margin-top:auto}.supporting-metrics{width:100%;min-width:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--white);overflow:hidden;box-shadow:0 8px 22px rgba(8,27,51,.045)}.metric-card{min-width:0;min-height:118px;padding:16px;border-right:1px solid var(--line);display:flex;flex-direction:column}.metric-card:last-child{border-right:0}.metric-card .label{color:var(--muted);font-size:10px;font-weight:900;letter-spacing:.045em;text-transform:uppercase;overflow-wrap:anywhere}.metric-card .value{margin-top:10px;color:var(--navy);font-size:clamp(18px,1.7vw,25px);font-weight:850;letter-spacing:-.035em}.metric-card.good .value{color:var(--emerald)}.metric-card.warn .value{color:var(--orange)}.metric-card .sub{margin-top:auto;padding-top:7px;color:var(--muted);font-size:10px;line-height:1.35}.board-interpretation{margin-top:22px;padding-top:18px}.board-interpretation-heading{display:none}.board-note{grid-template-columns:minmax(120px,.26fr) minmax(0,1fr);padding:11px 0}.board-note p,.board-note ul{font-size:12px}.scenario-meta{font-size:12px}.sidebar{display:none}.nav{display:none}
-    .chart-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 0 4px;padding-left:56px;color:var(--muted);font-size:10px}.chart-legend-item{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.chart-legend-item i{display:inline-block;width:18px;border-top:2px solid var(--legend-color);border-top-style:solid}.chart-legend-item i[style*="--legend-dash:8 6"]{border-top-style:dashed}.chart-legend-item i[style*="--legend-dash:2 5"]{border-top-style:dotted}
-    @media(max-width:1120px){.topbar{grid-template-columns:minmax(160px,.8fr) minmax(320px,1.4fr) auto}.top-nav button{padding-inline:9px}.analysis-grid{grid-template-columns:minmax(0,1.25fr) minmax(260px,.9fr)}.scenario-panel{grid-column:1/-1;min-height:0}.scenario-list{display:grid;grid-template-columns:repeat(3,1fr);gap:0 18px}.scenario-edit{max-width:260px;align-self:flex-end}.supporting-metrics{grid-template-columns:repeat(3,1fr)}.metric-card:nth-child(3){border-right:0}.metric-card:nth-child(n+4){border-top:1px solid var(--line)}}
-    @media(min-width:821px){.dashboard-hero{margin-bottom:14px}.dashboard-hero h1{font-size:34px}.dashboard-hero p{margin-top:5px}.scenario-summary{margin-bottom:14px}.scenario-summary>div{padding:10px 14px}.kpi-lead{min-height:160px}.kpi{min-height:132px;padding:16px}.kpi-lead .value{margin-top:12px}.analysis-grid{margin-top:12px;align-items:start}.analysis-grid .panel{height:auto;min-height:220px;padding:14px;overflow:hidden}.analysis-grid .chart{height:140px;min-height:140px;overflow:hidden}.analysis-grid .chart svg{height:132px}.emissions-panel .chart{height:150px;min-height:150px}.emissions-panel .chart svg{height:150px}.scenario-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;margin-bottom:14px}.scenario-list>div{padding:7px 0}.scenario-edit{min-height:38px}.supporting-metrics{margin-top:12px}.metric-card{min-height:94px;padding:13px}.metric-card .value{margin-top:7px}.metric-card .sub{padding-top:4px}}
-    @media(max-width:820px){.topbar{grid-template-columns:minmax(0,1fr) auto;gap:10px}.top-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start;overflow-x:auto;padding-bottom:2px}.top-actions .status,.top-actions .button:not(.primary){display:none}.content{padding-top:22px}.dashboard-hero{display:block}.dashboard-hero .scenario-meta{margin-top:8px}.scenario-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.scenario-summary>div:nth-child(2){border-right:0}.scenario-summary>div:nth-child(n+3){border-top:1px solid var(--line)}.scenario-summary>div:nth-child(4){border-right:0}.decision-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi,.kpi-heading,.kpi .label,.panel,.panel-heading>div{min-width:0}.kpi .label{overflow-wrap:anywhere}.kpi-lead{grid-column:1/-1}.analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.emissions-panel{grid-column:1/-1}.scenario-panel{grid-column:1/-1}.scenario-list{grid-template-columns:repeat(2,minmax(0,1fr))}.supporting-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-card:nth-child(2){border-right:0}.metric-card:nth-child(3){border-right:1px solid var(--line)}.metric-card:nth-child(n+3){border-top:1px solid var(--line)}.metric-card:last-child{border-right:0}}
-    @media(max-width:600px){.topbar{padding:10px 14px}.topbar-identity .page-title{font-size:14px}.top-nav{gap:2px}.top-nav button{padding:8px 10px;font-size:11px}.content{padding:18px 14px 38px}.dashboard-hero h1{font-size:30px}.scenario-summary{margin-bottom:14px}.scenario-summary>div{padding:10px 12px}.scenario-summary strong{font-size:12px}.decision-grid,.analysis-grid{grid-template-columns:minmax(0,1fr)}.kpi-lead,.emissions-panel,.scenario-panel{grid-column:auto}.kpi-lead{min-height:186px}.kpi-lead .value{font-size:54px}.kpi-secondary{min-height:132px}.analysis-grid .panel{min-height:0}.emissions-panel .chart{min-height:220px}.chart{min-height:205px}.scenario-list{grid-template-columns:repeat(2,minmax(0,1fr))}.scenario-list>div{padding:8px 0;font-size:11px}.supporting-metrics{grid-template-columns:1fr}.metric-card,.metric-card:nth-child(3){min-height:88px;border-right:0}.metric-card:nth-child(n+2){border-top:1px solid var(--line)}.metric-card .value{margin-top:6px;font-size:22px}.metric-card .sub{margin-top:4px}.board-interpretation{margin-top:18px}.board-note{grid-template-columns:1fr;gap:5px}.board-note p+p{grid-column:1}.board-note ul{grid-column:1}}
-    @media(max-width:600px){body{overflow-x:hidden}.topbar{padding:10px 14px}.topbar-identity .page-title{font-size:14px}.top-nav{gap:2px}.top-nav button{padding:8px 10px;font-size:11px}.content{padding:18px 14px 38px}.dashboard-hero h1{font-size:30px}.scenario-summary{margin-bottom:14px}.scenario-summary>div{padding:10px 12px}.scenario-summary strong{font-size:12px}.decision-grid,.analysis-grid{grid-template-columns:minmax(0,1fr)}.kpi-lead,.emissions-panel,.scenario-panel{grid-column:auto}.kpi-lead{min-height:186px}.kpi-lead .value{font-size:54px}.kpi-secondary{min-height:132px}.analysis-grid .panel{min-height:0}.emissions-panel .chart{min-height:220px}.chart{min-height:205px}.scenario-list{grid-template-columns:repeat(2,minmax(0,1fr))}.scenario-list>div{padding:8px 0;font-size:11px}.supporting-metrics{grid-template-columns:1fr}.metric-card,.metric-card:nth-child(3){min-height:88px;border-right:0}.metric-card:nth-child(n+2){border-top:1px solid var(--line)}.metric-card .value{margin-top:6px;font-size:22px}.metric-card .sub{margin-top:4px}.board-interpretation{margin-top:18px}.board-note{grid-template-columns:1fr;gap:5px}.board-note p+p{grid-column:1}.board-note ul{grid-column:1}}
-    @media(prefers-reduced-motion:reduce){.progress-track span{transition:none}}
-
-    /* Approved overview composition: retain the existing sidebar and keep the duplicated cost chart out of the overview. */
-    .app-shell{display:grid;grid-template-columns:248px minmax(0,1fr)}
-    .sidebar{display:flex}
-    .main{width:auto;overflow:visible}
-    .topbar{display:flex;min-height:76px;padding:16px clamp(20px,4vw,54px)}
-    .topbar-identity{display:none}
-    .content{max-width:1520px;padding:28px clamp(20px,4vw,54px) 54px}
-    .analysis-grid{grid-template-columns:minmax(0,1.45fr) minmax(260px,.85fr)}
-    .analysis-grid .panel{min-height:260px}
-    .operating-card{position:relative;display:block;padding:18px 18px 16px}
-    .operating-card .kpi-heading{justify-content:space-between}
-    .operating-card .value{margin:12px 0 9px;font-size:clamp(28px,2.6vw,42px)}
-    .operating-comparison{display:grid;gap:6px;padding-right:92px}
-    .operating-comparison>div{display:grid;grid-template-columns:58px minmax(30px,1fr) auto;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
-    .operating-comparison strong{color:var(--navy);font-weight:700;white-space:nowrap}
-    .operating-bar{display:block;height:12px;border-radius:1px;background:#9da3a8}
-    .operating-bar.transition{width:16%;background:var(--emerald)}
-    .operating-delta{position:absolute;right:17px;bottom:18px;display:grid;gap:2px;padding-left:12px;border-left:1px solid var(--line);color:var(--emerald);font-size:13px;font-weight:800;white-space:nowrap}
-    .operating-delta small{font-size:11px;text-align:right}
-    @media(max-width:900px){.app-shell{display:block}.sidebar{position:relative;height:auto;overflow:visible;padding:14px 18px;display:block}.brand{display:flex;align-items:center;gap:12px;padding:0;border:0}.brand-mark{width:38px;height:38px}.brand strong{margin:0}.brand span,.sidebar-note{display:none}.nav{display:flex;flex-wrap:wrap;overflow-x:visible;margin:14px -2px 0;padding-bottom:2px}.nav button{white-space:nowrap;flex:1 1 auto;text-align:center}.nav button[aria-current="page"]{background:rgba(255,255,255,.14);color:#fff}.topbar{top:0}.topbar-identity{display:none}.analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:820px){.analysis-grid{grid-template-columns:minmax(0,1fr)}.supporting-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-card:nth-child(2){border-right:0}.metric-card:nth-child(3){border-right:1px solid var(--line)}.metric-card:nth-child(n+3){border-top:1px solid var(--line)}.metric-card:last-child{border-right:0}}
-    @media(max-width:600px){.topbar{padding:10px 14px}.content{padding:18px 14px 38px}.decision-grid{grid-template-columns:minmax(0,1fr)}.kpi-lead{grid-column:auto}.operating-card{min-height:166px}.operating-comparison{padding-right:92px}.supporting-metrics{grid-template-columns:1fr}.metric-card,.metric-card:nth-child(3){min-height:82px;border-right:0}.metric-card:nth-child(n+2){border-top:1px solid var(--line)}}
+    @media print{.sidebar,.topbar,.button,.skip-link{display:none!important}.app-shell{display:block}.content,.content:has(#view-overview:not([hidden])){padding:0}.view{display:block!important;break-after:page}.panel,.kpi,.metric-card,.summary-strip{box-shadow:none;break-inside:avoid}.footer,.main:has(#view-overview:not([hidden])) .footer{padding:18px 0}}
   </style>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to assessment</a>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false"><defs>
+    <symbol id="icon-trend-down" viewBox="0 0 24 24"><polyline points="3 7 9.5 13.5 13.5 9.5 21 17"/><polyline points="15 17 21 17 21 11"/></symbol>
+    <symbol id="icon-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 10h3.7l3.3 3.3v3.2h-7z"/><circle cx="7" cy="18.2" r="1.8"/><circle cx="17" cy="18.2" r="1.8"/></symbol>
+    <symbol id="icon-factory" viewBox="0 0 24 24"><path d="M3 20.5V10l5.2 3.4V10l5.2 3.4V5.5h5.6v15z"/><path d="M3 20.5h18"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="M13.4 2.5 5 13.6h5.6L10.6 21.5 19 10.4h-5.6z"/></symbol>
+    <symbol id="icon-cloud" viewBox="0 0 24 24"><path d="M7.4 19h9.3a3.9 3.9 0 0 0 .4-7.8 5.4 5.4 0 0 0-10.4-1A3.95 3.95 0 0 0 7.4 19z"/></symbol>
+    <symbol id="icon-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M14.7 9.3a3 3 0 0 0-2.7-1.3c-1.6 0-2.7.8-2.7 2s1 1.7 2.7 2.1 2.8 1 2.8 2.2-1.2 2.1-2.8 2.1a3.1 3.1 0 0 1-2.7-1.4"/><path d="M12 6.4v11.2"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 6.9v5.4l3.5 2.1"/></symbol>
+    <symbol id="icon-pencil" viewBox="0 0 24 24"><path d="M4 20h4.3L19.5 8.8a2 2 0 0 0 0-2.8l-1.5-1.5a2 2 0 0 0-2.8 0L4 15.7z"/><path d="M14.6 5.4 18.6 9.4"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 11.2v5.4"/><path d="M12 7.6v.8"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.4" y="5" width="17.2" height="15.5" rx="2.6"/><path d="M3.4 10h17.2M8 3v4M16 3v4"/></symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24"><path d="M4.6 20.5V5.4a1 1 0 0 1 1-1h8.8a1 1 0 0 1 1 1v15.1"/><path d="M15.4 10.6h3a1 1 0 0 1 1 1v8.9"/><path d="M3 20.5h18M8 8.4h1.5M8 12h1.5M8 15.6h1.5M11.8 8.4h1.5M11.8 12h1.5M11.8 15.6h1.5"/></symbol>
+    <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M3.5 8h8M16.5 8h4M3.5 16h4M11.5 16h9"/><circle cx="13.8" cy="8" r="2.3"/><circle cx="8.8" cy="16" r="2.3"/></symbol>
+    <symbol id="icon-shield-check" viewBox="0 0 24 24"><path d="M12 3.2 5 5.7v5.6c0 4.3 2.9 8.2 7 9.4 4.1-1.2 7-5.1 7-9.4V5.7z"/><path d="M9.1 12.1l2.2 2.2 4-4.1"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3.8v10.4"/><path d="M7.8 10.4 12 14.6l4.2-4.2"/><path d="M4.8 19.5h14.4"/></symbol>
+  </defs></svg>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Assessment navigation">
       <div class="brand"><div class="brand-mark" aria-hidden="true">FE</div><div><strong>Fleet Electrification</strong><span>Transition assessment</span></div></div>
@@ -71,37 +57,43 @@
     <div class="main">
       <header class="topbar">
         <div class="page-title">Fleet transition model<small id="header-period">FY2025 to FY2030</small></div>
-        <div class="top-actions"><span class="status" id="data-status">Sample Data</span><button class="button" type="button" id="save-button">Save</button><button class="button" type="button" id="export-button">Export</button><button class="button primary" type="button" id="print-button">Print report</button></div>
+        <div class="top-actions"><span class="status" id="data-status">Sample Data</span></div>
       </header>
       <main class="content" id="main-content" tabindex="-1">
         <section class="view" id="view-overview" data-view="overview">
-          <div class="hero dashboard-hero"><div><p class="eyebrow">Decision overview</p><h1>Fleet transition model</h1><p>Emissions, investment and operating impact for this scenario.</p></div><div class="scenario-meta"><strong id="scenario-company">Company X by You</strong><br><span id="scenario-method">Distance-based method</span></div></div>
-          <div class="scenario-summary" aria-label="Scenario summary"><div><span class="summary-label">Scenario</span><strong id="summary-company">Company X by You</strong></div><div><span class="summary-label">Assessment period</span><strong id="summary-period">FY2025 to FY2030</strong></div><div><span class="summary-label">BEV method</span><strong id="summary-method">Distance-based</strong></div><div><span class="summary-label">Data status</span><strong id="summary-status">Sample Data</strong></div></div>
+          <div class="overview-head"><p class="eyebrow">Decision overview</p><p class="overview-lede">Emissions, investments, and operating impact for the selected scenario.</p></div>
           <div id="warning-stack" class="warning-stack" role="alert" aria-label="Input errors" aria-live="assertive"></div>
-          <div class="decision-grid">
-            <article class="kpi kpi-lead good" id="net-emissions-card"><div class="kpi-heading"><span class="icon-tile" aria-hidden="true">⌁</span><span class="label">Net emissions change</span></div><strong class="value" id="kpi-net-emissions-percent">−12.9%</strong><strong class="absolute-value" id="kpi-net-emissions">−21.94 tCO2e reduced vs baseline</strong><span class="sub" id="kpi-net-emissions-sub">before certificates</span></article>
-            <article class="kpi kpi-secondary good operating-card" id="operating-card"><div class="kpi-heading"><span class="label">Annual operating impact</span><span class="icon-tile subtle" aria-hidden="true">ⓘ</span></div><strong class="value" id="kpi-operating">AUD 8,902</strong><div class="operating-comparison" aria-label="Baseline and transition comparison"><div><span>Baseline</span><i class="operating-bar baseline" id="operating-baseline-bar"></i><strong id="operating-baseline-value">AUD 8,902</strong></div><div><span>Transition</span><i class="operating-bar transition" id="operating-transition-bar"></i><strong id="operating-transition-value">—</strong></div></div><span class="operating-delta" id="operating-delta">−AUD 8,902 <small>/ year</small></span></article>
-            <article class="kpi kpi-secondary" id="fleet-card"><div class="kpi-heading"><span class="icon-tile" aria-hidden="true">▱</span><span class="label">Fleet transition</span></div><strong class="value" id="kpi-fleet">10 of 10</strong><div class="progress-track"><span id="fleet-progress" style="width:100%"></span></div><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></article>
+          <div class="summary-strip">
+            <p class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#icon-building"/></svg></span><span class="summary-text"><span class="k">Scenario</span><span class="v" id="scenario-company">Company X by You</span></span></p>
+            <p class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg></span><span class="summary-text"><span class="k">Assessment period</span><span class="v" id="overview-period">FY2025 to FY2030</span></span></p>
+            <p class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#icon-sliders"/></svg></span><span class="summary-text"><span class="k">BEV calculation method</span><span class="v" id="scenario-method">Distance-based method</span></span></p>
+            <p class="summary-item"><span class="summary-icon"><svg class="icon" aria-hidden="true"><use href="#icon-shield-check"/></svg></span><span class="summary-text"><span class="k">Data status</span><span class="v" id="overview-status">Sample Data</span></span></p>
           </div>
-          <div class="analysis-grid">
-            <article class="panel chart-panel emissions-panel"><div class="panel-heading"><div><h3 id="emissions-chart-title">Emissions pathway</h3><p class="panel-intro">Baseline and transition pathways to target.</p></div><span class="icon-tile subtle" aria-hidden="true">⌁</span></div><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><div class="chart-summary" id="emissions-summary"></div></article>
-            <article class="panel scenario-panel"><div class="panel-heading"><div><h3>Scenario</h3><p class="panel-intro">Inputs driving this overview.</p></div><span class="icon-tile subtle" aria-hidden="true">☷</span></div><dl class="scenario-list"><div><dt>Fleet</dt><dd id="scenario-fleet">10 of 10</dd></div><div><dt>Period</dt><dd id="scenario-period">FY2025–30</dd></div><div><dt>BEV method</dt><dd id="scenario-bev-method">Distance-based</dd></div><div><dt>BEV efficiency</dt><dd id="scenario-efficiency">0.20 kWh/km</dd></div><div><dt>Grid factor</dt><dd id="scenario-grid-factor">0.62 kg/kWh</dd></div><div><dt>Certificates</dt><dd id="scenario-certificates">100%</dd></div></dl><button class="button primary scenario-edit" type="button" data-view-target="inputs">Edit scenario</button></article>
+          <div class="kpi-grid">
+            <article class="kpi kpi-lead good" id="net-emissions-card"><span class="kpi-icon"><svg class="icon" aria-hidden="true"><use href="#icon-trend-down"/></svg></span><span class="kpi-body"><span class="label">Net emissions change</span><strong class="value" id="kpi-net-emissions">&#8722;12.9%</strong><span class="sub" id="kpi-net-emissions-sub">&#8722;21.94 tCO2e reduced vs baseline</span></span></article>
+            <article class="kpi kpi-operating good" id="operating-card"><span class="kpi-head"><span class="label">Annual operating impact</span><svg class="icon icon-hint" role="img"><title>Electricity, certificates and avoided fuel, compared with the baseline year</title><use href="#icon-info"/></svg></span><strong class="value" id="kpi-operating">AUD 8,902</strong><span class="compare"><span class="compare-row"><span class="compare-label">Baseline</span><span class="compare-track"><span class="compare-fill base" id="operating-bar-baseline"></span></span><span class="compare-value" id="operating-baseline">AUD 70,000</span></span><span class="compare-row"><span class="compare-label">Transition</span><span class="compare-track"><span class="compare-fill trans" id="operating-bar-transition"></span></span><span class="compare-value" id="operating-transition">AUD 61,098</span></span></span><span class="compare-delta"><span class="delta-value" id="operating-delta">&#8722;AUD 8,902</span><span class="delta-unit">per year</span></span></article>
+            <article class="kpi" id="fleet-card"><span class="kpi-icon"><svg class="icon" aria-hidden="true"><use href="#icon-truck"/></svg></span><span class="kpi-body"><span class="label">Fleet transition</span><strong class="value kpi-fleet-figure" id="kpi-fleet">10 <em>of</em> 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></span></article>
           </div>
-          <section class="supporting-metrics" aria-label="Supporting metrics">
-            <article class="metric-card good"><span class="label">Scope 1 avoided</span><strong class="value" id="kpi-scope1">46.49 tCO2e</strong><span class="sub">Mobile combustion eliminated</span></article>
-            <article class="metric-card warn" id="scope2-card"><span class="label">Scope 2 added</span><strong class="value" id="kpi-scope2-increase">24.55 tCO2e</strong><span class="sub" id="kpi-scope2-increase-sub">Grid Scope 2 increase</span></article>
-            <article class="metric-card good"><span class="label">Residual after certificates</span><strong class="value" id="kpi-residual">0.00 tCO2e</strong><span class="sub" id="kpi-residual-sub">Before certificates: 148.55 tCO2e</span></article>
-            <article class="metric-card"><span class="label">Net transition investment</span><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
-            <article class="metric-card" id="payback-card"><span class="label">Indicative simple payback</span><strong class="value" id="kpi-payback">41.56 years</strong><span class="sub" id="kpi-payback-sub">Based on AUD 8,902 annual savings</span></article>
-          </section>
+          <div class="chart-grid">
+            <article class="panel panel-chart panel-pathway"><div class="panel-head"><h3 id="emissions-chart-title">Emissions pathway</h3><svg class="icon icon-hint" role="img"><title>Scope 1 and Scope 2 for the transitioning fleet, before and after certificate adjustment</title><use href="#icon-info"/></svg></div><p class="panel-intro" id="emissions-chart-period">FY2025 to FY2030 &#183; Scope 1 and Scope 2, tCO2e per year</p><div class="chart" id="emissions-chart" role="img" aria-label="Emissions pathway chart"></div><ul class="chart-legend" id="emissions-legend"></ul><p class="chart-summary" id="emissions-summary"></p></article>
+            <article class="panel scenario-rail" id="scenario-rail"><h3>Scenario</h3><dl class="rail-list"><div class="rail-row"><dt>Fleet</dt><dd id="rail-fleet">10 of 10 vehicles</dd></div><div class="rail-row"><dt>Period</dt><dd id="rail-period">FY2025 to FY2030</dd></div><div class="rail-row"><dt>BEV method</dt><dd id="rail-method">Distance-based</dd></div><div class="rail-row"><dt>BEV efficiency</dt><dd id="rail-efficiency">0.2 kWh/km</dd></div><div class="rail-row"><dt>Grid factor</dt><dd id="rail-grid">0.62 kgCO2e/kWh</dd></div><div class="rail-row"><dt>Certificate coverage</dt><dd id="rail-certificates">100%</dd></div><div class="rail-row"><dt>EAC rate</dt><dd id="rail-eac">AUD 0.055/kWh</dd></div></dl><button class="button dark rail-edit" type="button" id="edit-scenario-button" data-view-target="inputs"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"/></svg>Edit scenario</button></article>
+          </div>
+          <div class="metric-row">
+            <article class="metric-card good" id="scope1-card"><span class="label">Scope 1 avoided</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-factory"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-scope1">46.49</strong><span class="unit" id="unit-scope1">tCO2e / year</span></span></span><span class="sub" id="sub-scope1">In FY2030</span></article>
+            <article class="metric-card warn" id="scope2-card"><span class="label">Scope 2 added</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-bolt"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-scope2-increase">24.55</strong><span class="unit" id="unit-scope2">tCO2e / year</span></span></span><span class="sub" id="kpi-scope2-increase-sub">Grid Scope 2: 124.00 to 148.55 tCO2e</span></article>
+            <article class="metric-card good" id="residual-card"><span class="label">Residual after certificates</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-cloud"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-residual">0.00</strong><span class="unit" id="unit-residual">tCO2e / year</span></span></span><span class="sub" id="kpi-residual-sub">Before certificates: 148.55 tCO2e</span></article>
+            <article class="metric-card money" id="investment-card"><span class="label">Net investment</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-coin"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="unit" id="unit-investment">Net of resale</span></span></span><span class="sub" id="kpi-investment-sub">AUD 120,000 vs new ICE purchase</span></article>
+            <article class="metric-card" id="payback-card"><span class="label">Indicative simple payback</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-clock"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-payback">41.56</strong><span class="unit" id="unit-payback">years</span></span></span><span class="sub" id="kpi-payback-sub">Based on AUD 8,902 annual savings</span></article>
+          </div>
           <section class="board-interpretation" id="board-interpretation" aria-labelledby="board-interpretation-title">
-            <div class="board-interpretation-heading"><p class="eyebrow">Decision support</p><h2 id="board-interpretation-title">Board interpretation</h2></div>
-            <div class="board-note"><strong>Payback outlook</strong><p id="payback-explanation"></p><p id="payback-boundary"></p></div>
-            <div class="board-note" id="overview-warning-note" hidden><strong>Scenario warnings</strong><ul id="overview-warning-list"></ul></div>
-            <div class="board-note"><strong>Important limitation</strong><p id="payback-limitation">Simple payback excludes maintenance, financing, tax, depreciation, battery replacement and time value of money.</p></div>
+            <div class="board-interpretation-heading"><h2 id="board-interpretation-title">Board interpretation</h2></div>
+            <div class="board-notes">
+              <div class="board-note"><strong>Payback outlook</strong><p id="payback-explanation"></p><p id="payback-boundary"></p></div>
+              <div class="board-note" id="overview-warning-note" hidden><strong>Scenario warnings</strong><ul id="overview-warning-list"></ul></div>
+              <div class="board-note"><strong>Important limitation</strong><p id="payback-limitation">Simple payback excludes maintenance, financing, tax, depreciation, battery replacement and time value of money.</p></div>
+            </div>
           </section>
         </section>
-
         <section class="view" id="view-inputs" data-view="inputs" hidden>
           <div class="view-heading"><p class="eyebrow">Scenario builder</p><h2>Inputs and assumptions</h2><p>Blue-outlined controls are your editable scenario. Results update immediately and remain in this browser.</p></div>
           <div class="input-section-filters" role="group" aria-label="Input sections">
@@ -245,6 +237,50 @@
           { stage: "Baseline", year: visualBaseline },
           { stage: "After fleet transition", year: visualTarget },
           { stage: "After certificates", year: visualTarget },
+        ],
+      };
+    }
+
+    function buildEmissionsYearSequence(baselineYear, targetYear) {
+      const parse = label => {
+        const match = String(label ?? "").trim().match(/^(\D*)(\d{4})(\D*)$/);
+        return match ? { prefix: match[1], year: Number(match[2]), suffix: match[3] } : null;
+      };
+      const start = parse(baselineYear);
+      const end = parse(targetYear);
+      if (!start || !end) return null;
+      if (start.prefix !== end.prefix || start.suffix !== end.suffix) return null;
+      const span = end.year - start.year;
+      if (!(span >= 1 && span <= 20)) return null;
+      return Array.from({ length: span + 1 }, (_, index) => `${start.prefix}${start.year + index}${start.suffix}`);
+    }
+
+    // Presentation only: the shared start and both endpoints come straight from calculateScenario.
+    // Intermediate years are a straight-line ramp between those calculated points.
+    function buildEmissionsPathway(result, periodLabels) {
+      const startValue = result.baselineTotalEmissions;
+      const beforeEnd = result.residualBeforeCertificates;
+      const afterEnd = result.residualAfterCertificates;
+      const sequence = buildEmissionsYearSequence(periodLabels.baselineYear, periodLabels.targetYear)
+        || [periodLabels.baselineYear, periodLabels.targetYear];
+      const steps = sequence.length - 1;
+      const points = sequence.map((year, index) => {
+        const progress = steps > 0 ? index / steps : 1;
+        return {
+          year,
+          visualYear: formatChartYearLabel(year),
+          before: startValue + (beforeEnd - startValue) * progress,
+          after: startValue + (afterEnd - startValue) * progress,
+        };
+      });
+      return {
+        points,
+        startValue,
+        beforeEnd,
+        afterEnd,
+        series: [
+          { key: "before", label: "Before EAC", values: points.map(point => point.before) },
+          { key: "after", label: "After EAC", values: points.map(point => point.after) },
         ],
       };
     }
@@ -400,6 +436,10 @@
           ? "warn"
           : "neutral";
 
+      const netEmissionsPct = result.baselineTotalEmissions > 0
+        ? netEmissionsDisplayChange / result.baselineTotalEmissions * 100
+        : null;
+
       return {
         scope2Increase,
         scope2Tone: scope2Increase > 0 ? "warn" : scope2Increase < 0 ? "good" : "neutral",
@@ -411,6 +451,7 @@
           : netTone === "warn"
             ? "Increase before certificates"
             : "No change before certificates",
+        netEmissionsPct,
       };
     }
 
@@ -485,6 +526,8 @@
       getFallbackFieldState,
       formatChartYearLabel,
       getEmissionsPeriodLabels,
+      buildEmissionsYearSequence,
+      buildEmissionsPathway,
       syncFallbackMethodFields,
       derivePaybackFleetBoundary,
       formatPaybackBoundaryMessage,
@@ -493,7 +536,7 @@
   </script>
   <script>
     (() => {
-      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, deriveOverviewKpiStory, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, syncFallbackMethodFields } = globalThis.__fleetModel;
+      const { DEFAULT_SCENARIO, DEFAULT_INPUT_SECTIONS, calculateScenario, deriveOverviewKpiStory, validateScenario, derivePaybackInterpretation, formatPaybackBoundaryMessage, serializeScenario, parseStoredScenario, serializeInputSections, parseStoredInputSections, formatInputSectionAnnouncement, getEmissionsPeriodLabels, buildEmissionsPathway, syncFallbackMethodFields } = globalThis.__fleetModel;
       const percentageFields = new Set(["chargingLossPct", "fuelToBevPct", "currentCertificateCoverage", "targetCertificateCoverage"]);
       const fieldGroups = {
         "fleet-fields": [
@@ -548,8 +591,9 @@
         const card = q("#payback-card");
         card.className = `metric-card${interpretation.hasPayback ? "" : " warn"}`;
         q("#kpi-payback").textContent = interpretation.hasPayback
-          ? `${formatNumber(interpretation.simplePaybackTransition, 2)} years`
+          ? formatNumber(interpretation.simplePaybackTransition, 2)
           : "No payback";
+        q("#unit-payback").textContent = interpretation.hasPayback ? "years" : "";
         q("#kpi-payback-sub").textContent = interpretation.hasPayback
           ? `Based on ${formatMoney(interpretation.annualSavings)} annual savings`
           : interpretation.operatingChangeIsZero
@@ -639,28 +683,63 @@
         return control.name === "currencyCode" ? control.value.toUpperCase().slice(0, 3) : control.value;
       }
 
-      function lineChart(series, labels) {
-        const width = 720, height = 220, left = 56, right = 24, top = 32, bottom = 44;
-        const allValues = series.flatMap(item => item.values);
-        const max = Math.max(...allValues, 1) * 1.1;
-        const innerW = width - left - right, innerH = height - top - bottom;
-        const pointSet = values => values.map((value, index) => ({ x: left + (innerW * index / (values.length - 1)), y: top + innerH - (value / max * innerH), value }));
-        const pathFor = points => { const midpoint01 = (points[0].x + points[1].x) / 2; const midpoint12 = (points[1].x + points[2].x) / 2; const path = `M${points[0].x},${points[0].y} C${midpoint01},${points[0].y} ${midpoint01},${points[1].y} ${points[1].x},${points[1].y} C${midpoint12},${points[1].y} ${midpoint12},${points[2].y} ${points[2].x},${points[2].y}`; return path; };
-        const grid = [0, .25, .5, .75, 1].map(ratio => { const y = top + innerH - innerH * ratio; return `<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}" stroke="#e7edf1"/><text x="${left-10}" y="${y+4}" text-anchor="end" font-size="10" fill="#7a8b9c">${formatNumber(max * ratio,0)}</text>`; }).join("");
-        const legend = series.map(item => `<span class="chart-legend-item"><i style="--legend-color:${item.color};--legend-dash:${item.dash || "none"}"></i>${escapeHtml(item.name)}</span>`).join("");
-        const paths = series.map(item => { const points = pointSet(item.values); const last = points[points.length - 1]; return `<path d="${pathFor(points)}" fill="none" stroke="${item.color}" stroke-width="${item.weight || 3}" stroke-linecap="round" stroke-linejoin="round"${item.dash ? ` stroke-dasharray="${item.dash}"` : ""}/>${points.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="${item.emphasis && i === points.length - 1 ? 4 : 3}" fill="#fff" stroke="${item.color}" stroke-width="2"/>`).join("")}<text x="${Math.min(width-right-3,last.x+8)}" y="${Math.max(top+12,last.y-8)}" font-size="10" font-weight="700" fill="${item.color}">${formatNumber(last.value,1)}</text>`; }).join("");
-        const xLabels = labels.map((label,index) => { const x = left + (innerW * index / (labels.length - 1)); return `<text x="${x}" y="${height-23}" text-anchor="middle" font-size="10" font-weight="700" fill="#33445a">${escapeHtml(label.stage)}</text><text x="${x}" y="${height-9}" text-anchor="middle" font-size="9" fill="#7a8b9c">${escapeHtml(label.year)}</text>`; }).join("");
-        return `<div class="chart-legend" aria-hidden="true">${legend}</div><svg viewBox="0 0 ${width} ${height}" aria-hidden="true">${grid}<line x1="${left}" y1="${top+innerH}" x2="${width-right}" y2="${top+innerH}" stroke="#cdd7e1"/>${paths}${xLabels}</svg>`;
+      const PATHWAY_STROKES = Object.freeze({ before: "#94a3b8", after: "#087f5b" });
+
+      function niceAxisScale(peak) {
+        const target = Math.max(peak, 1) / 5;
+        const magnitude = 10 ** Math.floor(Math.log10(target));
+        const step = [1, 2, 2.5, 5, 10]
+          .map(multiple => multiple * magnitude)
+          .find(candidate => candidate >= target - 1e-9) || magnitude * 10;
+        return { step, max: Math.max(Math.ceil(Math.max(peak, 1) / step) * step, step) };
       }
 
-      function barChart(current, projected) {
-        const width = 620, height = 250, base = 205, max = Math.max(current, projected, 1) * 1.15;
-        const bars = [[170,current,"Current"],[390,projected,"Projected"]];
-        const heights = bars.map(([,value]) => value / max * 155);
-        const trendStart = { x: 216, y: base - heights[0] - 4 };
-        const trendEnd = { x: 436, y: base - heights[1] - 4 };
-        const trendControlY = Math.min(trendStart.y, trendEnd.y) - 18;
-        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><line x1="70" y1="${base}" x2="570" y2="${base}" stroke="#cdd7e1"/>${bars.map(([x,value,label],i)=>{const h=heights[i];return `<rect x="${x}" y="${base-h}" width="92" height="${h}" rx="6" fill="${i ? "#087f5b" : "#102a48"}"/><text x="${x+46}" y="${base-h-12}" text-anchor="middle" font-size="12" font-weight="700" fill="#102a48">${formatMoney(value)}</text><text x="${x+46}" y="232" text-anchor="middle" font-size="11" fill="#607087">${label}</text>`}).join("")}<path class="cost-trend" d="M${trendStart.x},${trendStart.y} Q326,${trendControlY} ${trendEnd.x},${trendEnd.y}" fill="none" stroke="#607087" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 8"/></svg>`;
+      const compactChartQuery = typeof matchMedia === "function" ? matchMedia("(max-width:640px)") : null;
+      const isCompactChart = () => Boolean(compactChartQuery && compactChartQuery.matches);
+
+      function pathwayChart(pathway, compact = false) {
+        const width = compact ? 372 : 760, height = compact ? 256 : 340;
+        const left = compact ? 40 : 58, right = compact ? 26 : 150;
+        const top = compact ? 26 : 34, bottom = compact ? 42 : 58;
+        const tickFont = compact ? 10 : 11;
+        const innerW = width - left - right, innerH = height - top - bottom;
+        const count = pathway.points.length;
+        const peak = Math.max(...pathway.series.flatMap(series => series.values), 0);
+        const { step, max } = niceAxisScale(peak);
+        const xAt = index => left + (count > 1 ? innerW * index / (count - 1) : innerW / 2);
+        const yAt = value => top + innerH - Math.min(Math.max(value / max, 0), 1) * innerH;
+        const line = points => `M${points.map(point => `${point.x},${point.y}`).join(" L")}`;
+        const decimals = step < 1 ? 2 : step < 10 ? 1 : 0;
+
+        const ticks = [];
+        for (let value = 0; value <= max + step / 1000; value += step) ticks.push(value);
+        const grid = ticks.map(value => `<line x1="${left}" y1="${yAt(value)}" x2="${left + innerW}" y2="${yAt(value)}" stroke="#e8edf3" stroke-dasharray="2 5"/><text x="${left - 8}" y="${yAt(value) + 4}" text-anchor="end" font-size="${tickFont}" fill="#8494a8">${formatNumber(value, decimals)}</text>`).join("");
+        const axisLabels = pathway.points.map((point, index) => `<text x="${xAt(index)}" y="${height - 32}" text-anchor="middle" font-size="${tickFont}" fill="#5b6b81">${escapeHtml(point.visualYear)}</text>`).join("");
+
+        const series = pathway.series.map(item => ({
+          key: item.key,
+          label: item.label,
+          stroke: PATHWAY_STROKES[item.key] || PATHWAY_STROKES.before,
+          points: item.values.map((value, index) => ({ x: xAt(index), y: yAt(value), value })),
+        }));
+        const paths = series.map(item => `<path d="${line(item.points)}" fill="none" stroke="${item.stroke}" stroke-width="${compact ? 2 : 2.4}" stroke-linecap="round" stroke-linejoin="round"/>${item.points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="${compact ? 2.8 : 3.4}" fill="#fff" stroke="${item.stroke}" stroke-width="2"/>`).join("")}`).join("");
+
+        // Endpoint callouts sit in the right gutter so the axis keeps one label per year.
+        const slots = series.map(item => ({ item, y: item.points[item.points.length - 1].y }))
+          .sort((a, b) => a.y - b.y);
+        const gap = 54;
+        if (slots.length === 2 && slots[1].y - slots[0].y < gap) {
+          const middle = (slots[0].y + slots[1].y) / 2;
+          slots[0].y = middle - gap / 2;
+          slots[1].y = middle + gap / 2;
+        }
+        const endpoints = compact ? "" : slots.map(slot => {
+          const y = Math.min(Math.max(slot.y, top + 12), top + innerH - 26);
+          const x = left + innerW + 18;
+          return `<g class="pathway-endpoint"><text x="${x}" y="${y}" font-size="15" font-weight="850" fill="${slot.item.stroke}">${formatNumber(slot.item.points[slot.item.points.length - 1].value, 2)}</text><text x="${x}" y="${y + 15}" font-size="10" fill="#8494a8">tCO2e / year</text><text x="${x}" y="${y + 29}" font-size="10.5" font-weight="700" fill="${slot.item.stroke}">${escapeHtml(slot.item.label)}</text></g>`;
+        }).join("");
+
+        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true"><text x="0" y="${compact ? 11 : 14}" font-size="${tickFont}" fill="#8494a8">tCO2e / year</text>${grid}<line x1="${left}" y1="${top + innerH}" x2="${left + innerW}" y2="${top + innerH}" stroke="#cdd7e1"/>${paths}${endpoints}${axisLabels}</svg>`;
       }
 
       function rows(items) {
@@ -675,18 +754,17 @@
         q("#data-status").style.background = scenario.dataStatus === "Sample Data" ? "var(--orange-soft)" : "var(--emerald-soft)";
         q("#data-status").style.color = scenario.dataStatus === "Sample Data" ? "var(--orange)" : "var(--emerald)";
         q("#header-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
+        q("#overview-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
+        q("#overview-status").textContent = scenario.dataStatus;
         q("#scenario-company").textContent = scenario.companyName;
         q("#scenario-method").textContent = `${scenario.bevMethod} method`;
-        q("#summary-company").textContent = scenario.companyName;
-        q("#summary-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
-        q("#summary-method").textContent = scenario.bevMethod;
-        q("#summary-status").textContent = scenario.dataStatus;
-        q("#scenario-fleet").textContent = `${result.vehiclesTransitioning} of ${scenario.totalIceVehicles}`;
-        q("#scenario-period").textContent = `${scenario.baselineYear}–${String(scenario.targetYear).slice(-2)}`;
-        q("#scenario-bev-method").textContent = scenario.bevMethod;
-        q("#scenario-efficiency").textContent = `${formatNumber(scenario.bevKwhPerKm, 2)} kWh/km`;
-        q("#scenario-grid-factor").textContent = `${formatNumber(scenario.gridEmissionFactor, 2)} kg/kWh`;
-        q("#scenario-certificates").textContent = `${formatNumber(scenario.targetCertificateCoverage * 100)}%`;
+        q("#rail-fleet").textContent = `${formatNumber(scenario.vehiclesTransitioning,0)} of ${formatNumber(scenario.totalIceVehicles,0)} vehicles`;
+        q("#rail-period").textContent = `${scenario.baselineYear} to ${scenario.targetYear}`;
+        q("#rail-method").textContent = scenario.bevMethod;
+        q("#rail-efficiency").textContent = `${formatNumber(scenario.bevKwhPerKm,2)} kWh/km`;
+        q("#rail-grid").textContent = `${formatNumber(scenario.gridEmissionFactor,2)} kgCO2e/kWh`;
+        q("#rail-certificates").textContent = `${formatNumber(scenario.targetCertificateCoverage*100,0)}%`;
+        q("#rail-eac").textContent = `${formatMoney(scenario.certificateCostPerKwh, 3)}/kWh`;
         const errors = messages.filter(message => message.severity === "error");
         const warnings = messages.filter(message => message.severity === "warning" && message.text !== "No payback under current assumptions.");
         q("#warning-stack").innerHTML = errors.map(message => `<div class="alert error">${escapeHtml(message.text)}</div>`).join("");
@@ -695,41 +773,44 @@
         renderPaybackInterpretation(payback, warnings);
         qa(".field").forEach(field => { field.classList.remove("has-error"); const old = field.querySelector(".field-error"); if(old) old.remove(); });
         messages.filter(message => message.severity === "error").forEach(message => { const field=q(`[data-field="${message.field}"]`); if(field){field.classList.add("has-error");field.insertAdjacentHTML("beforeend",`<small class="field-error">${escapeHtml(message.text)}</small>`);} });
-        q("#kpi-fleet").textContent = `${result.vehiclesTransitioning} of ${scenario.totalIceVehicles}`;
+        q("#kpi-fleet").innerHTML = `${escapeHtml(formatNumber(result.vehiclesTransitioning))} <em>of</em> ${escapeHtml(formatNumber(scenario.totalIceVehicles))}`;
         q("#kpi-fleet-sub").textContent = `${formatNumber(result.transitionPct*100)}% of fleet transitioned`;
-        q("#kpi-scope1").textContent = formatT(result.scope1Avoided);
+        q("#kpi-scope1").textContent = formatNumber(result.scope1Avoided, 2);
+        q("#sub-scope1").textContent = `In ${scenario.targetYear}`;
         q("#scope2-card").className = `metric-card${kpiStory.scope2Tone === "neutral" ? "" : ` ${kpiStory.scope2Tone}`}`;
-        q("#kpi-scope2-increase").textContent = formatT(kpiStory.scope2Increase);
+        q("#kpi-scope2-increase").textContent = formatNumber(kpiStory.scope2Increase, 2);
         q("#kpi-scope2-increase-sub").textContent = `Grid Scope 2: ${formatT(result.baselineGridScope2)} to ${formatT(result.postTransitionGridScope2)}`;
-        q("#kpi-residual").textContent = formatT(result.residualAfterCertificates);
+        q("#kpi-residual").textContent = formatNumber(result.residualAfterCertificates, 2);
         q("#kpi-residual-sub").textContent = `Before certificates: ${formatT(result.residualBeforeCertificates)}`;
         q("#kpi-investment").textContent = formatMoney(result.transitionInvestment);
         q("#kpi-investment-sub").textContent = `${formatMoney(result.incrementalInvestment)} vs new ICE purchase`;
         const savings = result.annualOperatingChange < 0;
-        q("#operating-card").className = `kpi kpi-secondary operating-card${savings ? " good" : " warn"}`;
-        q("#kpi-operating").textContent = formatMoney(Math.abs(result.annualOperatingChange));
-        const currentCost = result.currentElectricityCost + scenario.currentAnnualFuelCost;
-        const projectedCost = result.targetElectricityCost + (scenario.currentAnnualFuelCost-result.fuelCostAvoided);
-        q("#operating-baseline-value").textContent = formatMoney(currentCost);
-        q("#operating-transition-value").textContent = savings ? "—" : formatMoney(projectedCost);
-        q("#operating-baseline-bar").style.width = "100%";
-        q("#operating-transition-bar").style.width = `${Math.max(8, Math.min(100, currentCost > 0 ? (projectedCost / currentCost) * 100 : 8))}%`;
-        q("#operating-delta").innerHTML = `${result.annualOperatingChange < 0 ? "−" : "+"}${formatMoney(Math.abs(result.annualOperatingChange))} <small>/ year</small>`;
+        const baselineEnergyCost = result.currentElectricityCost + scenario.currentAnnualFuelCost;
+        const transitionEnergyCost = result.targetElectricityCost + (scenario.currentAnnualFuelCost - result.fuelCostAvoided);
+        const energyCostScale = Math.max(baselineEnergyCost, transitionEnergyCost, 1);
+        q("#operating-card").className = `kpi kpi-operating ${savings ? "good" : "warn"}`;
+        q("#kpi-operating").textContent = formatMoney(result.annualOperatingChange);
+        q("#operating-baseline").textContent = formatMoney(baselineEnergyCost);
+        q("#operating-transition").textContent = formatMoney(transitionEnergyCost);
+        q("#operating-bar-baseline").style.width = `${baselineEnergyCost / energyCostScale * 100}%`;
+        q("#operating-bar-transition").style.width = `${transitionEnergyCost / energyCostScale * 100}%`;
+        q("#operating-delta").textContent = `${savings ? "\u2212" : "+"}${formatMoney(result.annualOperatingChange)}`;
         q("#net-emissions-card").className = `kpi kpi-lead${kpiStory.netTone === "neutral" ? "" : ` ${kpiStory.netTone}`}`;
-        const netPercent = result.baselineTotalEmissions > 0 ? -(kpiStory.netEmissionsChange / result.baselineTotalEmissions) * 100 : 0;
-        q("#kpi-net-emissions-percent").textContent = `${netPercent < 0 ? "−" : netPercent > 0 ? "+" : ""}${formatNumber(Math.abs(netPercent), 1)}%`;
-        q("#kpi-net-emissions").textContent = `${kpiStory.netEmissionsChange > 0 ? "−" : kpiStory.netEmissionsChange < 0 ? "+" : ""}${formatT(kpiStory.netEmissionsMagnitude)} reduced vs baseline`;
-        q("#kpi-net-emissions-sub").textContent = "before certificates";
-        q("#fleet-progress").style.width = `${Math.max(0, Math.min(100, result.transitionPct * 100))}%`;
+        const netSign = kpiStory.netTone === "good" ? "\u2212" : kpiStory.netTone === "warn" ? "+" : "";
+        q("#kpi-net-emissions").textContent = kpiStory.netEmissionsPct === null
+          ? "Not available"
+          : `${netSign}${formatNumber(Math.abs(kpiStory.netEmissionsPct), 1)}%`;
+        const netVerb = kpiStory.netTone === "good" ? "reduced" : kpiStory.netTone === "warn" ? "added" : "change";
+        q("#kpi-net-emissions-sub").textContent = `${netSign}${formatT(kpiStory.netEmissionsMagnitude)} ${netVerb} vs baseline`;
+        q("#net-emissions-card").title = kpiStory.netSubline;
         const periodLabels = getEmissionsPeriodLabels(scenario.baselineYear, scenario.targetYear);
-        q("#emissions-chart-title").textContent = periodLabels.title;
+        const pathway = buildEmissionsPathway(result, periodLabels);
+        q("#emissions-chart-period").textContent = `${periodLabels.baselineYear} to ${periodLabels.targetYear} \u00b7 Scope 1 and Scope 2, tCO2e per year`;
         q("#emissions-chart").setAttribute("aria-label", periodLabels.ariaLabel);
-        const pathwaySeries = [
-          { name: "Baseline", values: [result.baselineTotalEmissions,result.baselineTotalEmissions,result.baselineTotalEmissions], color: "#8a939a", dash: "8 6" },
-          { name: "Transition", values: [result.baselineTotalEmissions,result.residualBeforeCertificates,result.residualAfterCertificates], color: "#087f5b", emphasis: true, weight: 4 },
-        ];
-        q("#emissions-chart").innerHTML = lineChart(pathwaySeries,periodLabels.stages);
-        q("#emissions-summary").textContent = `${periodLabels.baselineYear} baseline ${formatT(pathwaySeries[0].values[0])}; transition reaches ${formatT(pathwaySeries[1].values[2])} after certificate adjustment.`;
+        q("#emissions-chart").innerHTML = pathwayChart(pathway, isCompactChart());
+        q("#emissions-legend").innerHTML = pathway.series.map(series => `<li class="legend-item"><span class="legend-swatch" style="background:${PATHWAY_STROKES[series.key]}"></span>${escapeHtml(series.label)}</li>`).join("");
+        const finalYear = pathway.points[pathway.points.length - 1].year;
+        q("#emissions-summary").textContent = `Shared ${pathway.points[0].year} starting point ${formatT(pathway.startValue)}. ${finalYear} before EAC ${formatT(pathway.beforeEnd)}; ${finalYear} after EAC ${formatT(pathway.afterEnd)}. Years in between are drawn as a straight-line transition between those calculated points.`;
         q("#emissions-table").innerHTML = rows([
           ["Baseline mobile Scope 1",formatT(result.baselineMobileScope1),"fuel combustion"],["Scope 1 avoided",formatT(result.scope1Avoided),"transition share"],["Remaining Scope 1",formatT(result.remainingScope1),"mobile plus unaffected"],["BEV electricity added",`${formatNumber(result.bevElectricityAdded)} kWh`,scenario.bevMethod],["Baseline grid Scope 2",formatT(result.baselineGridScope2),"grid-based"],["Post-transition grid Scope 2",formatT(result.postTransitionGridScope2),"grid-based"],["Scope 2 after certificate adjustment",formatT(result.scope2AfterEac),scenario.certificateType],["Residual after certificates",formatT(result.residualAfterCertificates),"Scope 1 plus adjusted Scope 2"]
         ]);
@@ -741,7 +822,7 @@
 
       function showView(name, push = true) {
         qa("[data-view]").forEach(view => { view.hidden = view.dataset.view !== name; });
-        qa("[data-view-target]").forEach(button => { button.toggleAttribute("aria-current", button.dataset.viewTarget === name); });
+        qa(".nav [data-view-target]").forEach(button => { button.toggleAttribute("aria-current", button.dataset.viewTarget === name); });
         if (push && location.hash !== `#${name}`) history.pushState(null,"",`#${name}`);
         q("#main-content").focus({preventScroll:true});
       }
@@ -753,22 +834,12 @@
       qa("[data-view-target]").forEach(button => button.addEventListener("click",()=>showView(button.dataset.viewTarget)));
       window.addEventListener("popstate",()=>showView(location.hash.slice(1)||"overview",false));
       q("#scenario-form").addEventListener("input", event => { const control=event.target;if(!control.name)return;scenario={...scenario,[control.name]:readControl(control)};if (control.name === "bevMethod") syncMethodFields();render();announce("Scenario recalculated."); });
-      q("#save-button").addEventListener("click", () => {
-        try { localStorage.setItem(storageKey, serializeScenario(scenario)); announce("Scenario saved in this browser."); }
-        catch { announce("This browser could not save the scenario."); }
-      });
       q("#reset-button").addEventListener("click", () => {
         if (!confirm("Reset every input to the illustrative sample scenario?")) return;
         scenario = structuredClone(DEFAULT_SCENARIO);
         syncForm(); render(); announce("Sample scenario restored.");
       });
-      q("#export-button").addEventListener("click", () => {
-        const payload = { version: 1, exportedAt: new Date().toISOString(), scenario, calculated: calculateScenario(scenario), warnings: validateScenario(scenario) };
-        const url = URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
-        const link = document.createElement("a"); link.href=url; link.download="fleet-electrification-scenario.json"; link.click();
-        setTimeout(()=>URL.revokeObjectURL(url),0); announce("Scenario exported as JSON.");
-      });
-      q("#print-button").addEventListener("click",()=>window.print());
+      if (compactChartQuery?.addEventListener) compactChartQuery.addEventListener("change", render);
       showView(["overview","inputs","emissions","costs","methodology"].includes(location.hash.slice(1))?location.hash.slice(1):"overview",false);
     })();
   </script>
