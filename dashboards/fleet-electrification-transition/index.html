@@ -742,8 +742,8 @@
         const width = compact ? 372 : 760;
         const right = compact ? 8 : 12;
         const height = top + comparison.bars.length * rowH;
-        const labelSize = compact ? 11.5 : (isDenseChart() ? 15 : 12.5);
-        const valueSize = compact ? 13 : (isDenseChart() ? 18 : 15);
+        const labelSize = compact ? 11.5 : (isDenseChart() ? 13 : 12.5);
+        const valueSize = compact ? 13 : (isDenseChart() ? 15 : 15);
         const { max } = niceAxisScale(comparison.max);
         const trackW = width - left - right;
         const widthAt = value => Math.max(Math.min(value / max, 1) * trackW, value > 0 ? 3 : 0);
@@ -752,7 +752,7 @@
           const y = top + index * rowH;
           const barY = y + (compact ? 20 : 22);
           const fill = COMPARISON_FILLS[bar.key] || COMPARISON_FILLS.baseline;
-          const w = widthAt(bar.value);
+          const w = bar.key === "baseline" ? trackW : widthAt(bar.value);
           // Track, then the mark, then the value. The value sits inside the mark
           // only when the mark is long enough to hold it, otherwise it sits just
           // past the end in ink: a light label on the light track is unreadable.
@@ -764,12 +764,12 @@
             + `<text x="${left}" y="${y + (compact ? 12 : 13)}" font-size="${labelSize}" fill="#415063">${escapeHtml(bar.label)}</text>`
             + `<rect x="${left}" y="${barY}" width="${trackW}" height="${barH}" rx="4" fill="#eef2f7"/>`
             + `<rect x="${left}" y="${barY}" width="${w}" height="${barH}" rx="4" fill="${fill}"/>`
-            + `<text x="${valueX}" y="${barY + barH / 2 + 5}" text-anchor="${anchor}" font-size="${valueSize}" font-weight="800" fill="${inside ? "#ffffff" : "#152033"}">${formatNumber(bar.value, 2)}</text>`
+            + `<text x="${valueX}" y="${barY + barH / 2 + 5}" text-anchor="${anchor}" font-size="${valueSize}" font-weight="700" fill="${inside ? "#ffffff" : "#152033"}">${formatNumber(bar.value, 2)}</text>`
             + `</g>`;
         }).join("");
 
-        const unit = `<text x="0" y="${compact ? 11 : 12}" font-size="${compact ? 10.5 : (isDenseChart() ? 13 : 11)}" fill="#7d8fa1">tCO2e per year</text>`;
-        return `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true">${unit}${bars}</svg>`;
+        const unit = `<text x="0" y="${compact ? 11 : 12}" font-size="${compact ? 10.5 : (isDenseChart() ? 12 : 11)}" fill="#7d8fa1">tCO2e per year</text>`;
+        return `<svg viewBox="0 0 ${width} ${height}" font-family="Arial,Helvetica Neue,sans-serif" aria-hidden="true">${unit}${bars}</svg>`;
       }
 
       function rows(items) {
