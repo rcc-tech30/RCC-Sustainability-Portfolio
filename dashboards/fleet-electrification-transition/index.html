@@ -24,6 +24,48 @@
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
     @media print{.sidebar,.topbar,.button,.skip-link{display:none!important}.app-shell{display:block}.content,.content:has(#view-overview:not([hidden])){padding:0}.view{display:block!important;break-after:page}.panel,.kpi,.metric-card,.summary-strip{box-shadow:none;break-inside:avoid}.footer,.main:has(#view-overview:not([hidden])) .footer{padding:18px 0}}
   </style>
+  <style id="wide-desktop-density">
+    @media (min-width:1600px) and (min-height:960px){
+      #view-overview{--ov-scale:1.15}
+      .content:has(#view-overview:not([hidden])){max-width:1760px}
+      #view-overview .overview-head{margin-bottom:10px}
+      #view-overview .overview-lede{font-size:17px}
+      #view-overview .summary-strip{padding:14px 26px;gap:18px}
+      #view-overview .summary-icon{width:36px;height:36px}
+      #view-overview .summary-item .k{font-size:14px}
+      #view-overview .summary-item .v{font-size:16px}
+      #view-overview .kpi-grid,#view-overview .chart-grid,#view-overview .metric-row,#view-overview .board-interpretation{margin-top:14px}
+      #view-overview .kpi-grid,#view-overview .chart-grid,#view-overview .metric-row,.board-notes{gap:14px}
+      #view-overview .kpi{padding:18px 24px}
+      #view-overview .kpi-operating{padding:18px 24px}
+      #view-overview .kpi-icon{width:46px;height:46px}
+      #view-overview .kpi-icon .icon{width:22px;height:22px}
+      #view-overview .kpi .label{font-size:15px}
+      #view-overview .kpi .sub{font-size:14px}
+      #view-overview .kpi .value{font-size:clamp(28px,2.5vw,35px)}
+      #view-overview .kpi-lead .value{font-size:clamp(34px,3.2vw,44px)}
+      #view-overview .kpi-operating .value{font-size:clamp(30px,2.9vw,40px)}
+      #view-overview .compare-label,#view-overview .compare-value{font-size:14px}
+      #view-overview .panel{padding:20px 24px}
+      #view-overview .panel h3{font-size:19px}
+      #view-overview .panel-intro{font-size:14px}
+      #view-overview .chart-summary{font-size:13.5px}
+      #view-overview .rail-list{margin:8px 0 12px}
+      #view-overview .rail-row{padding:7px 0}
+      #view-overview .rail-row dt,#view-overview .rail-row dd{font-size:15px}
+      #view-overview .metric-card{padding:16px;gap:6px}
+      #view-overview .metric-card .label{font-size:14px}
+      #view-overview .metric-icon{width:34px;height:34px}
+      #view-overview .metric-card .value{font-size:clamp(20px,1.8vw,24px)}
+      #view-overview .metric-card .unit,#view-overview .metric-card .sub{font-size:13px}
+      #view-overview .metric-card .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #view-overview .board-interpretation-heading h2{font-size:15px}
+      #view-overview .board-note{padding:16px}
+      #view-overview .board-note strong{font-size:14px}
+      #view-overview .board-note p,#view-overview .board-note ul{font-size:14px;line-height:1.4}
+    }
+  </style>
+
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to assessment</a>
