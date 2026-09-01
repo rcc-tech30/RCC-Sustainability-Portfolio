@@ -105,7 +105,7 @@ test("filtered overview trend contains comparable annual actuals without corpora
 
 test("monthly comparison uses Australian financial-year month order and reconciles to annual totals", () => {
   const core = loadCore();
-  assert.deepEqual(core.MONTHS, ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
+  assert.deepEqual(JSON.parse(JSON.stringify(core.MONTHS)), ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
   const series = core.getMonthlyComparison(core.DATA, "Scope 1");
   assert.deepEqual(series.map((item) => item.values.length), [12, 12]);
   for (const item of series) {
