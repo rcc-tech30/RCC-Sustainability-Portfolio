@@ -126,3 +126,21 @@ test("monthly Scope 2 comparison supports location-based values", () => {
   assert.equal(location[1].total, 329);
   assert.equal(location[1].values.length, 12);
 });
+
+test("monthly chart legend uses explicit line swatches and the renewable card names FY2026 in its heading", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+
+  assert.match(html, /monthly-legend-item \.legend-line/);
+  assert.match(html, /FY2025[^<]*baseline/);
+  assert.match(html, /FY2026[^<]*comparison/);
+  assert.match(html, /panel\("FY2026 renewable electricity progress", ""/);
+  assert.doesNotMatch(html, /panel\("Renewable electricity progress", "FY2026 renewable share by facility"/);
+});
+test("monthly comparison renders smooth paths with endpoint values and no circle markers", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
+  assert.ok(source, "monthly chart renderer should be present");
+  assert.match(source, /smoothPath/);
+  assert.match(source, /chart-value-label/);
+  assert.doesNotMatch(source, /<circle/);
+});

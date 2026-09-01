@@ -542,8 +542,8 @@
       height: calc(100% - 38px);
       min-height: 0;
       display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
-      gap: 4px;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 8px;
     }
 
     .monthly-chart svg {
@@ -567,9 +567,12 @@
       align-items: center;
     }
 
-    .monthly-legend-item .legend-dot {
-      width: 9px;
-      height: 9px;
+    .monthly-legend-item .legend-line {
+      width: 22px;
+      height: 0;
+      border-top: 3px solid currentColor;
+      border-radius: 999px;
+      flex: 0 0 auto;
     }
 
     .method-toggle {
@@ -1234,7 +1237,7 @@
       height: calc(100% - 38px);
       min-height: 0;
       display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-rows: auto minmax(0, 1fr);
       gap: 5px;
     }
 
@@ -1858,6 +1861,20 @@
           return `<line x1="${left}" y1="${y}" x2="${left + plotWidth}" y2="${y}" class="chart-grid-line"/><text x="${left - 10}" y="${y + 4}" text-anchor="end" class="chart-axis">${formatNumber(max * ratio)}</text>`;
         }).join("");
         const xFor = (index) => left + (index * plotWidth) / Math.max(1, months.length - 1);
+        const smoothPath = (points) => {
+          if (points.length < 2) return "";
+          let path = `M ${points[0].x} ${points[0].y}`;
+          for (let index = 1; index < points.length - 1; index += 1) {
+            const point = points[index];
+            const next = points[index + 1];
+            const midX = (point.x + next.x) / 2;
+            const midY = (point.y + next.y) / 2;
+            path += ` Q ${point.x} ${point.y} ${midX} ${midY}`;
+          }
+          const penultimate = points[points.length - 2];
+          const last = points[points.length - 1];
+          return `${path} Q ${penultimate.x} ${penultimate.y} ${last.x} ${last.y}`;
+        };
         const seriesMarkup = series.map((item, seriesIndex) => {
           const points = months.map((label, index) => ({
             label,
@@ -1867,19 +1884,21 @@
             ...point,
             y: top + plotHeight - (point.value / max) * plotHeight
           }));
-          const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
-          const line = `<path d="${path}" fill="none" stroke="${colors[seriesIndex % colors.length]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-          const dots = points.map((point) => `
-            <circle cx="${point.x}" cy="${point.y}" r="5" fill="${colors[seriesIndex % colors.length]}" stroke="white" stroke-width="2" tabindex="0" data-tip="${escapeHtml(item.fy)} ${escapeHtml(point.label)}: ${oneDecimal.format(point.value)} tCO2e">
-              <title>${escapeHtml(item.fy)} ${escapeHtml(point.label)}: ${oneDecimal.format(point.value)} tCO2e</title>
-            </circle>`).join("");
-          return line + dots;
+          const color = colors[seriesIndex % colors.length];
+          const line = `<path d="${smoothPath(points)}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+          const finalPoint = points.at(-1);
+          const valueY = seriesIndex === 0 ? Math.max(top + 10, finalPoint.y - 10) : Math.min(top + plotHeight - 2, finalPoint.y + 16);
+          const valueLabel = `<text x="${finalPoint.x - 3}" y="${valueY}" text-anchor="end" class="chart-value-label" fill="${color}">${oneDecimal.format(finalPoint.value)}</text>`;
+          return line + valueLabel;
         }).join("");
         const monthLabels = months.map((label, index) => `<text x="${xFor(index)}" y="${top + plotHeight + 20}" text-anchor="middle" class="chart-label">${escapeHtml(label)}</text>`).join("");
-        const legend = series.map((item, index) => `<span class="monthly-legend-item"><span class="legend-dot" style="background:${colors[index % colors.length]}"></span>${escapeHtml(item.fy)}</span>`).join("");
-        return `<div class="monthly-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(options.ariaLabel || "Monthly emissions comparison chart")}">${grid}${seriesMarkup}${monthLabels}</svg><div class="monthly-legend" aria-label="Chart legend">${legend}</div></div>`;
+        const legend = series.map((item, index) => {
+          const descriptor = index === 0 ? "baseline" : "comparison";
+          const color = colors[index % colors.length];
+          return `<span class="monthly-legend-item" style="color:${color}"><span class="legend-line" aria-hidden="true"></span><span>${escapeHtml(item.fy)} · ${descriptor}</span></span>`;
+        }).join("");
+        return `<div class="monthly-chart"><div class="monthly-legend" aria-label="Chart legend">${legend}</div><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(options.ariaLabel || "Monthly emissions comparison chart")}">${grid}${seriesMarkup}${monthLabels}</svg></div>`;
       }
-
       function netZeroPathwayChart(view) {
         const width = 840;
         const height = 250;
@@ -2101,7 +2120,7 @@
                 ${kpiCard("Renewable electricity", `${oneDecimal.format(renewable)}%`, "", "FY2026 RE100 progress", { text: `${oneDecimal.format(Math.max(0, 100 - renewable))} pts remaining` }, "warning")}
                 ${panel("Monthly performance comparison", `${methodLabel} accounting • FY2025 vs FY2026 • 1 July–30 June`, methodToggle + monthlyComparisonChart(monthly, { ariaLabel: `Scope 2 monthly ${methodLabel.toLowerCase()} emissions comparing FY2025 and FY2026` }), "wide-panel scope2-comparison-panel", `${methodLabel} sample`)}
                 ${panel("Facility comparison", `FY2026 ${methodLabel.toLowerCase()} emissions by facility`, barChart(facilities, { ariaLabel: `FY2026 Scope 2 ${methodLabel.toLowerCase()} emissions by facility` }), "narrow-panel")}
-                ${panel("Renewable electricity progress", "FY2026 renewable share by facility", `<div class="progress-list"><div class="progress-row"><span>Melbourne HQ</span><div class="progress-track"><div class="progress-fill" style="width:68%"></div></div><span class="progress-value">68%</span></div><div class="progress-row"><span>Sydney Operations</span><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div><span class="progress-value">64%</span></div><div class="progress-row"><span>Brisbane Hub</span><div class="progress-track"><div class="progress-fill" style="width:54%"></div></div><span class="progress-value">54%</span></div></div>`, "wide-panel")}
+                ${panel("FY2026 renewable electricity progress", "", `<div class="progress-list"><div class="progress-row"><span>Melbourne HQ</span><div class="progress-track"><div class="progress-fill" style="width:68%"></div></div><span class="progress-value">68%</span></div><div class="progress-row"><span>Sydney Operations</span><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div><span class="progress-value">64%</span></div><div class="progress-row"><span>Brisbane Hub</span><div class="progress-track"><div class="progress-fill" style="width:54%"></div></div><span class="progress-value">54%</span></div></div>`, "wide-panel")}
                 ${panel("Management focus", "", `<p class="insight-copy">The ${methodLabel.toLowerCase()} view is selected for the monthly comparison. Use the methodology toggle to see how contractual instruments change reported Scope 2 results; monthly values are illustrative allocations that reconcile to annual sample totals.</p>`, "narrow-panel insight-panel")}
               </div>
             </div>
