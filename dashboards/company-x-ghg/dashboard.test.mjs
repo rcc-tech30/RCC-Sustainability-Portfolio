@@ -101,3 +101,28 @@ test("filtered overview trend contains comparable annual actuals without corpora
     ]
   );
 });
+
+
+test("monthly comparison uses Australian financial-year month order and reconciles to annual totals", () => {
+  const core = loadCore();
+  assert.deepEqual(JSON.parse(JSON.stringify(core.MONTHS)), ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
+  const series = core.getMonthlyComparison(core.DATA, "Scope 1");
+  assert.deepEqual(JSON.parse(JSON.stringify(series.map((item) => item.values.length))), [12, 12]);
+  for (const item of series) {
+    const monthlyTotal = item.values.reduce((total, point) => total + point.value, 0);
+    assert.ok(Math.abs(monthlyTotal - item.total) < 1e-9);
+  }
+  assert.equal(series[0].total, 140);
+  assert.equal(series[1].total, 116);
+});
+
+test("monthly Scope 2 comparison supports location-based values", () => {
+  const core = loadCore();
+  const market = core.getMonthlyComparison(core.DATA, "Scope 2", "emissions");
+  const location = core.getMonthlyComparison(core.DATA, "Scope 2", "locationEmissions");
+  assert.equal(market[0].total, 300);
+  assert.equal(market[1].total, 224);
+  assert.equal(location[0].total, 352);
+  assert.equal(location[1].total, 329);
+  assert.equal(location[1].values.length, 12);
+});
