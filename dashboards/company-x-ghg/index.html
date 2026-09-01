@@ -631,6 +631,16 @@
       font-weight: 780;
     }
 
+    .chart-value-label {
+      font-size: 8px;
+      font-weight: 560;
+      letter-spacing: 0.01em;
+      paint-order: stroke;
+      stroke: white;
+      stroke-linejoin: round;
+      stroke-width: 3px;
+    }
+
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -1886,10 +1896,14 @@
           }));
           const color = colors[seriesIndex % colors.length];
           const line = `<path d="${smoothPath(points)}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-          const finalPoint = points.at(-1);
-          const valueY = seriesIndex === 0 ? Math.max(top + 10, finalPoint.y - 10) : Math.min(top + plotHeight - 2, finalPoint.y + 16);
-          const valueLabel = `<text x="${finalPoint.x - 3}" y="${valueY}" text-anchor="end" class="chart-value-label" fill="${color}">${oneDecimal.format(finalPoint.value)}</text>`;
-          return line + valueLabel;
+          const valueLabels = points.map((point, pointIndex) => {
+            const isUpperSeries = seriesIndex === 0;
+            const edgeAnchor = pointIndex === 0 ? "start" : pointIndex === points.length - 1 ? "end" : "middle";
+            const offset = isUpperSeries ? -9 - (pointIndex % 2) * 2 : 13 + (pointIndex % 2) * 2;
+            const valueY = Math.max(top + 8, Math.min(top + plotHeight - 2, point.y + offset));
+            return `<text x="${point.x}" y="${valueY}" text-anchor="${edgeAnchor}" class="chart-value-label" fill="${color}">${oneDecimal.format(point.value)}</text>`;
+          }).join("");
+          return line + valueLabels;
         }).join("");
         const monthLabels = months.map((label, index) => `<text x="${xFor(index)}" y="${top + plotHeight + 20}" text-anchor="middle" class="chart-label">${escapeHtml(label)}</text>`).join("");
         const legend = series.map((item, index) => {
