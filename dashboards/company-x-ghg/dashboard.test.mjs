@@ -107,7 +107,7 @@ test("monthly comparison uses Australian financial-year month order and reconcil
   const core = loadCore();
   assert.deepEqual(JSON.parse(JSON.stringify(core.MONTHS)), ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
   const series = core.getMonthlyComparison(core.DATA, "Scope 1");
-  assert.deepEqual(series.map((item) => item.values.length), [12, 12]);
+  assert.deepEqual(JSON.parse(JSON.stringify(series.map((item) => item.values.length))), [12, 12]);
   for (const item of series) {
     const monthlyTotal = item.values.reduce((total, point) => total + point.value, 0);
     assert.ok(Math.abs(monthlyTotal - item.total) < 1e-9);
