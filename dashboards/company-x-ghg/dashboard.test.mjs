@@ -152,6 +152,6 @@ test("monthly comparison labels every month above and below the shared chart lin
   assert.match(source, /const valueLabels = points\\.map/);
   assert.match(source, /seriesIndex === 0/);
   assert.match(source, /seriesIndex === 1/);
-  assert.match(source, /monthly-chart.*width = 720/);
+  assert.match(source, /const width = 720/);
   assert.doesNotMatch(source, /const finalPoint = points\\.at\\(-1\\)/);
 });
