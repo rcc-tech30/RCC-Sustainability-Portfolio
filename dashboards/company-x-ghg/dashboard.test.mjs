@@ -147,11 +147,11 @@ test("monthly comparison renders smooth paths with endpoint values and no circle
 
 test("monthly comparison labels every month above and below the shared chart lines", () => {
   const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
-  const source = html.match(/function monthlyComparisonChart[\\s\\S]*?function netZeroPathwayChart/)?.[0];
+  const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
   assert.ok(source, "monthly chart renderer should be present");
-  assert.match(source, /const valueLabels = points\\.map/);
+  assert.match(source, /const valueLabels = points\.map/);
   assert.match(source, /seriesIndex === 0/);
   assert.match(source, /seriesIndex === 1/);
   assert.match(source, /const width = 720/);
-  assert.doesNotMatch(source, /const finalPoint = points\\.at\\(-1\\)/);
+  assert.doesNotMatch(source, /const finalPoint = points\.at\(-1\)/);
 });
