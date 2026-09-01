@@ -537,6 +537,75 @@
       overflow: visible;
     }
 
+    .monthly-chart {
+      width: 100%;
+      height: calc(100% - 38px);
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 4px;
+    }
+
+    .monthly-chart svg {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: visible;
+    }
+
+    .monthly-legend {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      color: var(--ink-500);
+      font-size: 9px;
+    }
+
+    .monthly-legend-item {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .monthly-legend-item .legend-dot {
+      width: 9px;
+      height: 9px;
+    }
+
+    .method-toggle {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0 0 6px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--mint-50);
+    }
+
+    .method-toggle button {
+      padding: 5px 9px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--ink-500);
+      background: transparent;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: 720;
+    }
+
+    .method-toggle button:hover,
+    .method-toggle button[aria-pressed="true"] {
+      border-color: var(--mint-200);
+      color: var(--forest-950);
+      background: white;
+      box-shadow: 0 1px 3px rgba(18, 52, 43, 0.08);
+    }
+
+    .scope2-comparison-panel .monthly-chart {
+      height: calc(100% - 76px);
+    }
+
     .chart-grid-line {
       stroke: #e6ece8;
       stroke-width: 1;
@@ -1339,6 +1408,25 @@
         { fy: "FY2050", label: "Net-zero target", emissions: 0 }
       ];
 
+      const MONTHS = ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const MONTHLY_PROFILES = {
+        FY2025: [84, 82, 83, 83, 84, 84, 83, 83, 84, 83, 82, 85],
+        FY2026: [80, 79, 82, 84, 85, 86, 85, 84, 83, 82, 81, 89]
+      };
+
+      function getMonthlyComparison(records, scope, valueField = "emissions") {
+        const scopedRecords = records.filter((record) => record.scope === scope);
+        return ["FY2025", "FY2026"].map((fy) => {
+          const total = sum(scopedRecords.filter((record) => record.fy === fy), valueField);
+          const profile = MONTHLY_PROFILES[fy];
+          return {
+            fy,
+            total,
+            values: MONTHS.map((label, index) => ({ label, value: total * profile[index] / 1000 }))
+          };
+        });
+      }
+
       function filterRecords(records, filters) {
         return records.filter((record) => Object.entries(filters).every(([key, value]) => value === "All" || record[key] === value));
       }
@@ -1467,7 +1555,7 @@
         };
       }
 
-      return { DATA, TARGETS, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView };
+      return { DATA, TARGETS, MONTHS, MONTHLY_PROFILES, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, getMonthlyComparison, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView };
     })();
   </script>
 
@@ -1486,6 +1574,7 @@
       const state = {
         page: pages.includes(location.hash.slice(1)) ? location.hash.slice(1) : "overview",
         filters: { fy: "FY2026", entity: "All", facility: "All", method: "All" },
+        scope2Method: "market",
         presentation: false
       };
       const content = document.getElementById("content");
@@ -1525,7 +1614,8 @@
       }
 
       function currentRecords() {
-        return core.recordsForPeriod(filterBaseRecords(false), state.filters.fy);
+        const monthlyComparison = state.page === "scope1" || state.page === "scope2";
+        return core.recordsForPeriod(filterBaseRecords(false), monthlyComparison ? "All" : state.filters.fy);
       }
 
       function comparableRecords(fy) {
@@ -1542,9 +1632,19 @@
 
       function syncFilterAvailability() {
         const corporatePathway = state.page === "netzero";
+        const monthlyComparison = state.page === "scope1" || state.page === "scope2";
         const heading = document.querySelector(".filter-heading");
-        heading.querySelector("strong").textContent = corporatePathway ? "Corporate pathway view" : "Reporting view";
-        heading.querySelector("span").textContent = corporatePathway ? "Only Financial Year applies" : "Filters update connected visuals";
+        heading.querySelector("strong").textContent = corporatePathway ? "Corporate pathway view" : monthlyComparison ? "Monthly comparison view" : "Reporting view";
+        heading.querySelector("span").textContent = corporatePathway
+          ? "Only Financial Year applies"
+          : monthlyComparison
+            ? "Financial year not applicable • FY2025 vs FY2026"
+            : "Filters update connected visuals";
+        const fySelect = document.querySelector('[data-filter="fy"]');
+        const fyDisabled = corporatePathway || monthlyComparison;
+        fySelect.disabled = fyDisabled;
+        fySelect.title = monthlyComparison ? "Scope 1 and Scope 2 compare FY2025 and FY2026 by month" : "";
+        fySelect.closest(".filter-field").classList.toggle("filter-disabled", fyDisabled);
         ["entity", "facility", "method"].forEach((field) => {
           const select = document.querySelector(`[data-filter="${field}"]`);
           select.disabled = corporatePathway;
@@ -1742,6 +1842,44 @@
           </div>`;
       }
 
+      function monthlyComparisonChart(series, options = {}) {
+        if (!series.length || !series.some((item) => item.values?.length)) return emptyState();
+        const width = 720;
+        const height = 270;
+        const left = 54;
+        const top = 24;
+        const plotWidth = 620;
+        const plotHeight = 170;
+        const months = core.MONTHS;
+        const max = niceMax(Math.max(...series.flatMap((item) => item.values.map((point) => point.value)), 1));
+        const colors = options.colors || ["#4a7188", "#176b55"];
+        const grid = [0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+          const y = top + plotHeight - ratio * plotHeight;
+          return `<line x1="${left}" y1="${y}" x2="${left + plotWidth}" y2="${y}" class="chart-grid-line"/><text x="${left - 10}" y="${y + 4}" text-anchor="end" class="chart-axis">${formatNumber(max * ratio)}</text>`;
+        }).join("");
+        const xFor = (index) => left + (index * plotWidth) / Math.max(1, months.length - 1);
+        const seriesMarkup = series.map((item, seriesIndex) => {
+          const points = months.map((label, index) => ({
+            label,
+            value: Number(item.values[index]?.value) || 0,
+            x: xFor(index)
+          })).map((point) => ({
+            ...point,
+            y: top + plotHeight - (point.value / max) * plotHeight
+          }));
+          const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+          const line = `<path d="${path}" fill="none" stroke="${colors[seriesIndex % colors.length]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+          const dots = points.map((point) => `
+            <circle cx="${point.x}" cy="${point.y}" r="5" fill="${colors[seriesIndex % colors.length]}" stroke="white" stroke-width="2" tabindex="0" data-tip="${escapeHtml(item.fy)} ${escapeHtml(point.label)}: ${oneDecimal.format(point.value)} tCO2e">
+              <title>${escapeHtml(item.fy)} ${escapeHtml(point.label)}: ${oneDecimal.format(point.value)} tCO2e</title>
+            </circle>`).join("");
+          return line + dots;
+        }).join("");
+        const monthLabels = months.map((label, index) => `<text x="${xFor(index)}" y="${top + plotHeight + 20}" text-anchor="middle" class="chart-label">${escapeHtml(label)}</text>`).join("");
+        const legend = series.map((item, index) => `<span class="monthly-legend-item"><span class="legend-dot" style="background:${colors[index % colors.length]}"></span>${escapeHtml(item.fy)}</span>`).join("");
+        return `<div class="monthly-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(options.ariaLabel || "Monthly emissions comparison chart")}">${grid}${seriesMarkup}${monthLabels}</svg><div class="monthly-legend" aria-label="Chart legend">${legend}</div></div>`;
+      }
+
       function netZeroPathwayChart(view) {
         const width = 840;
         const height = 250;
@@ -1908,25 +2046,25 @@
 
       function renderScope1(records) {
         const scopeRecords = records.filter((record) => record.scope === "Scope 1");
-        const summary = core.getSummary(scopeRecords);
-        const baselineRecords = comparableRecords("FY2025").filter((record) => record.scope === "Scope 1");
-        const baseline = core.sum(baselineRecords, "emissions");
+        const latestRecords = scopeRecords.filter((record) => record.fy === "FY2026");
+        const summary = core.getSummary(latestRecords);
+        const baseline = core.sum(scopeRecords.filter((record) => record.fy === "FY2025"), "emissions");
         const change = core.pctChange(summary.total, baseline);
         const sources = ["Mobile combustion", "Stationary combustion", "Fugitive emissions"].map((source) => ({ label: source.replace(" combustion", ""), value: summary.bySource[source] || 0 }));
-        const fleetFuel = scopeRecords.filter((record) => record.source === "Mobile combustion");
-        const fleetCurrent = core.sum(fleetFuel, "emissions");
+        const monthly = core.getMonthlyComparison(scopeRecords, "Scope 1");
+        const fleetCurrent = summary.bySource["Mobile combustion"] || 0;
         return `
           <section class="page active" id="page-scope1">
             <div class="page-shell">
-              ${pageHeading("Scope 1", `Direct emissions performance for ${selectedYear()} with source and pathway context`)}
+              ${pageHeading("Scope 1", "Direct emissions monthly performance comparison for FY2025 and FY2026 (1 July–30 June)")}
               <div class="page-grid scope-grid">
-                ${kpiCard("Scope 1 emissions", formatNumber(summary.total), "tCO2e", selectedYear(), { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 })}
-                ${kpiCard("Mobile combustion", formatNumber(summary.bySource["Mobile combustion"] || 0), "tCO2e", "Fleet fuel", { text: `${oneDecimal.format(summary.total ? (summary.bySource["Mobile combustion"] || 0) / summary.total * 100 : 0)}% of Scope 1` })}
-                ${kpiCard("Stationary combustion", formatNumber(summary.bySource["Stationary combustion"] || 0), "tCO2e", "Backup generation", { text: "Applicable source" }, "neutral")}
-                ${kpiCard("Fugitive emissions", formatNumber(summary.bySource["Fugitive emissions"] || 0), "tCO2e", "Refrigerants", { text: "HVAC systems" }, "warning")}
-                ${panel("Scope 1 pathway", "Baseline, current performance and pathway share", lineChart(scopedPath("Scope 1", summary.total, selectedYear()), { highlightCurrent: true, gradientId: "scope1Gradient" }), "wide-panel", "Direct emissions")}
-                ${panel("Emissions by source", "Contribution to selected Scope 1 view", barChart(sources, { ariaLabel: "Scope 1 emissions by source" }), "narrow-panel")}
-                ${panel("Operational note", "", `<div class="note-list"><div class="note-item"><strong>Process emissions are not applicable to Company X</strong> because it has no related operations that generate process emissions.</div><div class="note-item">Mobile combustion remains the largest direct source at ${formatNumber(fleetCurrent)} tCO2e.</div><div class="note-item">The fleet pathway assumes progressive vehicle replacement aligned with asset cycles.</div></div>`, "wide-panel note-panel")}
+                ${kpiCard("Scope 1 emissions", formatNumber(summary.total), "tCO2e", "FY2026 current", { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 })}
+                ${kpiCard("Mobile combustion", formatNumber(summary.bySource["Mobile combustion"] || 0), "tCO2e", "FY2026 fleet fuel", { text: `${oneDecimal.format(summary.total ? (summary.bySource["Mobile combustion"] || 0) / summary.total * 100 : 0)}% of Scope 1` })}
+                ${kpiCard("Stationary combustion", formatNumber(summary.bySource["Stationary combustion"] || 0), "tCO2e", "FY2026 backup generation", { text: "Applicable source" }, "neutral")}
+                ${kpiCard("Fugitive emissions", formatNumber(summary.bySource["Fugitive emissions"] || 0), "tCO2e", "FY2026 refrigerants", { text: "HVAC systems" }, "warning")}
+                ${panel("Monthly performance comparison", "FY2025 vs FY2026 • 1 July–30 June • illustrative monthly sample", monthlyComparisonChart(monthly, { ariaLabel: "Scope 1 monthly emissions performance comparing FY2025 and FY2026" }), "wide-panel", "Illustrative sample")}
+                ${panel("Emissions by source", "FY2026 Scope 1 emissions by source", barChart(sources, { ariaLabel: "FY2026 Scope 1 emissions by source" }), "narrow-panel")}
+                ${panel("Operational note", "", `<div class="note-list"><div class="note-item"><strong>Financial Year is not used on this page.</strong> The line chart aligns each month from July through June for direct comparison.</div><div class="note-item">Mobile combustion remains the largest direct source at ${formatNumber(fleetCurrent)} tCO2e in FY2026.</div><div class="note-item">Monthly values are illustrative allocations that reconcile to the annual sample totals.</div></div>`, "wide-panel note-panel")}
                 ${panel("Fleet transition", "", `<div class="progress-list"><div class="progress-row"><span>Electric vehicles</span><div class="progress-track"><div class="progress-fill" style="width:38%"></div></div><span class="progress-value">38%</span></div><div class="progress-row"><span>Fuel data coverage</span><div class="progress-track"><div class="progress-fill" style="width:96%"></div></div><span class="progress-value">96%</span></div></div>`, "narrow-panel")}
               </div>
             </div>
@@ -1935,24 +2073,36 @@
 
       function renderScope2(records) {
         const scopeRecords = records.filter((record) => record.scope === "Scope 2");
-        const summary = core.getSummary(scopeRecords);
-        const baselineRecords = comparableRecords("FY2025").filter((record) => record.scope === "Scope 2");
-        const baseline = core.sum(baselineRecords, "emissions");
-        const change = core.pctChange(summary.total, baseline);
-        const facilities = Object.entries(summary.byFacility).map(([label, value]) => ({ label: label.replace(" Operations", "").replace(" Hub", ""), value })).sort((a, b) => b.value - a.value);
+        const latestRecords = scopeRecords.filter((record) => record.fy === "FY2026");
+        const baselineRecords = scopeRecords.filter((record) => record.fy === "FY2025");
+        const method = state.scope2Method === "location" ? "location" : "market";
+        const valueField = method === "location" ? "locationEmissions" : "emissions";
+        const methodLabel = method === "location" ? "Location-based" : "Market-based";
+        const alternateLabel = method === "location" ? "Market-based" : "Location-based";
+        const total = core.sum(latestRecords, valueField);
+        const baseline = core.sum(baselineRecords, valueField);
+        const change = core.pctChange(total, baseline);
+        const alternateTotal = core.sum(latestRecords, method === "location" ? "emissions" : "locationEmissions");
+        const facilities = Object.entries(latestRecords.reduce((groups, record) => {
+          groups[record.facility] = (groups[record.facility] || 0) + (Number(record[valueField]) || 0);
+          return groups;
+        }, {})).map(([label, value]) => ({ label: label.replace(" Operations", "").replace(" Hub", ""), value })).sort((a, b) => b.value - a.value);
+        const monthly = core.getMonthlyComparison(scopeRecords, "Scope 2", valueField);
+        const methodToggle = `<div class="method-toggle" role="group" aria-label="Scope 2 accounting methodology"><button type="button" data-scope2-method="market" aria-pressed="${method === "market" ? "true" : "false"}">Market-based</button><button type="button" data-scope2-method="location" aria-pressed="${method === "location" ? "true" : "false"}">Location-based</button></div>`;
+        const renewable = core.getSummary(latestRecords).renewable;
         return `
           <section class="page active" id="page-scope2">
             <div class="page-shell">
-              ${pageHeading("Scope 2", `Purchased electricity performance for ${selectedYear()} compared with baseline and pathway`)}
+              ${pageHeading("Scope 2", "Purchased electricity monthly performance comparison for FY2025 and FY2026 (1 July–30 June)")}
               <div class="page-grid scope-grid">
-                ${kpiCard("Market-based emissions", formatNumber(summary.total), "tCO2e", selectedYear(), { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 })}
-                ${kpiCard("Location-based emissions", formatNumber(summary.locationEmissions), "tCO2e", "Grid average", { text: `${formatNumber(Math.max(0, summary.locationEmissions - summary.total))} tCO2e difference` }, "neutral")}
-                ${kpiCard("Electricity consumption", formatNumber(summary.energy), "GJ", "Selected facilities", { text: "Activity data" })}
-                ${kpiCard("Renewable electricity", `${oneDecimal.format(summary.renewable)}%`, "", "RE100 progress", { text: `${oneDecimal.format(Math.max(0, 100 - summary.renewable))} pts remaining` }, "warning")}
-                ${panel("Scope 2 pathway", "FY2025 baseline, current result and target trajectory", lineChart(scopedPath("Scope 2", summary.total, selectedYear()), { highlightCurrent: true, gradientId: "scope2Gradient" }), "wide-panel", "Market-based")}
-                ${panel("Facility comparison", "Market-based emissions by facility", barChart(facilities, { horizontal: true, ariaLabel: "Scope 2 emissions by facility" }), "narrow-panel")}
-                ${panel("Renewable electricity progress", "", `<div class="progress-list"><div class="progress-row"><span>Melbourne HQ</span><div class="progress-track"><div class="progress-fill" style="width:68%"></div></div><span class="progress-value">68%</span></div><div class="progress-row"><span>Sydney Operations</span><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div><span class="progress-value">64%</span></div><div class="progress-row"><span>Brisbane Hub</span><div class="progress-track"><div class="progress-fill" style="width:54%"></div></div><span class="progress-value">54%</span></div></div>`, "wide-panel")}
-                ${panel("Management focus", "", `<p class="insight-copy">The RE100 pathway requires contract coverage to move from <strong>${oneDecimal.format(summary.renewable)}%</strong> to 100%. Priority should go to the facility with the lowest renewable electricity share while maintaining complete invoice and meter evidence.</p>`, "narrow-panel insight-panel")}
+                ${kpiCard(`${methodLabel} emissions`, formatNumber(total), "tCO2e", "FY2026 current", { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 })}
+                ${kpiCard(`${alternateLabel} emissions`, formatNumber(alternateTotal), "tCO2e", "FY2026 alternate view", { text: "Switch methodology above" }, "neutral")}
+                ${kpiCard("Electricity consumption", formatNumber(core.sum(latestRecords, "energy")), "GJ", "FY2026 selected facilities", { text: "Activity data" })}
+                ${kpiCard("Renewable electricity", `${oneDecimal.format(renewable)}%`, "", "FY2026 RE100 progress", { text: `${oneDecimal.format(Math.max(0, 100 - renewable))} pts remaining` }, "warning")}
+                ${panel("Monthly performance comparison", `${methodLabel} accounting • FY2025 vs FY2026 • 1 July–30 June`, methodToggle + monthlyComparisonChart(monthly, { ariaLabel: `Scope 2 monthly ${methodLabel.toLowerCase()} emissions comparing FY2025 and FY2026` }), "wide-panel scope2-comparison-panel", `${methodLabel} sample`)}
+                ${panel("Facility comparison", `FY2026 ${methodLabel.toLowerCase()} emissions by facility`, barChart(facilities, { ariaLabel: `FY2026 Scope 2 ${methodLabel.toLowerCase()} emissions by facility` }), "narrow-panel")}
+                ${panel("Renewable electricity progress", "FY2026 renewable share by facility", `<div class="progress-list"><div class="progress-row"><span>Melbourne HQ</span><div class="progress-track"><div class="progress-fill" style="width:68%"></div></div><span class="progress-value">68%</span></div><div class="progress-row"><span>Sydney Operations</span><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div><span class="progress-value">64%</span></div><div class="progress-row"><span>Brisbane Hub</span><div class="progress-track"><div class="progress-fill" style="width:54%"></div></div><span class="progress-value">54%</span></div></div>`, "wide-panel")}
+                ${panel("Management focus", "", `<p class="insight-copy">The ${methodLabel.toLowerCase()} view is selected for the monthly comparison. Use the methodology toggle to see how contractual instruments change reported Scope 2 results; monthly values are illustrative allocations that reconcile to annual sample totals.</p>`, "narrow-panel insight-panel")}
               </div>
             </div>
           </section>`;
@@ -2044,6 +2194,12 @@
             netzero: renderNetZero
           };
           content.innerHTML = renderers[state.page](records);
+          content.querySelectorAll("[data-scope2-method]").forEach((button) => {
+            button.addEventListener("click", () => {
+              state.scope2Method = button.dataset.scope2Method;
+              renderApp();
+            });
+          });
         }
         document.querySelectorAll(".nav-button").forEach((button) => {
           const active = button.dataset.page === state.page;
@@ -2097,6 +2253,7 @@
 
       function resetFilters() {
         state.filters = { fy: "FY2026", entity: "All", facility: "All", method: "All" };
+        state.scope2Method = "market";
         document.querySelectorAll("[data-filter]").forEach((select) => {
           select.value = state.filters[select.dataset.filter];
         });
