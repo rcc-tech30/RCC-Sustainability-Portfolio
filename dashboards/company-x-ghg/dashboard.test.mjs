@@ -152,6 +152,21 @@ test("monthly comparison labels every month above and below the shared chart lin
   assert.match(source, /const valueLabels = points\.map/);
   assert.match(source, /seriesIndex === 0/);
   assert.match(source, /seriesIndex === 1/);
-  assert.match(source, /const width = 720/);
+  assert.match(source, /const width = 1200/);
   assert.doesNotMatch(source, /const finalPoint = points\.at\(-1\)/);
+});
+
+test("Scope 1 and Scope 2 share an 88-percent full-width monthly plot", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
+  assert.ok(source, "monthly chart renderer should be present");
+  const width = Number(source.match(/const width = (\d+);/)?.[1]);
+  const plotWidth = Number(source.match(/const plotWidth = (\d+);/)?.[1]);
+  assert.equal(width, 1200);
+  assert.equal(plotWidth, 1056);
+  assert.equal(plotWidth / width, 0.88);
+  assert.match(html, /\.monthly-chart svg \{[\s\S]*?width: 100%;[\s\S]*?height: auto;/);
+  assert.match(html, /renderScope1[\s\S]*?monthlyComparisonChart\(monthly/);
+  assert.match(html, /renderScope2[\s\S]*?monthlyComparisonChart\(monthly/);
+  assert.doesNotMatch(html, /\.scope2-comparison-panel \.monthly-chart[\s\S]*?width:/);
 });
