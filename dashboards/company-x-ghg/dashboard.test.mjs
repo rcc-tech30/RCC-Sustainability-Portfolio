@@ -168,5 +168,7 @@ test("Scope 1 and Scope 2 share an 88-percent full-width monthly plot", () => {
   assert.match(html, /\.monthly-chart svg \{[\s\S]*?width: 100%;[\s\S]*?height: auto;/);
   assert.match(html, /renderScope1[\s\S]*?monthlyComparisonChart\(monthly/);
   assert.match(html, /renderScope2[\s\S]*?monthlyComparisonChart\(monthly/);
-  assert.doesNotMatch(html, /\.scope2-comparison-panel \.monthly-chart[\s\S]*?width:/);
+  const scope2Rule = html.match(/\.scope2-comparison-panel \.monthly-chart \\{([^}]*)\\}/)?.[1] || "";
+  assert.doesNotMatch(scope2Rule, /width:/);
+  assert.match(source, /stroke-width="2\\.5"/);
 });
