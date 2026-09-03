@@ -150,8 +150,8 @@ test("monthly comparison labels every month above and below the shared chart lin
   const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
   assert.ok(source, "monthly chart renderer should be present");
   assert.match(source, /const valueLabels = points\.map/);
-  assert.match(source, /seriesIndex === 0/);
-  assert.match(source, /seriesIndex === 1/);
+  assert.match(source, /const isUpperSeries = seriesIndex === 0/);
+  assert.match(source, /const offset = isUpperSeries \? -9/);
   assert.match(source, /const width = 1200/);
   assert.doesNotMatch(source, /const finalPoint = points\.at\(-1\)/);
 });
