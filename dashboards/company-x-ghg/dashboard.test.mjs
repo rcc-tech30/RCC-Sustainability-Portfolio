@@ -173,3 +173,30 @@ test("Scope 1 and Scope 2 share an 88-percent full-width monthly plot", () => {
   assert.match(html, /\.scope2-comparison-panel \.method-toggle \{[^}]*margin-bottom: 0;/);
   assert.match(source, /stroke-width="2\.5"/);
 });
+
+
+test("financial-year choices exclude combined years and default invalid values to FY2026", () => {
+  const core = loadCore();
+
+  assert.deepEqual(JSON.parse(JSON.stringify(core.getFinancialYearOptions())), ["FY2026", "FY2025"]);
+  assert.equal(core.getEffectiveFinancialYear("overview", "FY2025"), "FY2025");
+  assert.equal(core.getEffectiveFinancialYear("overview", "All"), "FY2026");
+  assert.equal(core.getEffectiveFinancialYear("overview", ""), "FY2026");
+});
+
+test("net-zero pathway always uses FY2026 current data regardless of reporting-year selection", () => {
+  const core = loadCore();
+  const view = core.getNetZeroView("FY2025", 1240, 1120);
+
+  assert.equal(core.getEffectiveFinancialYear("netzero", "FY2025"), "FY2026");
+  assert.equal(view.current, 1120);
+  assert.equal(view.currentLabel, "FY2026 actual");
+  assert.equal(view.highlightLabel, "FY2026");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(view.points.slice(0, 2))),
+    [
+      { label: "FY2025", note: "Baseline", value: 1240 },
+      { label: "FY2026", note: "Latest actual", value: 1120 }
+    ]
+  );
+});
