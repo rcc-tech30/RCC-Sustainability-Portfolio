@@ -136,15 +136,69 @@ test("monthly chart legend uses explicit line swatches and the renewable card na
   assert.match(html, /panel\("FY2026 renewable electricity progress", ""/);
   assert.doesNotMatch(html, /panel\("Renewable electricity progress", "FY2026 renewable share by facility"/);
 });
-test("monthly comparison renders smooth paths with every monthly value and no circle markers", () => {
+test("monthly comparison renders smooth paths with endpoint values and no circle markers", () => {
   const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
   const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
   assert.ok(source, "monthly chart renderer should be present");
   assert.match(source, /smoothPath/);
   assert.match(source, /chart-value-label/);
-  assert.match(source, /const valueLabels = points\.map/);
-  assert.doesNotMatch(source, /series\.values\[series\.values\.length - 1\]/);
   assert.doesNotMatch(source, /<circle/);
+});
+
+test("monthly comparison labels every month above and below the shared chart lines", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
+  assert.ok(source, "monthly chart renderer should be present");
+  assert.match(source, /const valueLabels = points\.map/);
+  assert.match(source, /const isUpperSeries = seriesIndex === 0/);
+  assert.match(source, /const offset = isUpperSeries \? -9/);
+  assert.match(source, /const width = 1200/);
+  assert.doesNotMatch(source, /const finalPoint = points\.at\(-1\)/);
+});
+
+test("Scope 1 and Scope 2 share an 88-percent full-width monthly plot", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
+  assert.ok(source, "monthly chart renderer should be present");
+  const width = Number(source.match(/const width = (\d+);/)?.[1]);
+  const plotWidth = Number(source.match(/const plotWidth = (\d+);/)?.[1]);
+  assert.equal(width, 1200);
+  assert.equal(plotWidth, 1056);
+  assert.equal(plotWidth / width, 0.88);
+  assert.match(html, /\.monthly-chart svg \{[\s\S]*?width: 100%;[\s\S]*?height: auto;/);
+  assert.match(html, /renderScope1[\s\S]*?monthlyComparisonChart\(monthly/);
+  assert.match(html, /renderScope2[\s\S]*?monthlyComparisonChart\(monthly/);
+  const scope2Rule = html.match(/\.scope2-comparison-panel \.monthly-chart \{([^}]*)\}/)?.[1] || "";
+  assert.doesNotMatch(scope2Rule, /width:/);
+  assert.match(html, /\.scope2-comparison-panel \.method-toggle \{[^}]*margin-bottom: 0;/);
+  assert.match(source, /stroke-width="2\.5"/);
+});
+
+
+test("financial-year choices exclude combined years and default invalid values to FY2026", () => {
+  const core = loadCore();
+
+  assert.deepEqual(JSON.parse(JSON.stringify(core.getFinancialYearOptions())), ["FY2026", "FY2025"]);
+  assert.equal(core.getEffectiveFinancialYear("overview", "FY2025"), "FY2025");
+  assert.equal(core.getEffectiveFinancialYear("overview", "All"), "FY2026");
+  assert.equal(core.getEffectiveFinancialYear("overview", ""), "FY2026");
+});
+
+test("net-zero pathway always uses FY2026 current data regardless of reporting-year selection", () => {
+  const core = loadCore();
+  const view = core.getNetZeroView("FY2025", 1240, 1120);
+
+  assert.equal(core.getEffectiveFinancialYear("netzero", "FY2025"), "FY2026");
+  assert.equal(view.current, 1120);
+  assert.equal(view.currentLabel, "FY2026 actual");
+  assert.equal(view.highlightLabel, "FY2026");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(view.points.slice(0, 2))),
+    [
+      { label: "FY2025", note: "Baseline", value: 1240 },
+      { label: "FY2026", note: "Latest actual", value: 1120 }
+    ]
+  );
 });
 
 test("overview pathway omits FY2026 actual when FY2025 is selected", () => {
@@ -207,12 +261,6 @@ test("fleet transition is a financial-year point-in-time status", () => {
 
   assert.deepEqual(JSON.parse(JSON.stringify(core.getFleetTransition("FY2025"))), { electric: 0, fleet: 10, percentage: 0, asAt: "30 June FY2025" });
   assert.deepEqual(JSON.parse(JSON.stringify(core.getFleetTransition("FY2026"))), { electric: 2, fleet: 10, percentage: 20, asAt: "30 June FY2026" });
-});
-
-test("financial-year filter offers only FY2026 and FY2025", () => {
-  const core = loadCore();
-
-  assert.deepEqual(JSON.parse(JSON.stringify(core.getFinancialYearOptions())), ["FY2026", "FY2025"]);
 });
 
 test("Scope 1 and Scope 2 enable year filtering while Net Zero ignores reporting filters", () => {
