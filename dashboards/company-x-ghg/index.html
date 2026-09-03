@@ -631,6 +631,11 @@
       font-weight: 780;
     }
 
+    .chart-value-label {
+      font-size: 8px;
+      font-weight: 650;
+    }
+
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -808,6 +813,18 @@
       text-align: right;
       color: var(--forest-900);
       font-weight: 760;
+    }
+
+    .progress-context {
+      margin: 0;
+      color: var(--ink-500);
+      font-size: 9px;
+      line-height: 1.4;
+    }
+
+    .progress-context strong {
+      color: var(--forest-950);
+      font-size: 11px;
     }
 
     .quality-table {
@@ -997,6 +1014,128 @@
     .nz-line-swatch.target {
       border-top-style: dashed;
       border-top-color: var(--emerald-500);
+    }
+
+    .waterfall-panel .panel-inner {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 4px;
+      padding: 12px 14px 10px;
+    }
+
+    .waterfall-panel .panel-header {
+      margin-bottom: 0;
+    }
+
+    .waterfall-chart,
+    .waterfall-scroll {
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+    }
+
+    .waterfall-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-inline: contain;
+      scrollbar-color: #9bc6b2 transparent;
+      scrollbar-width: thin;
+    }
+
+    .waterfall-scroll:focus-visible {
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 2px rgba(36, 168, 119, 0.28);
+    }
+
+    .waterfall-scroll svg {
+      width: 100%;
+      min-width: 1040px;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .waterfall-connector {
+      stroke: #aeb8b3;
+      stroke-width: 1.25;
+      stroke-dasharray: 5 4;
+    }
+
+    .waterfall-zero {
+      stroke: #aeb8b3;
+      stroke-width: 1.25;
+    }
+
+    .waterfall-label {
+      fill: var(--ink-700);
+      font-size: 9px;
+      font-weight: 650;
+    }
+
+    .waterfall-value {
+      fill: var(--forest-950);
+      font-size: 10px;
+      font-weight: 760;
+    }
+
+    .waterfall-notes {
+      display: grid;
+      gap: 2px;
+      text-align: center;
+      color: var(--ink-500);
+      font-size: 8.5px;
+      line-height: 1.35;
+    }
+
+    .waterfall-notes p {
+      margin: 0;
+    }
+
+    .waterfall-notes p:first-child {
+      color: var(--ink-700);
+      font-size: 9px;
+    }
+
+    .waterfall-notes span {
+      padding: 0 8px;
+      color: var(--emerald-600);
+    }
+
+    .lever-summary-panel .panel-inner {
+      padding: 10px 14px;
+    }
+
+    .lever-summary-panel .panel-header {
+      margin-bottom: 6px;
+    }
+
+    .lever-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      height: calc(100% - 24px);
+    }
+
+    .lever-summary > div {
+      min-width: 0;
+      padding-left: 12px;
+      border-left: 2px solid var(--mint-200);
+    }
+
+    .lever-summary strong,
+    .lever-summary span {
+      display: block;
+    }
+
+    .lever-summary strong {
+      color: var(--forest-950);
+      font-size: 10px;
+    }
+
+    .lever-summary span {
+      margin-top: 4px;
+      color: var(--ink-500);
+      font-size: 8.5px;
+      line-height: 1.35;
     }
 
     .milestone-progress {
@@ -1558,7 +1697,98 @@
         };
       }
 
-      return { DATA, TARGETS, MONTHS, MONTHLY_PROFILES, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, getMonthlyComparison, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView };
+      function getOverviewPathway(financialYear, fy2025Total, fy2026Total) {
+        const points = [
+          { label: "FY2025", note: "Baseline", value: Number(fy2025Total) || 0 }
+        ];
+        if (financialYear !== "FY2025") {
+          points.push({ label: "FY2026", note: "Latest actual", value: Number(fy2026Total) || 0 });
+        }
+        points.push(...TARGETS.slice(1).map((target) => ({
+          label: target.fy,
+          note: target.label,
+          value: target.emissions
+        })));
+        return {
+          points,
+          highlightLabel: financialYear === "FY2025" ? "FY2025" : "FY2026"
+        };
+      }
+
+      function getNetZeroLevers() {
+        return {
+          baseline: 1240,
+          grossReduction: 1116,
+          residual: 124,
+          neutralisation: 124,
+          final: 0,
+          scopeResiduals: { scope1: 5, scope2Market: 0, scope3: 119 },
+          steps: [
+            { key: "baseline", label: "FY2025 baseline", displayValue: "1,240", amount: 1240, type: "total" },
+            { key: "fleet", label: "Fleet electrification", displayValue: "−82", amount: -82, type: "reduction" },
+            { key: "stationary", label: "Stationary equipment electrification", displayValue: "−32", amount: -32, type: "reduction" },
+            { key: "refrigerants", label: "Lower-GWP refrigerants", displayValue: "−21", amount: -21, type: "reduction" },
+            { key: "added-electricity", label: "Added electricity from electrification", displayValue: "+E", amount: 80, type: "increase", modelInput: true },
+            { key: "renewable-electricity", label: "100% renewable electricity", displayValue: "−(300 + E)", amount: -380, type: "reduction", modelInput: true },
+            { key: "supplier", label: "Supplier decarbonisation", displayValue: "−X", amount: -360, type: "reduction", modelInput: true },
+            { key: "other-value-chain", label: "Other value-chain reductions", displayValue: "−(681 − X)", amount: -321, type: "reduction", modelInput: true },
+            { key: "residual", label: "Residual emissions", displayValue: "124", amount: 124, type: "subtotal" },
+            { key: "neutralisation", label: "Neutralisation of residual emissions", displayValue: "−124", amount: -124, type: "neutralisation" },
+            { key: "net-zero", label: "FY2050 net zero", displayValue: "0", amount: 0, type: "total" }
+          ]
+        };
+      }
+
+      function getFleetTransition(financialYear) {
+        const electric = financialYear === "FY2025" ? 0 : 2;
+        const fleet = 10;
+        return {
+          electric,
+          fleet,
+          percentage: electric / fleet * 100,
+          asAt: `30 June ${financialYear === "FY2025" ? "FY2025" : "FY2026"}`
+        };
+      }
+
+      function getFinancialYearOptions() {
+        return ["FY2026", "FY2025"];
+      }
+
+      function getPageFilterPolicy(page) {
+        if (page === "netzero") {
+          return {
+            heading: "Corporate pathway view",
+            guidance: "Reporting filters do not apply to the FY2025 baseline reduction pathway",
+            fyDisabled: true,
+            otherDisabled: true
+          };
+        }
+        if (page === "scope1" || page === "scope2") {
+          return {
+            heading: "Reporting and monthly comparison",
+            guidance: "Financial year applies to KPIs and breakdowns • Monthly comparison always shows FY2025 and FY2026",
+            fyDisabled: false,
+            otherDisabled: false
+          };
+        }
+        return {
+          heading: "Reporting view",
+          guidance: "Filters update connected visuals",
+          fyDisabled: false,
+          otherDisabled: false
+        };
+      }
+
+      function getScopeYearView(records, scope, financialYear, valueField = "emissions") {
+        const selectedRecords = records.filter((record) => record.scope === scope && record.fy === financialYear);
+        return {
+          records: selectedRecords,
+          total: sum(selectedRecords, valueField),
+          bySource: groupSum(selectedRecords, "source", valueField)
+        };
+      }
+
+      return { DATA, TARGETS, MONTHS, MONTHLY_PROFILES, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, getMonthlyComparison, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView, getOverviewPathway, getNetZeroLevers, getFleetTransition, getFinancialYearOptions, getPageFilterPolicy, getScopeYearView };
     })();
   </script>
 
@@ -1634,25 +1864,19 @@
       }
 
       function syncFilterAvailability() {
-        const corporatePathway = state.page === "netzero";
-        const monthlyComparison = state.page === "scope1" || state.page === "scope2";
+        const policy = core.getPageFilterPolicy(state.page);
         const heading = document.querySelector(".filter-heading");
-        heading.querySelector("strong").textContent = corporatePathway ? "Corporate pathway view" : monthlyComparison ? "Monthly comparison view" : "Reporting view";
-        heading.querySelector("span").textContent = corporatePathway
-          ? "Only Financial Year applies"
-          : monthlyComparison
-            ? "Financial year not applicable • FY2025 vs FY2026"
-            : "Filters update connected visuals";
+        heading.querySelector("strong").textContent = policy.heading;
+        heading.querySelector("span").textContent = policy.guidance;
         const fySelect = document.querySelector('[data-filter="fy"]');
-        const fyDisabled = corporatePathway || monthlyComparison;
-        fySelect.disabled = fyDisabled;
-        fySelect.title = monthlyComparison ? "Scope 1 and Scope 2 compare FY2025 and FY2026 by month" : "";
-        fySelect.closest(".filter-field").classList.toggle("filter-disabled", fyDisabled);
+        fySelect.disabled = policy.fyDisabled;
+        fySelect.title = policy.fyDisabled ? "The Net Zero pathway always starts from the FY2025 baseline" : "";
+        fySelect.closest(".filter-field").classList.toggle("filter-disabled", policy.fyDisabled);
         ["entity", "facility", "method"].forEach((field) => {
           const select = document.querySelector(`[data-filter="${field}"]`);
-          select.disabled = corporatePathway;
-          select.title = corporatePathway ? "This filter is not applied to the corporate Net Zero pathway" : "";
-          select.closest(".filter-field").classList.toggle("filter-disabled", corporatePathway);
+          select.disabled = policy.otherDisabled;
+          select.title = policy.otherDisabled ? "This filter is not applied to the corporate Net Zero pathway" : "";
+          select.closest(".filter-field").classList.toggle("filter-disabled", policy.otherDisabled);
         });
       }
 
@@ -1886,10 +2110,13 @@
           }));
           const color = colors[seriesIndex % colors.length];
           const line = `<path d="${smoothPath(points)}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-          const finalPoint = points.at(-1);
-          const valueY = seriesIndex === 0 ? Math.max(top + 10, finalPoint.y - 10) : Math.min(top + plotHeight - 2, finalPoint.y + 16);
-          const valueLabel = `<text x="${finalPoint.x - 3}" y="${valueY}" text-anchor="end" class="chart-value-label" fill="${color}">${oneDecimal.format(finalPoint.value)}</text>`;
-          return line + valueLabel;
+          const valueLabels = points.map((point) => {
+            const valueY = seriesIndex === 0
+              ? Math.max(top + 8, point.y - 9)
+              : Math.min(top + plotHeight - 2, point.y + 13);
+            return `<text x="${point.x}" y="${valueY}" text-anchor="middle" class="chart-value-label" fill="${color}">${oneDecimal.format(point.value)}</text>`;
+          }).join("");
+          return line + valueLabels;
         }).join("");
         const monthLabels = months.map((label, index) => `<text x="${xFor(index)}" y="${top + plotHeight + 20}" text-anchor="middle" class="chart-label">${escapeHtml(label)}</text>`).join("");
         const legend = series.map((item, index) => {
@@ -1962,12 +2189,104 @@
               ${targetPath ? `<path d="${targetPath}" fill="none" stroke="#24a877" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 7"/>` : ""}
               <rect x="536" y="2" width="256" height="42" rx="9" fill="#e8f7ef" stroke="#cceede"/>
               <text x="664" y="18" text-anchor="middle" class="chart-value" style="font-size:11px">FY2050 NET TARGET: 0 tCO2e</text>
-              <text x="664" y="34" text-anchor="middle" class="chart-axis" style="font-size:9.5px">90% gross reduction + 10% neutralization</text>
+              <text x="664" y="34" text-anchor="middle" class="chart-axis" style="font-size:9.5px">90% gross reduction + 10% neutralisation</text>
               <rect x="${calloutX - 68}" y="${calloutY}" width="136" height="24" rx="7" fill="#fff4d9" stroke="#f0d59a"/>
               <text x="${calloutX}" y="${calloutY + 15}" text-anchor="middle" class="chart-value" style="font-size:9px">${formatNumber(view.gapTo2030)} tCO2e remaining</text>
               ${dots}
             </svg>
             <div class="nz-legend"><span class="nz-legend-item"><span class="nz-line-swatch"></span>Reported actual</span><span class="nz-legend-item"><span class="nz-line-swatch target"></span>Approved target pathway</span></div>
+          </div>`;
+      }
+
+      function netZeroLeversChart(view) {
+        const width = 1120;
+        const height = 285;
+        const left = 34;
+        const top = 24;
+        const plotWidth = 1052;
+        const plotHeight = 170;
+        const max = 1300;
+        const baselineY = top + plotHeight;
+        const barWidth = 62;
+        const stepGap = (plotWidth - barWidth) / Math.max(1, view.steps.length - 1);
+        const yFor = (value) => top + plotHeight - (Math.max(0, value) / max) * plotHeight;
+        const labelLines = {
+          baseline: ["FY2025", "baseline"],
+          fleet: ["Fleet", "electrification"],
+          stationary: ["Stationary equipment", "electrification"],
+          refrigerants: ["Lower-GWP", "refrigerants"],
+          "added-electricity": ["Added electricity", "from electrification"],
+          "renewable-electricity": ["100% renewable", "electricity"],
+          supplier: ["Supplier", "decarbonisation"],
+          "other-value-chain": ["Other value-chain", "reductions"],
+          residual: ["Residual", "emissions"],
+          neutralisation: ["Neutralisation of", "residual emissions"],
+          "net-zero": ["FY2050", "net zero"]
+        };
+        let cumulative = 0;
+        const plotted = view.steps.map((step, index) => {
+          let start;
+          let end;
+          if (step.type === "total" || step.type === "subtotal") {
+            start = 0;
+            end = step.amount;
+            cumulative = step.amount;
+          } else {
+            start = cumulative;
+            end = cumulative + step.amount;
+            cumulative = end;
+          }
+          return {
+            ...step,
+            x: left + index * stepGap,
+            start,
+            end
+          };
+        });
+        const grid = [0, 400, 800, 1200].map((value) => {
+          const y = yFor(value);
+          return `<line x1="${left}" y1="${y}" x2="${left + plotWidth}" y2="${y}" class="chart-grid-line"/><text x="${left - 8}" y="${y + 4}" text-anchor="end" class="chart-axis">${formatNumber(value)}</text>`;
+        }).join("");
+        const connectors = plotted.slice(0, -1).map((step, index) => {
+          const next = plotted[index + 1];
+          const y = yFor(step.end);
+          return `<line x1="${step.x + barWidth}" y1="${y}" x2="${next.x}" y2="${y}" class="waterfall-connector"/>`;
+        }).join("");
+        const bars = plotted.map((step) => {
+          const startY = yFor(step.start);
+          const endY = yFor(step.end);
+          const y = Math.min(startY, endY);
+          const rawHeight = Math.abs(startY - endY);
+          const barHeight = Math.max(4, rawHeight);
+          const color = step.type === "increase"
+            ? "#d89528"
+            : step.type === "subtotal"
+              ? "#e5a02f"
+              : step.type === "neutralisation"
+                ? "#168c78"
+                : step.type === "total"
+                  ? "#aeb8b3"
+                  : "#244a3b";
+          const lines = labelLines[step.key] || [step.label];
+          const labels = lines.map((line, index) => `<tspan x="${step.x + barWidth / 2}" dy="${index === 0 ? 0 : 13}">${escapeHtml(line)}</tspan>`).join("");
+          const valueY = Math.max(14, y - 7);
+          return `
+            <rect x="${step.x}" y="${rawHeight ? y : baselineY - 4}" width="${barWidth}" height="${barHeight}" rx="2" fill="${color}" tabindex="0" data-tip="${escapeHtml(step.label)}: ${escapeHtml(step.displayValue)} tCO2e">
+              <title>${escapeHtml(step.label)}: ${escapeHtml(step.displayValue)} tCO2e</title>
+            </rect>
+            <text x="${step.x + barWidth / 2}" y="${valueY}" text-anchor="middle" class="waterfall-value">${escapeHtml(step.displayValue)}</text>
+            <text x="${step.x + barWidth / 2}" y="${baselineY + 22}" text-anchor="middle" class="waterfall-label">${labels}</text>`;
+        }).join("");
+        return `
+          <div class="waterfall-chart">
+            <div class="waterfall-scroll" tabindex="0" aria-label="Scrollable Net Zero reduction lever waterfall">
+              <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="FY2025 baseline emissions reduced by operational, electricity, value-chain and neutralisation levers to FY2050 net zero">
+                ${grid}
+                <line x1="${left}" y1="${baselineY}" x2="${left + plotWidth}" y2="${baselineY}" class="waterfall-zero"/>
+                ${connectors}
+                ${bars}
+              </svg>
+            </div>
           </div>`;
       }
 
@@ -2026,25 +2345,33 @@
           core.sum(corporateComparableRecords("FY2025"), "emissions"),
           core.sum(corporateComparableRecords("FY2026"), "emissions")
         );
-        const pathwayPoints = hasSubsetFilter
-          ? core.getActualTrendPoints(baseline.total, latestActual.total)
-          : corporateView.points;
-        const pathwayTitle = hasSubsetFilter ? "Selected view: baseline and actual" : "Corporate baseline, actual and pathway";
+        const overviewPathway = core.getOverviewPathway(
+          state.filters.fy,
+          core.sum(corporateComparableRecords("FY2025"), "emissions"),
+          core.sum(corporateComparableRecords("FY2026"), "emissions")
+        );
+        const selectedActualPoints = state.filters.fy === "FY2025"
+          ? [{ label: "FY2025", note: "Baseline", value: baseline.total }]
+          : core.getActualTrendPoints(baseline.total, latestActual.total);
+        const pathwayTitle = hasSubsetFilter ? "Selected view: baseline and actual" : "Corporate emissions pathway";
         const pathwaySubtitle = hasSubsetFilter
           ? "Comparable annual actuals; no target is allocated to this filtered view"
-          : "Historical baseline and future target trajectory";
+          : "Reported actuals and approved target milestones";
         const pathwayTag = hasSubsetFilter ? "No allocated target" : "FY2050 net zero";
-        const totalDelta = state.filters.fy === "All"
-          ? { text: "Combined reporting periods" }
+        const totalDelta = state.filters.fy === "FY2025"
+          ? { text: "Baseline year" }
           : { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs baseline`, bad: change > 0 };
         const targetCard = hasSubsetFilter
           ? kpiCard("FY2030 gap", "N/A", "", "Selected view", { text: "Corporate target only" }, "neutral")
           : kpiCard("Reduction to FY2030", formatNumber(corporateView.gapTo2030), "tCO2e", "Remaining", { text: "Target 806 tCO2e", bad: corporateView.gapTo2030 > 0 }, "warning");
         const composition = ["Scope 1", "Scope 2", "Scope 3"].map((scope) => ({ label: scope, value: summary.byScope[scope] || 0 }));
         const insightScope = composition.slice().sort((a, b) => b.value - a.value)[0];
+        const comparisonText = state.filters.fy === "FY2025"
+          ? "This is the selected baseline-year view."
+          : `${escapeHtml(currentLabel)} emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the comparable FY2025 baseline.`;
         const executiveReading = hasSubsetFilter
-          ? `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. FY2026 emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the comparable FY2025 baseline. No reduction target is allocated to this filtered view. Reset Entity, Facility and Calculation Method to see the corporate pathway.</p>`
-          : `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. Current emissions are <strong>${oneDecimal.format(Math.abs(change))}% ${change <= 0 ? "below" : "above"}</strong> the FY2025 baseline. The next decision point is closing the <strong>${formatNumber(corporateView.gapTo2030)} tCO2e</strong> gap to the FY2030 pathway.</p>`;
+          ? `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. ${comparisonText} No reduction target is allocated to this filtered view. Reset Entity, Facility and Calculation Method to see the corporate pathway.</p>`
+          : `<p class="insight-copy"><strong>${escapeHtml(insightScope.label)}</strong> is the largest reported source at <strong>${oneDecimal.format(summary.total ? insightScope.value / summary.total * 100 : 0)}%</strong> of the selected view. ${comparisonText} The next decision point is closing the <strong>${formatNumber(corporateView.gapTo2030)} tCO2e</strong> gap to the FY2030 pathway.</p>`;
         return `
           <section class="page active" id="page-overview">
             <div class="page-shell">
@@ -2055,7 +2382,7 @@
                 ${kpiCard("Data coverage", `${oneDecimal.format(summary.coverage)}%`, "", "Emissions weighted", { text: summary.coverage >= 90 ? "Strong coverage" : "Needs attention" })}
                 ${targetCard}
                 ${panel("GHG emissions composition", "Reported emissions by scope", donutChart(composition, "tCO2e", formatNumber(summary.total)), "chart-panel")}
-                ${panel(pathwayTitle, pathwaySubtitle, lineChart(pathwayPoints, { highlightLabel: hasSubsetFilter ? "FY2026" : corporateView.highlightLabel, gradientId: "overviewGradient" }), "chart-panel", pathwayTag)}
+                ${panel(pathwayTitle, pathwaySubtitle, hasSubsetFilter ? lineChart(selectedActualPoints, { highlightLabel: state.filters.fy, gradientId: "overviewGradient" }) : netZeroPathwayChart(overviewPathway), "chart-panel", pathwayTag)}
                 ${panel("Executive reading", "", executiveReading, "narrow-panel insight-panel")}
                 ${panel("Reporting boundary", "", `<div class="note-list"><div class="note-item">Scope 1 covers controlled fuel use and refrigerants.</div><div class="note-item">Scope 2 uses market-based results for the reported total.</div><div class="note-item">Scope 3 categories shown are those relevant to this illustrative company.</div></div>`, "wide-panel note-panel")}
               </div>
@@ -2065,26 +2392,31 @@
 
       function renderScope1(records) {
         const scopeRecords = records.filter((record) => record.scope === "Scope 1");
-        const latestRecords = scopeRecords.filter((record) => record.fy === "FY2026");
-        const summary = core.getSummary(latestRecords);
-        const baseline = core.sum(scopeRecords.filter((record) => record.fy === "FY2025"), "emissions");
-        const change = core.pctChange(summary.total, baseline);
+        const year = state.filters.fy;
+        const yearView = core.getScopeYearView(scopeRecords, "Scope 1", year);
+        const baselineView = core.getScopeYearView(scopeRecords, "Scope 1", "FY2025");
+        const summary = core.getSummary(yearView.records);
+        const change = core.pctChange(summary.total, baselineView.total);
         const sources = ["Mobile combustion", "Stationary combustion", "Fugitive emissions"].map((source) => ({ label: source.replace(" combustion", ""), value: summary.bySource[source] || 0 }));
         const monthly = core.getMonthlyComparison(scopeRecords, "Scope 1");
         const fleetCurrent = summary.bySource["Mobile combustion"] || 0;
+        const fleet = core.getFleetTransition(year);
+        const comparisonDelta = year === "FY2025"
+          ? { text: "Baseline year" }
+          : { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 };
         return `
           <section class="page active" id="page-scope1">
             <div class="page-shell">
               ${pageHeading("Scope 1", "Direct emissions monthly performance comparison for FY2025 and FY2026 (1 July–30 June)")}
               <div class="page-grid scope-grid">
-                ${kpiCard("Scope 1 emissions", formatNumber(summary.total), "tCO2e", "FY2026 current", { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 })}
-                ${kpiCard("Mobile combustion", formatNumber(summary.bySource["Mobile combustion"] || 0), "tCO2e", "FY2026 fleet fuel", { text: `${oneDecimal.format(summary.total ? (summary.bySource["Mobile combustion"] || 0) / summary.total * 100 : 0)}% of Scope 1` })}
-                ${kpiCard("Stationary combustion", formatNumber(summary.bySource["Stationary combustion"] || 0), "tCO2e", "FY2026 backup generation", { text: "Applicable source" }, "neutral")}
-                ${kpiCard("Fugitive emissions", formatNumber(summary.bySource["Fugitive emissions"] || 0), "tCO2e", "FY2026 refrigerants", { text: "HVAC systems" }, "warning")}
+                ${kpiCard("Scope 1 emissions", formatNumber(summary.total), "tCO2e", `${year} selected`, comparisonDelta)}
+                ${kpiCard("Mobile combustion", formatNumber(summary.bySource["Mobile combustion"] || 0), "tCO2e", `${year} fleet fuel`, { text: `${oneDecimal.format(summary.total ? (summary.bySource["Mobile combustion"] || 0) / summary.total * 100 : 0)}% of Scope 1` })}
+                ${kpiCard("Stationary combustion", formatNumber(summary.bySource["Stationary combustion"] || 0), "tCO2e", `${year} backup generation`, { text: "Applicable source" }, "neutral")}
+                ${kpiCard("Fugitive emissions", formatNumber(summary.bySource["Fugitive emissions"] || 0), "tCO2e", `${year} refrigerants`, { text: "HVAC systems" }, "warning")}
                 ${panel("Monthly performance comparison", "FY2025 vs FY2026 • 1 July–30 June • illustrative monthly sample", monthlyComparisonChart(monthly, { ariaLabel: "Scope 1 monthly emissions performance comparing FY2025 and FY2026" }), "wide-panel", "Illustrative sample")}
-                ${panel("Emissions by source", "FY2026 Scope 1 emissions by source", barChart(sources, { ariaLabel: "FY2026 Scope 1 emissions by source" }), "narrow-panel")}
-                ${panel("Operational note", "", `<div class="note-list"><div class="note-item"><strong>Financial Year is not used on this page.</strong> The line chart aligns each month from July through June for direct comparison.</div><div class="note-item">Mobile combustion remains the largest direct source at ${formatNumber(fleetCurrent)} tCO2e in FY2026.</div><div class="note-item">Monthly values are illustrative allocations that reconcile to the annual sample totals.</div></div>`, "wide-panel note-panel")}
-                ${panel("Fleet transition", "", `<div class="progress-list"><div class="progress-row"><span>Electric vehicles</span><div class="progress-track"><div class="progress-fill" style="width:38%"></div></div><span class="progress-value">38%</span></div><div class="progress-row"><span>Fuel data coverage</span><div class="progress-track"><div class="progress-fill" style="width:96%"></div></div><span class="progress-value">96%</span></div></div>`, "narrow-panel")}
+                ${panel("Emissions by source", `${year} Scope 1 emissions by source`, barChart(sources, { ariaLabel: `${year} Scope 1 emissions by source` }), "narrow-panel")}
+                ${panel("Operational note", "", `<div class="note-list"><div class="note-item"><strong>Financial Year applies to KPIs and breakdowns.</strong> The monthly comparison always aligns FY2025 and FY2026 from July through June.</div><div class="note-item">Mobile combustion is ${formatNumber(fleetCurrent)} tCO2e in the selected ${year} view.</div><div class="note-item">Monthly values are illustrative allocations that reconcile to each annual sample total.</div></div>`, "wide-panel note-panel")}
+                ${panel("Fleet transition", "", `<div class="progress-list"><div class="progress-row"><span>Fleet transitioned</span><div class="progress-track"><div class="progress-fill" style="width:${fleet.percentage}%"></div></div><span class="progress-value">${oneDecimal.format(fleet.percentage)}%</span></div><p class="progress-context"><strong>${fleet.electric} of ${fleet.fleet}</strong> electric vehicles • As at ${escapeHtml(fleet.asAt)}</p></div>`, "narrow-panel")}
               </div>
             </div>
           </section>`;
@@ -2092,36 +2424,38 @@
 
       function renderScope2(records) {
         const scopeRecords = records.filter((record) => record.scope === "Scope 2");
-        const latestRecords = scopeRecords.filter((record) => record.fy === "FY2026");
-        const baselineRecords = scopeRecords.filter((record) => record.fy === "FY2025");
+        const year = state.filters.fy;
         const method = state.scope2Method === "location" ? "location" : "market";
         const valueField = method === "location" ? "locationEmissions" : "emissions";
         const methodLabel = method === "location" ? "Location-based" : "Market-based";
         const alternateLabel = method === "location" ? "Market-based" : "Location-based";
-        const total = core.sum(latestRecords, valueField);
-        const baseline = core.sum(baselineRecords, valueField);
-        const change = core.pctChange(total, baseline);
-        const alternateTotal = core.sum(latestRecords, method === "location" ? "emissions" : "locationEmissions");
-        const facilities = Object.entries(latestRecords.reduce((groups, record) => {
+        const yearView = core.getScopeYearView(scopeRecords, "Scope 2", year, valueField);
+        const baselineView = core.getScopeYearView(scopeRecords, "Scope 2", "FY2025", valueField);
+        const alternateView = core.getScopeYearView(scopeRecords, "Scope 2", year, method === "location" ? "emissions" : "locationEmissions");
+        const change = core.pctChange(yearView.total, baselineView.total);
+        const facilities = Object.entries(yearView.records.reduce((groups, record) => {
           groups[record.facility] = (groups[record.facility] || 0) + (Number(record[valueField]) || 0);
           return groups;
         }, {})).map(([label, value]) => ({ label: label.replace(" Operations", "").replace(" Hub", ""), value })).sort((a, b) => b.value - a.value);
         const monthly = core.getMonthlyComparison(scopeRecords, "Scope 2", valueField);
         const methodToggle = `<div class="method-toggle" role="group" aria-label="Scope 2 accounting methodology"><button type="button" data-scope2-method="market" aria-pressed="${method === "market" ? "true" : "false"}">Market-based</button><button type="button" data-scope2-method="location" aria-pressed="${method === "location" ? "true" : "false"}">Location-based</button></div>`;
-        const renewable = core.getSummary(latestRecords).renewable;
+        const renewable = core.getSummary(yearView.records).renewable;
+        const comparisonDelta = year === "FY2025"
+          ? { text: "Baseline year" }
+          : { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 };
         return `
           <section class="page active" id="page-scope2">
             <div class="page-shell">
               ${pageHeading("Scope 2", "Purchased electricity monthly performance comparison for FY2025 and FY2026 (1 July–30 June)")}
               <div class="page-grid scope-grid">
-                ${kpiCard(`${methodLabel} emissions`, formatNumber(total), "tCO2e", "FY2026 current", { text: `${change <= 0 ? "↓" : "↑"} ${oneDecimal.format(Math.abs(change))}% vs FY2025`, bad: change > 0 })}
-                ${kpiCard(`${alternateLabel} emissions`, formatNumber(alternateTotal), "tCO2e", "FY2026 alternate view", { text: "Switch methodology above" }, "neutral")}
-                ${kpiCard("Electricity consumption", formatNumber(core.sum(latestRecords, "energy")), "GJ", "FY2026 selected facilities", { text: "Activity data" })}
-                ${kpiCard("Renewable electricity", `${oneDecimal.format(renewable)}%`, "", "FY2026 RE100 progress", { text: `${oneDecimal.format(Math.max(0, 100 - renewable))} pts remaining` }, "warning")}
+                ${kpiCard(`${methodLabel} emissions`, formatNumber(yearView.total), "tCO2e", `${year} selected`, comparisonDelta)}
+                ${kpiCard(`${alternateLabel} emissions`, formatNumber(alternateView.total), "tCO2e", `${year} alternate view`, { text: "Switch methodology above" }, "neutral")}
+                ${kpiCard("Electricity consumption", formatNumber(core.sum(yearView.records, "energy")), "GJ", `${year} selected facilities`, { text: "Activity data" })}
+                ${kpiCard("Renewable electricity", `${oneDecimal.format(renewable)}%`, "", `${year} RE100 progress`, { text: `${oneDecimal.format(Math.max(0, 100 - renewable))} pts remaining` }, "warning")}
                 ${panel("Monthly performance comparison", `${methodLabel} accounting • FY2025 vs FY2026 • 1 July–30 June`, methodToggle + monthlyComparisonChart(monthly, { ariaLabel: `Scope 2 monthly ${methodLabel.toLowerCase()} emissions comparing FY2025 and FY2026` }), "wide-panel scope2-comparison-panel", `${methodLabel} sample`)}
-                ${panel("Facility comparison", `FY2026 ${methodLabel.toLowerCase()} emissions by facility`, barChart(facilities, { ariaLabel: `FY2026 Scope 2 ${methodLabel.toLowerCase()} emissions by facility` }), "narrow-panel")}
+                ${panel("Facility comparison", `${year} ${methodLabel.toLowerCase()} emissions by facility`, barChart(facilities, { ariaLabel: `${year} Scope 2 ${methodLabel.toLowerCase()} emissions by facility` }), "narrow-panel")}
                 ${panel("FY2026 renewable electricity progress", "", `<div class="progress-list"><div class="progress-row"><span>Melbourne HQ</span><div class="progress-track"><div class="progress-fill" style="width:68%"></div></div><span class="progress-value">68%</span></div><div class="progress-row"><span>Sydney Operations</span><div class="progress-track"><div class="progress-fill" style="width:64%"></div></div><span class="progress-value">64%</span></div><div class="progress-row"><span>Brisbane Hub</span><div class="progress-track"><div class="progress-fill" style="width:54%"></div></div><span class="progress-value">54%</span></div></div>`, "wide-panel")}
-                ${panel("Management focus", "", `<p class="insight-copy">The ${methodLabel.toLowerCase()} view is selected for the monthly comparison. Use the methodology toggle to see how contractual instruments change reported Scope 2 results; monthly values are illustrative allocations that reconcile to annual sample totals.</p>`, "narrow-panel insight-panel")}
+                ${panel("Management focus", "", `<p class="insight-copy">Financial Year applies to the annual KPIs and facility breakdown. The monthly comparison always shows FY2025 and FY2026 using the selected ${methodLabel.toLowerCase()} methodology. Monthly values are illustrative allocations that reconcile to annual sample totals.</p>`, "narrow-panel insight-panel")}
               </div>
             </div>
           </section>`;
@@ -2177,23 +2511,19 @@
       }
 
       function renderNetZero(records) {
-        const fy2025Total = core.getSummary(corporateComparableRecords("FY2025")).total;
-        const fy2026Total = core.getSummary(corporateComparableRecords("FY2026")).total;
-        const view = core.getNetZeroView(state.filters.fy, fy2025Total, fy2026Total);
-        const currentPeriod = state.filters.fy === "FY2025" ? "FY2025 baseline" : "FY2026 actual";
-        const achievedReduction = Math.max(0, view.reductionAchieved);
+        const levers = core.getNetZeroLevers();
+        const leverNotes = `<div class="waterfall-notes"><p>Scope 1: 140 → 5 residual <span aria-hidden="true">•</span> Market-based Scope 2: 300 → 0 <span aria-hidden="true">•</span> Scope 3: 800 → 119 residual</p><p>E and X are modelling inputs to be confirmed. Location-based Scope 2 remains separately reported.</p></div>`;
         return `
           <section class="page active" id="page-netzero">
             <div class="page-shell">
-              ${pageHeading("Net Zero Pathway", "Current performance, approved milestones and the pathway to net zero by FY2050")}
+              ${pageHeading("Net Zero Pathway", "Illustrative reduction strategy from the FY2025 baseline to net zero by FY2050")}
               <div class="page-grid netzero-grid">
-                ${kpiCard("Current emissions", formatNumber(view.current), "tCO2e", currentPeriod, { text: "Reported performance" }, "neutral")}
-                ${kpiCard("Reduction from baseline", `${oneDecimal.format(Math.max(0, view.reductionPercent))}%`, "", `${formatNumber(achievedReduction)} tCO2e below FY2025`, { text: "Reduction achieved" })}
-                ${kpiCard("FY2030 target", formatNumber(view.target2030), "tCO2e", "35% below baseline", { text: "Next milestone" })}
-                ${kpiCard("Gap to FY2030", formatNumber(view.gapTo2030), "tCO2e", "Remaining reduction", { text: view.gapTo2030 === 0 ? "Target reached" : "Action required", bad: view.gapTo2030 > 0 }, "warning")}
-                ${panel("Corporate emissions pathway", "Reported actuals and approved target milestones", netZeroPathwayChart(view), "wide-panel", "Net zero by FY2050")}
-                ${panel("Progress to FY2030", "Share of the required reduction already achieved", `<div class="milestone-progress"><div class="milestone-value"><strong>${oneDecimal.format(view.progressTo2030)}%</strong><span>of required reduction achieved</span></div><div class="milestone-track"><span style="width:${view.progressTo2030}%"></span></div><div class="milestone-stats"><div class="milestone-stat"><strong>${formatNumber(achievedReduction)}</strong><span>tCO2e achieved</span></div><div class="milestone-stat"><strong>${formatNumber(view.gapTo2030)}</strong><span>tCO2e remaining</span></div><div class="milestone-stat"><strong>${formatNumber(view.totalReductionRequired)}</strong><span>tCO2e total required</span></div></div><p class="milestone-note">Progress equals ${formatNumber(achievedReduction)} tCO2e achieved divided by the ${formatNumber(view.totalReductionRequired)} tCO2e reduction required for FY2030.</p></div>`, "narrow-panel")}
-                ${panel("Priority decarbonization actions", "", `<div class="lever-list"><article class="lever"><span class="lever-number">01</span><h4>100% fleet electrification</h4><p><strong>Scope 1.</strong> Replace combustion vehicles through planned asset cycles and verified charging data.</p></article><article class="lever"><span class="lever-number">02</span><h4>RE100</h4><p><strong>Scope 2.</strong> Use 100% renewable electricity with credible contractual evidence.</p></article><article class="lever"><span class="lever-number">03</span><h4>Supplier decarbonization</h4><p><strong>Scope 3.</strong> Prioritize suppliers with credible emissions reduction commitments.</p></article><article class="lever"><span class="lever-number">04</span><h4>Carbon capture, utilization and storage (CCUS)</h4><p><strong>Final 10%.</strong> Neutralize residual emissions through verified capture and permanent storage.</p></article></div>`, "full-panel")}
+                ${kpiCard("FY2025 baseline", formatNumber(levers.baseline), "tCO2e", "Starting inventory", { text: "100% baseline" }, "neutral")}
+                ${kpiCard("Gross reduction", formatNumber(levers.grossReduction), "tCO2e", "Across Scopes 1, 2 and 3", { text: "90% of baseline" })}
+                ${kpiCard("Residual emissions", formatNumber(levers.residual), "tCO2e", "After gross reductions", { text: "10% of baseline" }, "warning")}
+                ${kpiCard("Neutralisation", formatNumber(levers.neutralisation), "tCO2e", "Final residual treatment", { text: "FY2050 balance: 0" })}
+                ${panel("Net Zero Reduction Levers", "Illustrative reduction pathway from the FY2025 baseline", netZeroLeversChart(core.getNetZeroLevers()) + leverNotes, "full-panel waterfall-panel", "90% gross reduction + 10% neutralisation")}
+                ${panel("Lever interpretation", "", `<div class="lever-summary"><div><strong>Direct operations</strong><span>Electrify the fleet and stationary equipment, then reduce refrigerant leakage with lower-GWP alternatives.</span></div><div><strong>Purchased electricity</strong><span>Show added electrification load before applying credible 100% renewable electricity procurement to the market-based result.</span></div><div><strong>Value chain and residuals</strong><span>Prioritise measured supplier and other value-chain reductions before neutralising the final residual with permanent removals.</span></div></div>`, "full-panel lever-summary-panel")}
               </div>
             </div>
           </section>`;
@@ -2252,7 +2582,7 @@
 
       function populateFilters() {
         const fields = {
-          fy: ["FY2026", "FY2025"],
+          fy: core.getFinancialYearOptions(),
           entity: optionsFor("entity"),
           facility: optionsFor("facility"),
           method: optionsFor("method")
@@ -2260,8 +2590,9 @@
         document.querySelectorAll("[data-filter]").forEach((select) => {
           const field = select.dataset.filter;
           const values = fields[field];
-          const allLabel = field === "fy" ? "All years" : "All";
-          select.innerHTML = `<option value="All">${allLabel}</option>${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")}`;
+          select.innerHTML = field === "fy"
+            ? values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")
+            : `<option value="All">All</option>${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")}`;
           select.value = state.filters[field];
           select.addEventListener("change", () => {
             state.filters[field] = select.value;

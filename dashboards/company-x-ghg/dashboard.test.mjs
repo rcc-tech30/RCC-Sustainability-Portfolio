@@ -136,11 +136,148 @@ test("monthly chart legend uses explicit line swatches and the renewable card na
   assert.match(html, /panel\("FY2026 renewable electricity progress", ""/);
   assert.doesNotMatch(html, /panel\("Renewable electricity progress", "FY2026 renewable share by facility"/);
 });
-test("monthly comparison renders smooth paths with endpoint values and no circle markers", () => {
+test("monthly comparison renders smooth paths with every monthly value and no circle markers", () => {
   const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
   const source = html.match(/function monthlyComparisonChart[\s\S]*?function netZeroPathwayChart/)?.[0];
   assert.ok(source, "monthly chart renderer should be present");
   assert.match(source, /smoothPath/);
   assert.match(source, /chart-value-label/);
+  assert.match(source, /const valueLabels = points\.map/);
+  assert.doesNotMatch(source, /series\.values\[series\.values\.length - 1\]/);
   assert.doesNotMatch(source, /<circle/);
+});
+
+test("overview pathway omits FY2026 actual when FY2025 is selected", () => {
+  const core = loadCore();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(core.getOverviewPathway("FY2025", 1240, 1120))),
+    {
+      points: [
+        { label: "FY2025", note: "Baseline", value: 1240 },
+        { label: "FY2030", note: "Near-term target", value: 806 },
+        { label: "FY2040", note: "Interim target", value: 310 },
+        { label: "FY2050", note: "Net-zero target", value: 0 }
+      ],
+      highlightLabel: "FY2025"
+    }
+  );
+});
+
+test("overview pathway includes FY2026 actual before future targets", () => {
+  const core = loadCore();
+  const view = core.getOverviewPathway("FY2026", 1240, 1120);
+
+  assert.deepEqual(JSON.parse(JSON.stringify(view.points.map((point) => point.label))), ["FY2025", "FY2026", "FY2030", "FY2040", "FY2050"]);
+  assert.equal(view.points[1].value, 1120);
+  assert.equal(view.points[1].note, "Latest actual");
+  assert.equal(view.highlightLabel, "FY2026");
+});
+
+test("net-zero levers reconcile the FY2025 baseline to 10% residual and zero", () => {
+  const core = loadCore();
+  const view = core.getNetZeroLevers();
+
+  assert.equal(view.baseline, 1240);
+  assert.equal(view.grossReduction, 1116);
+  assert.equal(view.residual, 124);
+  assert.equal(view.neutralisation, 124);
+  assert.equal(view.final, 0);
+  assert.deepEqual(JSON.parse(JSON.stringify(view.scopeResiduals)), { scope1: 5, scope2Market: 0, scope3: 119 });
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(view.steps.map(({ key, displayValue }) => [key, displayValue]))),
+    [
+      ["baseline", "1,240"],
+      ["fleet", "−82"],
+      ["stationary", "−32"],
+      ["refrigerants", "−21"],
+      ["added-electricity", "+E"],
+      ["renewable-electricity", "−(300 + E)"],
+      ["supplier", "−X"],
+      ["other-value-chain", "−(681 − X)"],
+      ["residual", "124"],
+      ["neutralisation", "−124"],
+      ["net-zero", "0"]
+    ]
+  );
+});
+
+test("fleet transition is a financial-year point-in-time status", () => {
+  const core = loadCore();
+
+  assert.deepEqual(JSON.parse(JSON.stringify(core.getFleetTransition("FY2025"))), { electric: 0, fleet: 10, percentage: 0, asAt: "30 June FY2025" });
+  assert.deepEqual(JSON.parse(JSON.stringify(core.getFleetTransition("FY2026"))), { electric: 2, fleet: 10, percentage: 20, asAt: "30 June FY2026" });
+});
+
+test("financial-year filter offers only FY2026 and FY2025", () => {
+  const core = loadCore();
+
+  assert.deepEqual(JSON.parse(JSON.stringify(core.getFinancialYearOptions())), ["FY2026", "FY2025"]);
+});
+
+test("Scope 1 and Scope 2 enable year filtering while Net Zero ignores reporting filters", () => {
+  const core = loadCore();
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(core.getPageFilterPolicy("scope1"))),
+    {
+      heading: "Reporting and monthly comparison",
+      guidance: "Financial year applies to KPIs and breakdowns • Monthly comparison always shows FY2025 and FY2026",
+      fyDisabled: false,
+      otherDisabled: false
+    }
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(core.getPageFilterPolicy("scope2"))),
+    JSON.parse(JSON.stringify(core.getPageFilterPolicy("scope1")))
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(core.getPageFilterPolicy("netzero"))),
+    {
+      heading: "Corporate pathway view",
+      guidance: "Reporting filters do not apply to the FY2025 baseline reduction pathway",
+      fyDisabled: true,
+      otherDisabled: true
+    }
+  );
+});
+
+test("annual Scope 1 view follows the selected year", () => {
+  const core = loadCore();
+  const fy2025 = core.getScopeYearView(core.DATA, "Scope 1", "FY2025");
+  const fy2026 = core.getScopeYearView(core.DATA, "Scope 1", "FY2026");
+
+  assert.equal(fy2025.total, 140);
+  assert.deepEqual(JSON.parse(JSON.stringify(fy2025.bySource)), {
+    "Mobile combustion": 82,
+    "Stationary combustion": 32,
+    "Fugitive emissions": 26
+  });
+  assert.equal(fy2026.total, 116);
+  assert.equal(fy2026.bySource["Mobile combustion"], 72);
+});
+
+test("annual Scope 2 view follows both selected year and accounting method", () => {
+  const core = loadCore();
+
+  assert.equal(core.getScopeYearView(core.DATA, "Scope 2", "FY2025", "emissions").total, 300);
+  assert.equal(core.getScopeYearView(core.DATA, "Scope 2", "FY2026", "emissions").total, 224);
+  assert.equal(core.getScopeYearView(core.DATA, "Scope 2", "FY2025", "locationEmissions").total, 352);
+  assert.equal(core.getScopeYearView(core.DATA, "Scope 2", "FY2026", "locationEmissions").total, 329);
+});
+
+test("approved pathway and lever renderers are bound to their intended pages", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const overview = html.match(/function renderOverview[\s\S]*?function renderScope1/)?.[0];
+  const netZero = html.match(/function renderNetZero[\s\S]*?function renderApp/)?.[0];
+
+  assert.ok(overview, "overview renderer should be present");
+  assert.ok(netZero, "Net Zero renderer should be present");
+  assert.match(overview, /Corporate emissions pathway/);
+  assert.match(overview, /netZeroPathwayChart\(overviewPathway\)/);
+  assert.doesNotMatch(overview, /lineChart\(pathwayPoints/);
+  assert.match(netZero, /Net Zero Reduction Levers/);
+  assert.match(netZero, /netZeroLeversChart\(core\.getNetZeroLevers\(\)\)/);
+  assert.match(netZero, /E and X are modelling inputs to be confirmed/);
+  assert.match(netZero, /Location-based Scope 2 remains separately reported/);
 });
