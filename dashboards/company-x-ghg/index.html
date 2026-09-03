@@ -1427,6 +1427,18 @@
       ];
 
       const MONTHS = ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const FINANCIAL_YEARS = ["FY2026", "FY2025"];
+      const CURRENT_FINANCIAL_YEAR = "FY2026";
+
+      function getFinancialYearOptions() {
+        return [...FINANCIAL_YEARS];
+      }
+
+      function getEffectiveFinancialYear(page, selectedYear) {
+        if (page === "netzero") return CURRENT_FINANCIAL_YEAR;
+        return FINANCIAL_YEARS.includes(selectedYear) ? selectedYear : CURRENT_FINANCIAL_YEAR;
+      }
+
       const MONTHLY_PROFILES = {
         FY2025: [84, 82, 83, 83, 84, 84, 83, 83, 84, 83, 82, 85],
         FY2026: [80, 79, 82, 84, 85, 86, 85, 84, 83, 82, 81, 89]
@@ -1535,7 +1547,7 @@
 
       function getNetZeroView(financialYear, fy2025Total, fy2026Total) {
         const baseline = Number(fy2025Total) || 0;
-        const current = financialYear === "FY2025" ? baseline : Number(fy2026Total) || 0;
+        const current = Number(fy2026Total) || 0;
         const reductionAchieved = baseline - current;
         const reductionPercent = baseline ? (reductionAchieved / baseline) * 100 : 0;
         const target2030 = TARGETS.find((target) => target.fy === "FY2030").emissions;
@@ -1545,12 +1557,9 @@
           ? Math.max(0, Math.min(100, reductionAchieved / totalReductionRequired * 100))
           : 0;
         const actualPoints = [
-          { label: "FY2025", note: "Baseline", value: baseline }
+          { label: "FY2025", note: "Baseline", value: baseline },
+          { label: "FY2026", note: "Latest actual", value: current }
         ];
-
-        if (financialYear !== "FY2025") {
-          actualPoints.push({ label: "FY2026", note: "Latest actual", value: current });
-        }
 
         const targetPoints = TARGETS.slice(1).map((target) => ({
           label: target.fy,
@@ -1561,7 +1570,7 @@
         return {
           baseline,
           current,
-          currentLabel: financialYear === "All" ? "Latest actual" : `${financialYear} actual`,
+          currentLabel: "FY2026 actual",
           reductionAchieved,
           reductionPercent,
           target2030,
@@ -1569,11 +1578,11 @@
           gapTo2030,
           progressTo2030,
           points: [...actualPoints, ...targetPoints],
-          highlightLabel: financialYear === "FY2025" ? "FY2025" : "FY2026"
+          highlightLabel: "FY2026"
         };
       }
 
-      return { DATA, TARGETS, MONTHS, MONTHLY_PROFILES, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, getMonthlyComparison, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getNetZeroView };
+      return { DATA, TARGETS, MONTHS, MONTHLY_PROFILES, filterRecords, sum, pctChange, groupSum, weightedAverage, getSummary, getQualityMetrics, getMonthlyComparison, fitCanvas, shouldIgnoreArrow, recordsForPeriod, periodLabel, hasSubsetFilter, getActualTrendPoints, getFinancialYearOptions, getEffectiveFinancialYear, getNetZeroView };
     })();
   </script>
 
@@ -1628,7 +1637,7 @@
       }
 
       function selectedYear() {
-        return core.periodLabel(state.filters.fy);
+        return core.periodLabel(core.getEffectiveFinancialYear(state.page, state.filters.fy));
       }
 
       function currentRecords() {
@@ -1641,7 +1650,7 @@
       }
 
       function corporateCurrentRecords() {
-        return core.recordsForPeriod(core.DATA, state.filters.fy);
+        return core.recordsForPeriod(core.DATA, core.getEffectiveFinancialYear("netzero", state.filters.fy));
       }
 
       function corporateComparableRecords(fy) {
@@ -1654,14 +1663,19 @@
         const heading = document.querySelector(".filter-heading");
         heading.querySelector("strong").textContent = corporatePathway ? "Corporate pathway view" : monthlyComparison ? "Monthly comparison view" : "Reporting view";
         heading.querySelector("span").textContent = corporatePathway
-          ? "Only Financial Year applies"
+          ? "FY2026 current pathway • filters not applicable"
           : monthlyComparison
             ? "Financial year not applicable • FY2025 vs FY2026"
             : "Filters update connected visuals";
         const fySelect = document.querySelector('[data-filter="fy"]');
         const fyDisabled = corporatePathway || monthlyComparison;
+        fySelect.value = core.getEffectiveFinancialYear(state.page, state.filters.fy);
         fySelect.disabled = fyDisabled;
-        fySelect.title = monthlyComparison ? "Scope 1 and Scope 2 compare FY2025 and FY2026 by month" : "";
+        fySelect.title = corporatePathway
+          ? "Net Zero pathway always uses current FY2026 data"
+          : monthlyComparison
+            ? "Scope 1 and Scope 2 compare FY2025 and FY2026 by month"
+            : "";
         fySelect.closest(".filter-field").classList.toggle("filter-disabled", fyDisabled);
         ["entity", "facility", "method"].forEach((field) => {
           const select = document.querySelector(`[data-filter="${field}"]`);
@@ -2198,8 +2212,9 @@
       function renderNetZero(records) {
         const fy2025Total = core.getSummary(corporateComparableRecords("FY2025")).total;
         const fy2026Total = core.getSummary(corporateComparableRecords("FY2026")).total;
-        const view = core.getNetZeroView(state.filters.fy, fy2025Total, fy2026Total);
-        const currentPeriod = state.filters.fy === "FY2025" ? "FY2025 baseline" : "FY2026 actual";
+        const currentYear = core.getEffectiveFinancialYear("netzero", state.filters.fy);
+        const view = core.getNetZeroView(currentYear, fy2025Total, fy2026Total);
+        const currentPeriod = `${currentYear} actual`;
         const achievedReduction = Math.max(0, view.reductionAchieved);
         return `
           <section class="page active" id="page-netzero">
@@ -2271,7 +2286,7 @@
 
       function populateFilters() {
         const fields = {
-          fy: ["FY2026", "FY2025"],
+          fy: core.getFinancialYearOptions(),
           entity: optionsFor("entity"),
           facility: optionsFor("facility"),
           method: optionsFor("method")
@@ -2279,8 +2294,9 @@
         document.querySelectorAll("[data-filter]").forEach((select) => {
           const field = select.dataset.filter;
           const values = fields[field];
-          const allLabel = field === "fy" ? "All years" : "All";
-          select.innerHTML = `<option value="All">${allLabel}</option>${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")}`;
+          select.innerHTML = field === "fy"
+            ? values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")
+            : `<option value="All">All</option>${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("")}`;
           select.value = state.filters[field];
           select.addEventListener("change", () => {
             state.filters[field] = select.value;
