@@ -539,16 +539,17 @@
 
     .monthly-chart {
       width: 100%;
-      height: calc(100% - 38px);
+      height: auto;
       min-height: 0;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-rows: auto auto;
       gap: 8px;
     }
 
     .monthly-chart svg {
+      display: block;
       width: 100%;
-      height: 100%;
+      height: auto;
       min-height: 0;
       overflow: visible;
     }
@@ -606,7 +607,7 @@
     }
 
     .scope2-comparison-panel .monthly-chart {
-      height: calc(100% - 76px);
+      height: auto;
     }
 
     .chart-grid-line {
@@ -632,7 +633,7 @@
     }
 
     .chart-value-label {
-      font-size: 8px;
+      font-size: 10px;
       font-weight: 560;
       letter-spacing: 0.01em;
       paint-order: stroke;
@@ -1849,7 +1850,7 @@
               </defs>
               ${grid}
               ${areaPath ? `<path d="${areaPath}" fill="url(#${escapeHtml(options.gradientId || "areaGradient")})"/>` : ""}
-              ${solidPath ? `<path d="${solidPath}" fill="none" stroke="#176b55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+              ${solidPath ? `<path d="${solidPath}" fill="none" stroke="#176b55" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
               ${dots}
             </svg>
           </div>`;
@@ -1857,12 +1858,12 @@
 
       function monthlyComparisonChart(series, options = {}) {
         if (!series.length || !series.some((item) => item.values?.length)) return emptyState();
-        const width = 720;
-        const height = 270;
-        const left = 54;
-        const top = 24;
-        const plotWidth = 620;
-        const plotHeight = 170;
+        const width = 1200;
+        const height = 250;
+        const left = 72;
+        const top = 28;
+        const plotWidth = 1056;
+        const plotHeight = 150;
         const months = core.MONTHS;
         const max = niceMax(Math.max(...series.flatMap((item) => item.values.map((point) => point.value)), 1));
         const colors = options.colors || ["#4a7188", "#176b55"];
