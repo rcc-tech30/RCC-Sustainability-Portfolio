@@ -329,3 +329,33 @@ test("approved pathway and lever renderers are bound to their intended pages", (
   assert.match(netZero, /E and X are modelling inputs to be confirmed/);
   assert.match(netZero, /Location-based Scope 2 remains separately reported/);
 });
+
+test("corporate emissions pathway omits the redundant remaining-emissions callout", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const pathwayChart = html.match(/function netZeroPathwayChart[\s\S]*?function netZeroLeversChart/)?.[0];
+
+  assert.ok(pathwayChart, "corporate pathway chart renderer should be present");
+  assert.doesNotMatch(pathwayChart, /tCO2e remaining/);
+  assert.doesNotMatch(pathwayChart, /callout[XY]/);
+});
+
+test("net-zero lever waterfall uses the approved wide, legible chart geometry", () => {
+  const html = fs.readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const source = html.match(/function netZeroLeversChart[\s\S]*?function methodMixChart/)?.[0];
+  assert.ok(source, "Net Zero lever chart renderer should be present");
+
+  const width = Number(source.match(/const width = (\d+);/)?.[1]);
+  const height = Number(source.match(/const height = (\d+);/)?.[1]);
+  const plotWidth = Number(source.match(/const plotWidth = (\d+);/)?.[1]);
+  const plotHeight = Number(source.match(/const plotHeight = (\d+);/)?.[1]);
+  const barWidth = Number(source.match(/const barWidth = (\d+);/)?.[1]);
+  const labelSize = Number(html.match(/\.waterfall-label \{[\s\S]*?font-size: ([\d.]+)px;/)?.[1]);
+  const valueSize = Number(html.match(/\.waterfall-value \{[\s\S]*?font-size: ([\d.]+)px;/)?.[1]);
+
+  assert.ok(width / height >= 7.5, "SVG aspect ratio should match the wide live card instead of letterboxing the chart");
+  assert.ok(plotWidth / width >= 0.85 && plotWidth / width <= 0.9, "plot should occupy 85–90% of the SVG width");
+  assert.ok(plotHeight / height >= 0.7, "plot should use at least 70% of the SVG height");
+  assert.ok(barWidth >= 110, "lever bars should remain prominent at the live card scale");
+  assert.ok(labelSize >= 15, "category labels should remain readable after dashboard scaling");
+  assert.ok(valueSize >= 16, "lever values should remain readable after dashboard scaling");
+});
