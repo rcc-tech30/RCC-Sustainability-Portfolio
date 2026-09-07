@@ -8,7 +8,7 @@ Replace the current four-project presentation with three clearly ordered public 
 
 ## Approved public project order
 
-### Project 01 — RCC Holdings Emissions & Decarbonization
+### Project 01: RCC Holdings Emissions & Decarbonization
 
 This project presents two related artifacts as one case study:
 
@@ -41,14 +41,14 @@ The existing PBIX request dialog and Google Form endpoint remain in use. Update 
 - Title: `Request the RCC Holdings Power BI file`
 - Success and privacy messaging remain concise and retain the existing work-email validation unless a separate change is approved.
 
-### Project 02 — Fleet Electrification
+### Project 02: Fleet Electrification
 
 - Reuse the existing Fleet Electrification project card and live dashboard.
 - Change its project number from 01 to 02.
 - Preserve its current actions, data, responsive behavior, and project notes.
 - Use the public card title `Fleet Electrification`; supporting copy may describe it as a transition assessment.
 
-### Project 03 — RCC GHG Canada Operations Sample
+### Project 03: RCC GHG Canada Operations Sample
 
 - Reuse the existing Canadian workbook and project folder.
 - Change its project number from 04 to 03.
@@ -87,6 +87,8 @@ The current `dashboards/company-x-power-bi/README.md` uses obsolete Company X an
 ## Homepage and repository documentation
 
 Update `index.html` so Featured Work contains exactly three cards in the approved order. Remove the separate Company X HTML and Company X Power BI cards. The combined Project 01 card must have exactly the two approved primary actions: workbook download and PBIX request.
+
+All new or revised public-facing copy must avoid em dashes. This applies to the homepage, archive page, dialog, accessibility text, project READMEs, and download notes. Use periods, commas, parentheses, or colons instead.
 
 Update the root `README.md` to match the same three-project structure. Remove its stale direct PBIX download claim and the obsolete Company X project descriptions.
 
