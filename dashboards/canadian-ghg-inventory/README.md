@@ -1,4 +1,4 @@
-# Canadian GHG Inventory 2026
+# RCC GHG Canada Operations Sample
 
 **[Download the Canadian GHG inventory workbook](Canadian_GHG_Inventory_2026_Scope1_Scope2.xlsx)**
 
