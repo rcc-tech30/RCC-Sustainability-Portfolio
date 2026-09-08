@@ -20,7 +20,8 @@ function projectCards(homepage) {
     return {
       body,
       number: body.match(/<span class="project-number">([^<]+)<\/span>/)?.[1],
-      title: body.match(/<h2>([^<]+)<\/h2>/)?.[1],
+      title: body.match(/<h2(?:\s+[^>]*)?>([\s\S]*?)<\/h2>/)?.[1].replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim(),
+      titleClass: body.match(/<h2(?:\s+class="([^"]*)")?[^>]*>/)?.[1] ?? '',
     };
   });
 }
@@ -52,10 +53,15 @@ test('homepage presents exactly the three approved projects in order', async () 
   assert.deepEqual(
     projects.map(({ number, title }) => [number, title]),
     [
-      ['PROJECT 01', 'RCC Holdings Emissions &amp; Decarbonization'],
+      ['PROJECT 01', 'GHG Accounting &amp; Decarbonization Sample'],
       ['PROJECT 02', 'Fleet Electrification'],
       ['PROJECT 03', 'RCC GHG Canada Operations Sample'],
     ],
+  );
+
+  assert.deepEqual(
+    projects.map(({ titleClass }) => titleClass),
+    ['project-title-compact', '', ''],
   );
 
   assert.equal((projects[0].body.match(/class="button\b/g) || []).length, 2);
