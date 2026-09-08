@@ -2,11 +2,28 @@
 
 I’m Reiniel Celgie Chan. This repository is a growing portfolio of practical work across sustainability, carbon accounting, data, automation, and the tools I explore along the way.
 
-Each project is intended to show how I structure information, turn technical topics into decision-ready outputs, and build useful solutions. The portfolio will evolve as I complete new dashboards, analyses, workflow automations, and experiments.
+Each project shows how I structure information, turn technical topics into decision-ready outputs, and build useful solutions. The portfolio will evolve as I complete new dashboards, analyses, workflow automations, and experiments.
 
 ## Featured projects
 
-### Fleet Electrification Transition Assessment
+### RCC Holdings Emissions & Decarbonization
+
+**[Download the Excel calculator](dashboards/rcc-holdings-emissions-decarbonization/RCC_GHG_Calculator_AU_UK_2026.xlsx)**
+
+**[Request the Power BI file through the portfolio website](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/#portfolio)**
+
+A formula-driven Australian and United Kingdom greenhouse gas calculator paired with a native Power BI analysis for operational emissions and decarbonization scenarios. The workbook and report use illustrative sample data. The Power BI file is request-only and is not stored in this public repository.
+
+Capabilities demonstrated:
+
+- Scope 1, Scope 2, and selected Scope 3 calculation workflows
+- Australian and United Kingdom emission-factor references
+- Formula-driven data quality checks and reporting summaries
+- User-defined decarbonization targets and reduction levers
+- Waterfall analysis of projected emissions reductions
+- Native Power BI modelling and executive reporting
+
+### Fleet Electrification
 
 **[Use the live interactive assessment](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/fleet-electrification-transition/)**
 
@@ -24,46 +41,13 @@ Capabilities demonstrated:
 - Validation warnings, local saving, JSON export, and print output
 - Accessible responsive presentation without external dependencies
 
-### Company X GHG Dashboard
-
-**[View the live interactive dashboard](https://rcc-tech30.github.io/RCC-Sustainability-Portfolio/dashboards/company-x-ghg/)**
-
-[Read the project notes and viewing instructions](dashboards/company-x-ghg/)
-
-An interactive greenhouse-gas reporting dashboard built as a self-contained HTML application. It presents an executive overview alongside detailed Scope 1, Scope 2, Scope 3, data-quality, and net-zero pathway views.
-
-Capabilities demonstrated:
-
-- Scope 1–3 reporting views and emissions-source breakdowns
-- Baseline, current-performance, and target-pathway communication
-- Market- and location-based Scope 2 presentation
-- Data coverage and calculation-method quality indicators
-- Interactive filters, reset controls, presentation mode, and dashboard download
-- Accessible labels and a self-contained presentation without external dependencies
-
-### Company X Native Power BI Dashboard
-
-**[Download the native Power BI dashboard](https://github.com/rcc-tech30/RCC-Sustainability-Portfolio/raw/refs/heads/main/dashboards/company-x-power-bi/company-x-sustainability-dashboard.pbix)**
-
-[Read the project notes and viewing instructions](dashboards/company-x-power-bi/)
-
-A native Microsoft Power BI report provided as a downloadable PBIX portfolio artifact. This project is separate from the browser-based Company X GHG Dashboard and uses a different illustrative dataset. Microsoft Power BI Desktop is required to open and explore it.
-
-Capabilities demonstrated:
-
-- Native Power BI report development
-- Interactive dashboard design and filtering
-- Data modeling and transformation
-- Sustainability data communication
-- Executive-ready visual presentation
-
-### Canadian GHG Inventory 2026
+### RCC GHG Canada Operations Sample
 
 **[Download the Canadian GHG inventory workbook](dashboards/canadian-ghg-inventory/Canadian_GHG_Inventory_2026_Scope1_Scope2.xlsx)**
 
 [Read the project notes and workbook boundaries](dashboards/canadian-ghg-inventory/)
 
-A formula-driven Excel sample demonstrating Scope 1 and Scope 2 greenhouse-gas accounting with Canadian emission-factor references, GWP tables, dashboard summaries, and traceable methodology notes. The company, facilities, activity quantities, and figures are fictional and created for portfolio demonstration purposes.
+A formula-driven Excel sample demonstrating Scope 1 and Scope 2 greenhouse gas accounting with Canadian emission-factor references, GWP tables, dashboard summaries, and traceable methodology notes. The company, facilities, activity quantities, and figures are fictional and created for portfolio demonstration purposes.
 
 ## Portfolio areas
 
@@ -74,11 +58,8 @@ A formula-driven Excel sample demonstrating Scope 1 and Scope 2 greenhouse-gas a
 
 ## Important disclosure
 
-Company X, its entities, facilities, activities, and all figures shown in the dashboard are fictional. The data is entirely illustrative and was created solely to demonstrate portfolio skills.
-
-This project is not client work, external assurance, certification, an official emissions inventory, or a claim of formal conformance with the GHG Protocol or another reporting standard. References to reporting concepts describe the example’s structure only.
+The published examples use illustrative or fictional data unless explicitly stated otherwise. They are not client work, external assurance, certification, official emissions inventories, regulatory advice, or claims of formal conformance with the GHG Protocol or another reporting standard.
 
 ## Connect
 
-[LinkedIn — Reiniel Celgie Chan](https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/)
-
+[LinkedIn: Reiniel Celgie Chan](https://www.linkedin.com/in/reiniel-celgie-chan-0a122428b/)

@@ -19,7 +19,7 @@
 - Do not change the existing Google Form action or work-email field name.
 - Do not redesign the site shell, About section, navigation, typography, Fleet Electrification tool, or Canadian workbook.
 - Do not use em dashes in public-facing copy. Use periods, commas, parentheses, or colons.
-- Stop if the workbook source cannot be read or does not match the approved 61,666-byte size and SHA256.
+- Stop if the workbook source cannot be read or does not match the approved 62,643-byte size and SHA256.
 
 ---
 
@@ -46,8 +46,8 @@ Get-FileHash -Algorithm SHA256 'D:\RCC_GHG_Calculator_AU_UK_2026 - (Share).xlsx'
 Expected source evidence:
 
 ```text
-Length: 61666
-SHA256: B0F98EA070F8D28178B6D428BC8109C66FC827529AF88A5FE320FF4B3B9B32B7
+Length: 62643
+SHA256: DEF3B493D4C0A149AE52F22D36218358A252A6776C1E601918B358AB4C863CC0
 ```
 
 If `Get-FileHash` reports that another process is using the file, stop and ask the owner to close Excel. Do not copy the file until the hash succeeds.
@@ -73,8 +73,8 @@ test("Project 01 publishes the audited workbook and never tracks a PBIX file", (
   const relativeWorkbook = "dashboards/rcc-holdings-emissions-decarbonization/RCC_GHG_Calculator_AU_UK_2026.xlsx";
   const workbook = path.join(repoRoot, relativeWorkbook);
   assert.equal(existsSync(workbook), true, "public workbook should exist");
-  assert.equal(statSync(workbook).size, 61666);
-  assert.equal(sha256(workbook), "B0F98EA070F8D28178B6D428BC8109C66FC827529AF88A5FE320FF4B3B9B32B7");
+  assert.equal(statSync(workbook).size, 62643);
+  assert.equal(sha256(workbook), "DEF3B493D4C0A149AE52F22D36218358A252A6776C1E601918B358AB4C863CC0");
 
   const trackedPbix = execFileSync(
     "git",
@@ -145,7 +145,7 @@ Get-FileHash -Algorithm SHA256 'dashboards\rcc-holdings-emissions-decarbonizatio
 node --test tests/portfolio-project-structure.test.mjs
 ```
 
-Expected: 61,666 bytes, exact approved SHA256, and PASS.
+Expected: 62,643 bytes, exact approved SHA256, and PASS.
 
 - [ ] **Step 6: Commit the verified distribution surface**
 
@@ -489,7 +489,7 @@ Expected:
 - All tests pass.
 - `git diff --check` exits 0.
 - `git ls-files -- ':(glob)**/*.pbix'` is empty.
-- Workbook SHA256 is `B0F98EA070F8D28178B6D428BC8109C66FC827529AF88A5FE320FF4B3B9B32B7`.
+- Workbook SHA256 is `DEF3B493D4C0A149AE52F22D36218358A252A6776C1E601918B358AB4C863CC0`.
 - No direct PBIX URL, obsolete project-card title, or em dash remains in the public files.
 - `.superpowers/` remains untouched and untracked.
 

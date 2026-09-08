@@ -30,7 +30,8 @@ The source workbook is the audited saved-state file:
 
 ```text
 D:\RCC_GHG_Calculator_AU_UK_2026 - (Share).xlsx
-SHA256: B0F98EA070F8D28178B6D428BC8109C66FC827529AF88A5FE320FF4B3B9B32B7
+Size: 62,643 bytes
+SHA256: DEF3B493D4C0A149AE52F22D36218358A252A6776C1E601918B358AB4C863CC0
 ```
 
 The repository copy must match that hash after copying.
