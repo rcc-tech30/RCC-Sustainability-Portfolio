@@ -289,6 +289,12 @@
 
     .project-number { color: var(--emerald); font: 700 12px ui-monospace, monospace; letter-spacing: 0.12em; }
     h2 { margin: 24px 0 18px; color: var(--forest-deep); font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.04em; line-height: 1.04; }
+    .project-title-compact {
+      font-size: clamp(22px, 2.5vw, 32px);
+      letter-spacing: -0.035em;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
     .project-copy p { margin: 0; color: var(--muted); line-height: 1.7; }
 
     .actions { display: grid; gap: 12px; margin-top: 42px; }
@@ -469,6 +475,7 @@
       .project-visual { min-height: 340px; padding: 24px; }
       .dashboard-preview { min-height: 290px; transform: none; }
       .project-copy { gap: 24px; }
+      .project-title-compact { font-size: clamp(28px, 8vw, 32px); }
       footer { flex-direction: column; }
     }
 
@@ -899,7 +906,7 @@
         <div class="project-copy">
           <div>
             <span class="project-number">PROJECT 01</span>
-            <h2>RCC Holdings Emissions &amp; Decarbonization</h2>
+            <h2 class="project-title-compact">GHG Accounting &amp;<br>Decarbonization<br>Sample</h2>
             <p>A formula-driven AU and UK greenhouse gas calculator paired with a native Power BI analysis for operational emissions and decarbonization scenarios. The workbook and report use illustrative sample data.</p>
           </div>
           <div>
