@@ -99,6 +99,49 @@ test('legacy saved scenarios migrate the former grid factor into the residual mi
   assert.equal(parsed.gridEmissionFactor, undefined);
 });
 
+test('current and target Solar REC coverage errors attach to their own fields', async () => {
+  const { model } = await loadProject();
+  const currentMessages = model.validateScenario({
+    ...model.DEFAULT_SCENARIO,
+    currentCertificateCoverage: 1.01,
+  });
+  const targetMessages = model.validateScenario({
+    ...model.DEFAULT_SCENARIO,
+    targetCertificateCoverage: 1.01,
+  });
+
+  assert.ok(currentMessages.some(({ field }) => field === 'currentCertificateCoverage'));
+  assert.ok(targetMessages.some(({ field }) => field === 'targetCertificateCoverage'));
+});
+
+test('all-zero emissions remain a valid two-case comparison', async () => {
+  const { model } = await loadProject();
+  const result = model.calculateScenario({
+    ...model.DEFAULT_SCENARIO,
+    dieselLitres: 0,
+    petrolLitres: 0,
+    currentCertificateCoverage: 1,
+    targetCertificateCoverage: 1,
+  });
+  const comparison = model.buildEmissionsComparison(
+    result,
+    model.getEmissionsPeriodLabels('FY2026', 'FY2030'),
+  );
+
+  assert.equal(comparison.max, 0);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(comparison.bars.map(({ value }) => value))),
+    [0, 0],
+  );
+});
+
+test('chart values are rendered with dark text outside the coloured bar segments', async () => {
+  const { html } = await loadProject();
+
+  assert.match(html, /fill="#152033">\$\{formatNumber\(bar\.value, 2\)\}/);
+  assert.doesNotMatch(html, /inside \? "#ffffff"/);
+});
+
 test('all inline scripts remain valid JavaScript', async () => {
   const html = await readFile(projectPath, 'utf8');
   const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
