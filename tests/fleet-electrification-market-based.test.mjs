@@ -27,11 +27,11 @@ test('sample scenario compares FY2026 with FY2030 using the 2026 Australian resi
   assert.equal(model.DEFAULT_SCENARIO.baselineYear, 'FY2026');
   assert.equal(model.DEFAULT_SCENARIO.targetYear, 'FY2030');
   assert.equal(model.DEFAULT_SCENARIO.marketBasedResidualMixFactor, 0.79);
-  assert.equal(model.DEFAULT_SCENARIO.certificateType, 'Solar REC');
+  assert.equal(model.DEFAULT_SCENARIO.certificateType, 'RE Certificate');
   assert.equal(model.DEFAULT_SCENARIO.gridEmissionFactor, undefined);
 });
 
-test('current and post-transition market-based Scope 2 apply their respective Solar REC coverage', async () => {
+test('current and post-transition market-based Scope 2 apply their respective RE certificate coverage', async () => {
   const { model } = await loadProject();
   const result = model.calculateScenario(model.DEFAULT_SCENARIO);
 
@@ -70,21 +70,34 @@ test('comparison contains only current and post-transition market-based cases', 
   );
 });
 
-test('project copy consistently describes a market-based Solar REC planning scenario', async () => {
+test('project copy consistently describes a market-based RE certificate planning scenario', async () => {
   const { html } = await loadProject();
   const readme = await readFile(readmePath, 'utf8');
   const combined = `${html}\n${readme}`;
 
   assert.match(html, /Current facility electricity/);
   assert.match(html, /Market-based residual mix factor/);
-  assert.match(html, /Solar REC premium/);
+  assert.match(html, /RE certificate premium/);
+  assert.match(html, /RE means renewable energy/i);
+  assert.match(html, /voluntarily surrendered LGCs or accredited GreenPower/i);
+  assert.match(html, /Estimated annual operating cost reduction after transitioning selected ICE vehicles to BEVs/i);
+  assert.match(html, /Estimated upfront cost of the fleet transition/i);
   assert.match(html, /market-based planning scenario only/i);
   assert.match(html, /held constant across the current and target cases/i);
   assert.match(html, /purchased by the company and included within its Scope 2 reporting boundary/i);
   assert.match(html, /eligible, exclusively claimed, purchased and retired/i);
   assert.match(readme, /DCCEEW National Greenhouse Accounts Factors 2026, Tables 2 and 9/);
   assert.doesNotMatch(combined, /grid-based|Grid factor|Grid emission factor|before EAC|after EAC/i);
+  assert.doesNotMatch(combined, /Solar REC/i);
   assert.doesNotMatch(combined, /\u2014/);
+});
+
+test('annual operating KPI names savings and cost increases clearly', async () => {
+  const { model } = await loadProject();
+
+  assert.equal(model.getOperatingCostLabel(-8902), 'Annual operating savings');
+  assert.equal(model.getOperatingCostLabel(1250), 'Annual operating cost increase');
+  assert.equal(model.getOperatingCostLabel(0), 'Annual operating cost change');
 });
 
 test('legacy saved scenarios migrate the former grid factor into the residual mix factor', async () => {
@@ -99,7 +112,7 @@ test('legacy saved scenarios migrate the former grid factor into the residual mi
   assert.equal(parsed.gridEmissionFactor, undefined);
 });
 
-test('current and target Solar REC coverage errors attach to their own fields', async () => {
+test('current and target RE certificate coverage errors attach to their own fields', async () => {
   const { model } = await loadProject();
   const currentMessages = model.validateScenario({
     ...model.DEFAULT_SCENARIO,
