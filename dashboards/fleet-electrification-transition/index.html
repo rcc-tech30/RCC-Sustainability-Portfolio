@@ -116,17 +116,17 @@
           </div>
           <div class="kpi-grid">
             <article class="kpi kpi-lead good" id="net-emissions-card"><span class="kpi-icon"><svg class="icon" aria-hidden="true"><use href="#icon-trend-down"/></svg></span><span class="kpi-body"><span class="label">Net emissions change</span><strong class="value" id="kpi-net-emissions">&#8722;12.9%</strong><span class="sub" id="kpi-net-emissions-sub">&#8722;21.94 tCO2e reduced vs baseline</span></span></article>
-            <article class="kpi kpi-operating good" id="operating-card"><span class="kpi-head"><span class="label" id="operating-label">Annual operating savings</span><svg class="icon icon-hint" role="img"><title>Estimated annual operating cost reduction after transitioning selected ICE vehicles to BEVs. It compares baseline facility electricity and fleet fuel costs with post-transition facility electricity, BEV charging, remaining fleet fuel and RE certificate costs.</title><use href="#icon-info"/></svg></span><strong class="value" id="kpi-operating">AUD 8,902</strong><span class="compare"><span class="compare-row"><span class="compare-label">Baseline</span><span class="compare-track"><span class="compare-fill base" id="operating-bar-baseline"></span></span><span class="compare-value" id="operating-baseline">AUD 70,000</span></span><span class="compare-row"><span class="compare-label">Transition</span><span class="compare-track"><span class="compare-fill trans" id="operating-bar-transition"></span></span><span class="compare-value" id="operating-transition">AUD 61,098</span></span></span></article>
+            <article class="kpi kpi-operating good" id="operating-card"><span class="kpi-head"><span class="label" id="operating-label">Annual operating savings</span><svg class="icon icon-hint" role="img"><title>Estimated annual operating cost reduction after transitioning selected ICE vehicles to BEVs. It compares baseline facility electricity and fleet fuel costs with post-transition facility electricity, BEV charging, remaining fleet fuel and Renewable Energy Certificate costs.</title><use href="#icon-info"/></svg></span><strong class="value" id="kpi-operating">AUD 8,902</strong><span class="compare"><span class="compare-row"><span class="compare-label">Baseline</span><span class="compare-track"><span class="compare-fill base" id="operating-bar-baseline"></span></span><span class="compare-value" id="operating-baseline">AUD 70,000</span></span><span class="compare-row"><span class="compare-label">Transition</span><span class="compare-track"><span class="compare-fill trans" id="operating-bar-transition"></span></span><span class="compare-value" id="operating-transition">AUD 61,098</span></span></span></article>
             <article class="kpi" id="fleet-card"><span class="kpi-icon"><svg class="icon" aria-hidden="true"><use href="#icon-truck"/></svg></span><span class="kpi-body"><span class="label">Fleet transition</span><strong class="value kpi-fleet-figure" id="kpi-fleet">10 <em>of</em> 10</strong><span class="sub" id="kpi-fleet-sub">100% of fleet transitioned</span></span></article>
           </div>
           <div class="chart-grid">
-            <article class="panel panel-chart panel-pathway"><div class="panel-head"><h3 id="emissions-chart-title">Scope 1 and market-based Scope 2</h3><svg class="icon icon-hint" role="img"><title>Current and post-transition Scope 1 plus market-based Scope 2</title><use href="#icon-info"/></svg></div><p class="panel-intro" id="emissions-chart-period">FY2026 current emissions compared with FY2030 post-transition emissions.</p><div class="chart" id="emissions-chart" role="img" aria-label="Current and post-transition emissions chart"></div><ul class="chart-legend" id="emissions-legend"></ul><p class="chart-summary" id="emissions-summary"></p></article>
+            <article class="panel panel-chart panel-pathway"><div class="panel-head"><h3 id="emissions-chart-title">Scope 1 &amp; 2 (Market-based)</h3><svg class="icon icon-hint" role="img"><title>Current and post-transition Scope 1 plus Scope 2 (market-based)</title><use href="#icon-info"/></svg></div><p class="panel-intro" id="emissions-chart-period">FY2026 current emissions compared with FY2030 post-transition emissions.</p><div class="chart" id="emissions-chart" role="img" aria-label="Current and post-transition emissions chart"></div><ul class="chart-legend" id="emissions-legend"></ul><p class="chart-summary" id="emissions-summary"></p></article>
             <article class="panel scenario-rail" id="scenario-rail"><h3>Scenario</h3><dl class="rail-list"><div class="rail-row"><dt>Fleet</dt><dd id="rail-fleet">10 of 10 vehicles</dd></div><div class="rail-row"><dt>Period</dt><dd id="rail-period">FY2026 to FY2030</dd></div><div class="rail-row"><dt>BEV method</dt><dd id="rail-method">Distance-based</dd></div><div class="rail-row"><dt>BEV efficiency</dt><dd id="rail-efficiency">0.2 kWh/km</dd></div><div class="rail-row"><dt>Residual mix factor</dt><dd id="rail-residual-mix">0.79 kgCO2e/kWh</dd></div><div class="rail-row"><dt>Target RE certificate coverage</dt><dd id="rail-certificates">100%</dd></div><div class="rail-row"><dt>RE certificate premium</dt><dd id="rail-rec-premium">AUD 0.055/kWh</dd></div></dl><button class="button dark rail-edit" type="button" id="edit-scenario-button" data-view-target="inputs"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"/></svg>Edit scenario</button></article>
           </div>
           <div class="metric-row">
             <article class="metric-card good" id="scope1-card"><span class="label">Scope 1 avoided</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-factory"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-scope1">46.49</strong><span class="unit" id="unit-scope1">tCO2e / year</span></span></span><span class="sub" id="sub-scope1" aria-hidden="true">FY2030</span><span id="sub-scope1-full" class="sr-only">Scope 1 emissions avoided in FY2030</span></article>
-            <article class="metric-card good" id="scope2-card"><span class="label">Market-based Scope 2 change</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-bolt"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-scope2-change">&#8722;158.00</strong><span class="unit" id="unit-scope2">tCO2e / year</span></span></span><span class="sub" id="kpi-scope2-change-sub" aria-hidden="true">158.00 → 0.00 tCO2e</span><span id="kpi-scope2-change-sub-full" class="sr-only">Market-based Scope 2 changes from 158.00 tCO2e to 0.00 tCO2e</span></article>
-            <article class="metric-card good" id="residual-card"><span class="label">Post-transition Scope 1 + Scope 2</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-cloud"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-post-transition">0.00</strong><span class="unit" id="unit-residual">tCO2e / year</span></span></span><span class="sub" id="kpi-post-transition-sub" aria-hidden="true">Current: 204.49 tCO2e</span><span id="kpi-post-transition-sub-full" class="sr-only">Current Scope 1 plus market-based Scope 2: 204.49 tCO2e</span></article>
+            <article class="metric-card good" id="scope2-card"><span class="label">Scope 2 change (Market-based)</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-bolt"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-scope2-change">&#8722;158.00</strong><span class="unit" id="unit-scope2">tCO2e / year</span></span></span><span class="sub" id="kpi-scope2-change-sub" aria-hidden="true">158.00 → 0.00 tCO2e</span><span id="kpi-scope2-change-sub-full" class="sr-only">Scope 2 changes from 158.00 tCO2e to 0.00 tCO2e under the market-based method</span></article>
+            <article class="metric-card good" id="residual-card"><span class="label">Post-transition Scope 1 + Scope 2</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-cloud"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-post-transition">0.00</strong><span class="unit" id="unit-residual">tCO2e / year</span></span></span><span class="sub" id="kpi-post-transition-sub" aria-hidden="true">Current: 204.49 tCO2e</span><span id="kpi-post-transition-sub-full" class="sr-only">Current Scope 1 plus Scope 2 (market-based): 204.49 tCO2e</span></article>
             <article class="metric-card money" id="investment-card"><span class="kpi-head"><span class="label">Net investment</span><svg class="icon icon-hint" role="img"><title>Estimated upfront cost of the fleet transition. It is calculated as the purchase cost of the selected BEVs, less expected proceeds from selling the replaced ICE vehicles. This amount excludes financing costs, taxes, grants, charging infrastructure and other costs unless entered separately.</title><use href="#icon-info"/></svg></span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-coin"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-investment">AUD 370,000</strong><span class="unit" id="unit-investment">Net of resale</span></span></span><span class="sub" id="kpi-investment-sub" aria-hidden="true">vs new ICE: AUD 120k</span><span id="kpi-investment-sub-full" class="sr-only">AUD 120,000 additional investment compared with a new ICE purchase</span></article>
             <article class="metric-card" id="payback-card"><span class="label">Simple payback</span><span class="metric-body"><span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#icon-clock"/></svg></span><span class="metric-figures"><strong class="value" id="kpi-payback">41.56</strong><span class="unit" id="unit-payback">years</span></span></span><span class="sub" id="kpi-payback-sub" aria-hidden="true">AUD 8,902/yr savings</span><span id="kpi-payback-sub-full" class="sr-only">Based on AUD 8,902 of annual operating savings</span></article>
           </div>
@@ -145,7 +145,7 @@
             <button class="section-filter" type="button" data-section-toggle="general" aria-expanded="true" aria-controls="input-section-general-content"><span>General</span><small>6 fields</small></button>
             <button class="section-filter" type="button" data-section-toggle="fleet" aria-expanded="false" aria-controls="input-section-fleet-content"><span>Fleet baseline</span><small>8 fields</small></button>
             <button class="section-filter" type="button" data-section-toggle="bev" aria-expanded="false" aria-controls="input-section-bev-content"><span>BEV</span><small>6 fields</small></button>
-            <button class="section-filter" type="button" data-section-toggle="eac" aria-expanded="false" aria-controls="input-section-eac-content"><span>Electricity + RE Certificate</span><small>6 fields</small></button>
+            <button class="section-filter" type="button" data-section-toggle="eac" aria-expanded="false" aria-controls="input-section-eac-content"><span>Electricity + Renewable Energy Certificate</span><small>6 fields</small></button>
           </div>
           <form id="scenario-form" novalidate>
             <section class="form-section input-section" data-input-section="general" id="input-section-general">
@@ -168,7 +168,7 @@
               <div class="section-content" id="input-section-bev-content" hidden><div class="form-grid" id="bev-fields"></div></div>
             </section>
             <section class="form-section input-section" data-input-section="eac" id="input-section-eac">
-              <h3 class="section-heading-wrap"><button class="section-heading" type="button" data-section-toggle="eac" aria-expanded="false" aria-controls="input-section-eac-content"><span><strong>Electricity + RE Certificate</strong><small>Facility electricity, residual mix, and RE certificate assumptions</small></span><span data-section-action>Show</span></button></h3>
+              <h3 class="section-heading-wrap"><button class="section-heading" type="button" data-section-toggle="eac" aria-expanded="false" aria-controls="input-section-eac-content"><span><strong>Electricity + Renewable Energy Certificate</strong><small>Facility electricity, residual mix, and Renewable Energy Certificate assumptions</small></span><span data-section-action>Show</span></button></h3>
               <div class="section-content" id="input-section-eac-content" hidden><div class="form-grid" id="electricity-fields"></div></div>
             </section>
             <div class="form-section"><button class="button" type="button" id="reset-button">Reset sample scenario</button></div>
@@ -176,8 +176,8 @@
         </section>
 
         <section class="view" id="view-emissions" data-view="emissions" hidden>
-          <div class="view-heading"><p class="eyebrow">Carbon impact</p><h2>Emissions and energy</h2><p>This view compares current and post-transition market-based Scope 2. It does not present a location-based result.</p></div>
-          <div class="two-col"><article class="panel"><h3>Calculated emissions</h3><table class="metric-table"><thead><tr><th>Metric</th><th>Result</th><th>Basis</th></tr></thead><tbody id="emissions-table"></tbody></table></article><div class="stack"><aside class="callout">Post-transition electricity includes current facility electricity plus electricity added by BEV charging. Target RE certificate coverage applies to that full amount.</aside><aside class="callout warning">RE means renewable energy. In the Australian example, this refers to eligible voluntarily surrendered LGCs or accredited GreenPower. Other countries may use different recognised certificates. Certificates are assumed eligible, exclusively claimed, purchased and retired for the applicable reporting period and electricity market. BEV charging electricity is assumed to be purchased by the company and included within its Scope 2 reporting boundary.</aside></div></div>
+          <div class="view-heading"><p class="eyebrow">Carbon impact</p><h2>Emissions and energy</h2><p>This view compares current and post-transition Scope 2 under the market-based method. It does not present a location-based result.</p></div>
+          <div class="two-col"><article class="panel"><h3>Calculated emissions</h3><table class="metric-table"><thead><tr><th>Metric</th><th>Result</th><th>Basis</th></tr></thead><tbody id="emissions-table"></tbody></table></article><div class="stack"><aside class="callout">Post-transition electricity includes current facility electricity plus electricity added by BEV charging. Target Renewable Energy Certificate coverage applies to that full amount.</aside><aside class="callout warning">In the Australian example, Renewable Energy Certificates refer to eligible voluntarily surrendered LGCs or accredited GreenPower. Other countries may use different recognised certificates. Certificates are assumed eligible, exclusively claimed, purchased and retired for the applicable reporting period and electricity market. BEV charging electricity is assumed to be purchased by the company and included within its Scope 2 reporting boundary.</aside></div></div>
         </section>
 
         <section class="view" id="view-costs" data-view="costs" hidden>
@@ -187,7 +187,7 @@
 
         <section class="view" id="view-methodology" data-view="methodology" hidden>
           <div class="view-heading"><p class="eyebrow">Model transparency</p><h2>Methodology and boundaries</h2><p>Use this planning model as a starting point, then replace every factor and commercial assumption with evidence appropriate to your situation.</p></div>
-          <div class="two-col"><article class="panel"><h3>Calculation approach</h3><div class="method-list"><div class="method-item"><strong>Mobile-combustion Scope 1</strong><p>Fuel volume is converted to energy and multiplied by the relevant Scope 1 factor. Scope 3 well-to-tank emissions are intentionally excluded.</p></div><div class="method-item"><strong>BEV electricity</strong><p>The preferred method uses transitioning vehicles, annual distance, vehicle efficiency and charging loss. The fallback converts baseline fuel energy using an illustrative efficiency factor.</p></div><div class="method-item"><strong>Purchased-electricity Scope 2, market-based</strong><p>Current Scope 2 uses current facility electricity and current RE certificate coverage. Post-transition Scope 2 uses current facility electricity plus added BEV charging and target RE certificate coverage. The selected residual mix factor applies to uncovered electricity; RE certificate-covered electricity is assumed to have a zero Scope 2 emission factor.</p></div><div class="method-item"><strong>Investment and payback</strong><p>Transition investment deducts resale proceeds. The alternate basis compares BEV purchase cost with a planned new ICE purchase. Payback divides investment by annual operating savings.</p></div></div></article><div class="stack"><article class="panel"><h3>Example factors</h3><table class="metric-table"><tbody><tr><td>Petrol energy content</td><td>34.2 GJ/kL</td></tr><tr><td>Petrol Scope 1 factor</td><td>67.62 kgCO2e/GJ</td></tr><tr><td>Diesel energy content</td><td>38.6 GJ/kL</td></tr><tr><td>Diesel Scope 1 factor</td><td>70.41 kgCO2e/GJ</td></tr><tr><td>Market-based residual mix</td><td>0.79 kgCO2e/kWh</td></tr><tr><td>RE certificate factor</td><td>0 kgCO2e/kWh</td></tr><tr><td>Energy conversion</td><td>277.7778 kWh/GJ</td></tr></tbody></table></article><aside class="callout warning"><strong>Important limitation</strong><br>This assessment presents a market-based planning scenario only. It is not a complete corporate Scope 2 inventory, investment advice, external assurance or certification. The simplified calculation applies the selected residual mix factor to electricity not covered by assumed eligible RE certificates and does not reproduce the complete DCCEEW market-based calculation. The selected factor is held constant across the current and target cases to isolate fleet transition and RE certificate coverage effects; it is not a forecast FY2030 factor. Scope 3 upstream fuel and electricity emissions, well-to-tank emissions and transmission and distribution losses are excluded. Australian examples reference DCCEEW National Greenhouse Accounts Factors 2026, Tables 2 and 9. Replace factors for the relevant geography, market, vehicle class and reporting period.<br><br><a class="source-link" href="https://www.dcceew.gov.au/climate-change/publications/national-greenhouse-accounts-factors-2026">View the official source</a></aside></div></div>
+          <div class="two-col"><article class="panel"><h3>Calculation approach</h3><div class="method-list"><div class="method-item"><strong>Mobile-combustion Scope 1</strong><p>Fuel volume is converted to energy and multiplied by the relevant Scope 1 factor. Scope 3 well-to-tank emissions are intentionally excluded.</p></div><div class="method-item"><strong>BEV electricity</strong><p>The preferred method uses transitioning vehicles, annual distance, vehicle efficiency and charging loss. The fallback converts baseline fuel energy using an illustrative efficiency factor.</p></div><div class="method-item"><strong>Purchased-electricity Scope 2 (market-based)</strong><p>Current Scope 2 uses current facility electricity and current Renewable Energy Certificate coverage. Post-transition Scope 2 uses current facility electricity plus added BEV charging and target Renewable Energy Certificate coverage. The selected residual mix factor applies to uncovered electricity; Renewable Energy Certificate-covered electricity is assumed to have a zero Scope 2 emission factor.</p></div><div class="method-item"><strong>Investment and payback</strong><p>Transition investment deducts resale proceeds. The alternate basis compares BEV purchase cost with a planned new ICE purchase. Payback divides investment by annual operating savings.</p></div></div></article><div class="stack"><article class="panel"><h3>Example factors</h3><table class="metric-table"><tbody><tr><td>Petrol energy content</td><td>34.2 GJ/kL</td></tr><tr><td>Petrol Scope 1 factor</td><td>67.62 kgCO2e/GJ</td></tr><tr><td>Diesel energy content</td><td>38.6 GJ/kL</td></tr><tr><td>Diesel Scope 1 factor</td><td>70.41 kgCO2e/GJ</td></tr><tr><td>Residual mix factor (market-based)</td><td>0.79 kgCO2e/kWh</td></tr><tr><td>Renewable Energy Certificate factor</td><td>0 kgCO2e/kWh</td></tr><tr><td>Energy conversion</td><td>277.7778 kWh/GJ</td></tr></tbody></table></article><aside class="callout warning"><strong>Important limitation</strong><br>This assessment presents a planning scenario using the market-based method only. It is not a complete corporate Scope 2 inventory, investment advice, external assurance or certification. The simplified calculation applies the selected residual mix factor to electricity not covered by assumed eligible Renewable Energy Certificates and does not reproduce the complete DCCEEW calculation under the market-based method. The selected factor is held constant across the current and target cases to isolate fleet transition and Renewable Energy Certificate coverage effects; it is not a forecast FY2030 factor. Scope 3 upstream fuel and electricity emissions, well-to-tank emissions and transmission and distribution losses are excluded. Australian examples reference DCCEEW National Greenhouse Accounts Factors 2026, Tables 2 and 9. Replace factors for the relevant geography, market, vehicle class and reporting period.<br><br><a class="source-link" href="https://www.dcceew.gov.au/climate-change/publications/national-greenhouse-accounts-factors-2026">View the official source</a></aside></div></div>
           <p class="panel-intro">Sources: <a class="source-link" href="https://www.dcceew.gov.au/climate-change/publications/national-greenhouse-accounts-factors-2026">DCCEEW National Greenhouse Accounts Factors 2026</a> and <a class="source-link" href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf">GHG Protocol Scope 2 Guidance</a>.</p>
         </section>
       </main>
@@ -221,7 +221,7 @@
       marketBasedResidualMixFactor: 0.79,
       currentCertificateCoverage: 0,
       targetCertificateCoverage: 1,
-      certificateType: "RE Certificate",
+      certificateType: "Renewable Energy Certificate",
       certificateCostPerKwh: 0.055,
       petrolEnergyGjPerKl: 34.2,
       petrolScope1KgPerGj: 67.62,
@@ -236,7 +236,7 @@
       general: "General",
       fleet: "Fleet baseline",
       bev: "BEV",
-      eac: "Electricity + RE Certificate",
+      eac: "Electricity + Renewable Energy Certificate",
     });
     const DEFAULT_INPUT_SECTIONS = Object.freeze({
       general: true,
@@ -308,7 +308,7 @@
       return {
         bars,
         max,
-        ariaLabel: `Current and post-transition Scope 1 plus market-based Scope 2 comparison. ${bars
+        ariaLabel: `Current and post-transition Scope 1 plus Scope 2 (market-based) comparison. ${bars
           .map(bar => `${bar.label} ${bar.value.toFixed(2)} tCO2e`).join("; ")}.`,
       };
     }
@@ -481,10 +481,10 @@
         netEmissionsMagnitude: Math.abs(netEmissionsDisplayChange),
         netTone,
         netSubline: netTone === "good"
-          ? "Reduction in Scope 1 plus market-based Scope 2"
+          ? "Reduction in Scope 1 plus Scope 2 (market-based)"
           : netTone === "warn"
-            ? "Increase in Scope 1 plus market-based Scope 2"
-            : "No change in Scope 1 plus market-based Scope 2",
+            ? "Increase in Scope 1 plus Scope 2 (market-based)"
+            : "No change in Scope 1 plus Scope 2 (market-based)",
         netEmissionsPct,
       };
     }
@@ -506,9 +506,9 @@
       if (s.bevMethod === "Fallback" && (!(s.fuelToBevPct > 0) || !(s.gjToKwh > 0))) add("fuelToBevPct", "error", "Fuel conversion inputs are required for the fallback method.");
       if (!(s.currentElectricityKwh > 0)) add("currentElectricityKwh", "error", "Current facility electricity must be greater than zero.");
       if (!(s.electricityRate > 0)) add("electricityRate", "error", "The base electricity rate must be greater than zero.");
-      if (!Number.isFinite(Number(s.marketBasedResidualMixFactor)) || s.marketBasedResidualMixFactor < 0) add("marketBasedResidualMixFactor", "error", "The market-based residual mix factor must be zero or greater.");
-      if (s.currentCertificateCoverage < 0 || s.currentCertificateCoverage > 1) add("currentCertificateCoverage", "error", "Current RE certificate coverage must be between 0% and 100%.");
-      if (s.targetCertificateCoverage < 0 || s.targetCertificateCoverage > 1) add("targetCertificateCoverage", "error", "Target RE certificate coverage must be between 0% and 100%.");
+      if (!Number.isFinite(Number(s.marketBasedResidualMixFactor)) || s.marketBasedResidualMixFactor < 0) add("marketBasedResidualMixFactor", "error", "The residual mix factor for the market-based method must be zero or greater.");
+      if (s.currentCertificateCoverage < 0 || s.currentCertificateCoverage > 1) add("currentCertificateCoverage", "error", "Current Renewable Energy Certificate coverage must be between 0% and 100%.");
+      if (s.targetCertificateCoverage < 0 || s.targetCertificateCoverage > 1) add("targetCertificateCoverage", "error", "Target Renewable Energy Certificate coverage must be between 0% and 100%.");
       for (const field of ["currentAnnualFuelCost", "bevPurchaseCost", "iceReplacementCost", "resaleProceeds", "certificateCostPerKwh"]) {
         if (s[field] < 0) add(field, "error", "Cost inputs cannot be negative.");
       }
@@ -521,16 +521,19 @@
     function serializeScenario(input) {
       const scenario = { ...DEFAULT_SCENARIO, ...input };
       delete scenario.gridEmissionFactor;
-      return JSON.stringify({ version: 1, scenario });
+      return JSON.stringify({ version: 2, scenario });
     }
 
     function parseStoredScenario(text) {
       try {
         const payload = JSON.parse(text);
-        if (payload?.version !== 1 || !payload.scenario || typeof payload.scenario !== "object" || Array.isArray(payload.scenario)) return null;
+        if (![1, 2].includes(payload?.version) || !payload.scenario || typeof payload.scenario !== "object" || Array.isArray(payload.scenario)) return null;
         const stored = { ...payload.scenario };
         if (stored.marketBasedResidualMixFactor === undefined && stored.gridEmissionFactor !== undefined) {
           stored.marketBasedResidualMixFactor = stored.gridEmissionFactor;
+        }
+        if (payload.version === 1 && (stored.dataStatus ?? DEFAULT_SCENARIO.dataStatus) === "Sample Data" && stored.baselineYear === "FY2025") {
+          stored.baselineYear = "FY2026";
         }
         delete stored.gridEmissionFactor;
         const normalized = { ...DEFAULT_SCENARIO, ...stored };
@@ -610,10 +613,10 @@
         "electricity-fields": [
           ["currentElectricityKwh", "Current facility electricity", "kWh/year", 1000, null, "Purchased facility electricity before fleet transition."],
           ["electricityRate", "Base electricity rate", "currency/kWh", 0.01],
-          ["marketBasedResidualMixFactor", "Market-based residual mix factor", "kgCO2e/kWh", 0.01, null, "Applied to uncovered electricity in both cases. Default Australia 2026: 0.79."],
-          ["currentCertificateCoverage", "Current RE certificate coverage", "%", 1, null, "Share of current facility electricity covered by eligible RE certificates."],
-          ["targetCertificateCoverage", "Target RE certificate coverage", "%", 1, null, "Share of all post-transition electricity covered by eligible RE certificates."],
-          ["certificateCostPerKwh", "RE certificate premium", "currency/kWh", 0.005, null, "Additional cost for each kWh covered by RE certificates."]
+          ["marketBasedResidualMixFactor", "Residual mix factor (market-based)", "kgCO2e/kWh", 0.01, null, "Applied to uncovered electricity in both cases. Default Australia 2026: 0.79."],
+          ["currentCertificateCoverage", "Current Renewable Energy Certificate coverage", "%", 1, null, "Share of current facility electricity covered by eligible Renewable Energy Certificates."],
+          ["targetCertificateCoverage", "Target Renewable Energy Certificate coverage", "%", 1, null, "Share of all post-transition electricity covered by eligible Renewable Energy Certificates."],
+          ["certificateCostPerKwh", "Renewable Energy Certificate premium", "currency/kWh", 0.005, null, "Additional cost for each kWh covered by Renewable Energy Certificates."]
         ]
       };
       const storageKey = "rcc.fleet-electrification.scenario.v1";
@@ -834,10 +837,10 @@
         const scope2Sign = kpiStory.scope2Change < 0 ? "\u2212" : kpiStory.scope2Change > 0 ? "+" : "";
         q("#kpi-scope2-change").textContent = `${scope2Sign}${formatNumber(Math.abs(kpiStory.scope2Change), 2)}`;
         q("#kpi-scope2-change-sub").textContent = `${formatNumber(result.currentMarketBasedScope2, 2)} → ${formatT(result.postTransitionMarketBasedScope2)}`;
-        q("#kpi-scope2-change-sub-full").textContent = `Market-based Scope 2 changes from ${formatT(result.currentMarketBasedScope2)} to ${formatT(result.postTransitionMarketBasedScope2)}`;
+        q("#kpi-scope2-change-sub-full").textContent = `Scope 2 changes from ${formatT(result.currentMarketBasedScope2)} to ${formatT(result.postTransitionMarketBasedScope2)} under the market-based method`;
         q("#kpi-post-transition").textContent = formatNumber(result.postTransitionCombinedEmissions, 2);
         q("#kpi-post-transition-sub").textContent = `Current: ${formatT(result.currentCombinedEmissions)}`;
-        q("#kpi-post-transition-sub-full").textContent = `Current Scope 1 plus market-based Scope 2: ${formatT(result.currentCombinedEmissions)}`;
+        q("#kpi-post-transition-sub-full").textContent = `Current Scope 1 plus Scope 2 (market-based): ${formatT(result.currentCombinedEmissions)}`;
         q("#kpi-investment").textContent = formatMoney(result.transitionInvestment);
         q("#kpi-investment-sub").textContent = `vs new ICE: ${formatMoneyShort(result.incrementalInvestment)}`;
         q("#kpi-investment-sub-full").textContent = `${formatMoney(result.incrementalInvestment)} additional investment compared with a new ICE purchase`;
@@ -865,10 +868,10 @@
         q("#emissions-chart-period").textContent = `${periodLabels.baselineYear} current emissions compared with ${periodLabels.targetYear} post-transition emissions.`;
         q("#emissions-chart").setAttribute("aria-label", comparison.ariaLabel);
         q("#emissions-chart").innerHTML = comparisonChart(comparison, isCompactChart());
-        q("#emissions-legend").innerHTML = `<li class="legend-item"><span class="legend-swatch" style="background:${EMISSIONS_FILLS.scope1}"></span>Scope 1</li><li class="legend-item"><span class="legend-swatch" style="background:${EMISSIONS_FILLS.scope2}"></span>Market-based Scope 2</li>`;
-        q("#emissions-summary").textContent = comparison.bars.map(bar => `${bar.label}: Scope 1 ${formatT(bar.segments.scope1)}, market-based Scope 2 ${formatT(bar.segments.scope2)}, total ${formatT(bar.value)}`).join("; ") + ".";
+        q("#emissions-legend").innerHTML = `<li class="legend-item"><span class="legend-swatch" style="background:${EMISSIONS_FILLS.scope1}"></span>Scope 1</li><li class="legend-item"><span class="legend-swatch" style="background:${EMISSIONS_FILLS.scope2}"></span>Scope 2 (Market-based)</li>`;
+        q("#emissions-summary").textContent = comparison.bars.map(bar => `${bar.label}: Scope 1 ${formatT(bar.segments.scope1)}, Scope 2 (market-based) ${formatT(bar.segments.scope2)}, total ${formatT(bar.value)}`).join("; ") + ".";
         q("#emissions-table").innerHTML = rows([
-          ["Current mobile Scope 1",formatT(result.baselineMobileScope1),"fuel combustion"],["Scope 1 avoided",formatT(result.scope1Avoided),"transition share"],["Remaining Scope 1",formatT(result.remainingScope1),"mobile plus unaffected"],["Current facility electricity",`${formatNumber(scenario.currentElectricityKwh)} kWh`,"before fleet transition"],["BEV electricity added",`${formatNumber(result.bevElectricityAdded)} kWh`,scenario.bevMethod],["Post-transition electricity",`${formatNumber(result.totalPostTransitionElectricity)} kWh`,"facility plus BEV charging"],["Current market-based Scope 2",formatT(result.currentMarketBasedScope2),`${formatNumber(scenario.currentCertificateCoverage*100,0)}% RE certificate coverage`],["Post-transition market-based Scope 2",formatT(result.postTransitionMarketBasedScope2),`${formatNumber(scenario.targetCertificateCoverage*100,0)}% RE certificate coverage`],["Current Scope 1 + Scope 2",formatT(result.currentCombinedEmissions),"market-based"],["Post-transition Scope 1 + Scope 2",formatT(result.postTransitionCombinedEmissions),"market-based"]
+          ["Current mobile Scope 1",formatT(result.baselineMobileScope1),"fuel combustion"],["Scope 1 avoided",formatT(result.scope1Avoided),"transition share"],["Remaining Scope 1",formatT(result.remainingScope1),"mobile plus unaffected"],["Current facility electricity",`${formatNumber(scenario.currentElectricityKwh)} kWh`,"before fleet transition"],["BEV electricity added",`${formatNumber(result.bevElectricityAdded)} kWh`,scenario.bevMethod],["Post-transition electricity",`${formatNumber(result.totalPostTransitionElectricity)} kWh`,"facility plus BEV charging"],["Current Scope 2 (market-based)",formatT(result.currentMarketBasedScope2),`${formatNumber(scenario.currentCertificateCoverage*100,0)}% Renewable Energy Certificate coverage`],["Post-transition Scope 2 (market-based)",formatT(result.postTransitionMarketBasedScope2),`${formatNumber(scenario.targetCertificateCoverage*100,0)}% Renewable Energy Certificate coverage`],["Current Scope 1 + Scope 2 (market-based)",formatT(result.currentCombinedEmissions),"combined"],["Post-transition Scope 1 + Scope 2 (market-based)",formatT(result.postTransitionCombinedEmissions),"combined"]
         ]);
         q("#cost-table").innerHTML = rows([
           ["Fuel cost avoided",formatMoney(result.fuelCostAvoided),"annual"],["Electricity procurement change",formatMoney(result.electricityCostChange),"annual"],["Additional certificate cost",formatMoney(result.additionalCertificateCost),"annual"],["Combined operating impact",`${formatMoney(result.annualOperatingChange)} ${savings ? "savings" : "increase"}`,"annual"],["Transition investment",formatMoney(result.transitionInvestment),"BEV less resale"],["Incremental investment",formatMoney(result.incrementalInvestment),"BEV vs new ICE"],["Simple payback",result.simplePaybackTransition===null?"No payback":`${formatNumber(result.simplePaybackTransition,2)} years`,"transition basis"],["Incremental payback",result.simplePaybackIncremental===null?"No payback":`${formatNumber(result.simplePaybackIncremental,2)} years`,"new ICE basis"]
