@@ -501,7 +501,8 @@
       if (!(s.currentElectricityKwh > 0)) add("currentElectricityKwh", "error", "Current facility electricity must be greater than zero.");
       if (!(s.electricityRate > 0)) add("electricityRate", "error", "The base electricity rate must be greater than zero.");
       if (!Number.isFinite(Number(s.marketBasedResidualMixFactor)) || s.marketBasedResidualMixFactor < 0) add("marketBasedResidualMixFactor", "error", "The market-based residual mix factor must be zero or greater.");
-      if (s.currentCertificateCoverage < 0 || s.currentCertificateCoverage > 1 || s.targetCertificateCoverage < 0 || s.targetCertificateCoverage > 1) add("targetCertificateCoverage", "error", "Certificate coverage must be between 0% and 100%.");
+      if (s.currentCertificateCoverage < 0 || s.currentCertificateCoverage > 1) add("currentCertificateCoverage", "error", "Current Solar REC coverage must be between 0% and 100%.");
+      if (s.targetCertificateCoverage < 0 || s.targetCertificateCoverage > 1) add("targetCertificateCoverage", "error", "Target Solar REC coverage must be between 0% and 100%.");
       for (const field of ["currentAnnualFuelCost", "bevPurchaseCost", "iceReplacementCost", "resaleProceeds", "certificateCostPerKwh"]) {
         if (s[field] < 0) add(field, "error", "Cost inputs cannot be negative.");
       }
@@ -773,19 +774,12 @@
           const w = widthAt(bar.value);
           const scope1W = bar.value > 0 ? w * bar.segments.scope1 / bar.value : 0;
           const scope2W = bar.value > 0 ? w * bar.segments.scope2 / bar.value : 0;
-          // Track, then the mark, then the value. The value sits inside the mark
-          // only when the mark is long enough to hold it, otherwise it sits just
-          // past the end in ink: a light label on the light track is unreadable.
-          const valueW = compact ? 56 : 62;
-          const inside = w >= valueW + 18;
-          const valueX = inside ? left + w - 10 : Math.min(left + w + 10, width - right - valueW);
-          const anchor = inside ? "end" : "start";
           return `<g>`
             + `<text x="${left}" y="${y + (compact ? 12 : 13)}" font-size="${labelSize}" fill="#415063">${escapeHtml(bar.label)}</text>`
+            + `<text x="${width - right}" y="${y + (compact ? 12 : 13)}" text-anchor="end" font-size="${valueSize}" font-weight="700" fill="#152033">${formatNumber(bar.value, 2)}</text>`
             + `<rect x="${left}" y="${barY}" width="${trackW}" height="${barH}" rx="4" fill="#eef2f7"/>`
             + `<rect x="${left}" y="${barY}" width="${scope1W}" height="${barH}" rx="4" fill="${EMISSIONS_FILLS.scope1}"/>`
             + `<rect x="${left + scope1W}" y="${barY}" width="${scope2W}" height="${barH}" rx="4" fill="${EMISSIONS_FILLS.scope2}"/>`
-            + `<text x="${valueX}" y="${barY + barH / 2 + 5}" text-anchor="${anchor}" font-size="${valueSize}" font-weight="700" fill="${inside ? "#ffffff" : "#152033"}">${formatNumber(bar.value, 2)}</text>`
             + `</g>`;
         }).join("");
 
