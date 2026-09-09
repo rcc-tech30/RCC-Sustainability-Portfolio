@@ -27,11 +27,11 @@ test('sample scenario compares FY2026 with FY2030 using the 2026 Australian resi
   assert.equal(model.DEFAULT_SCENARIO.baselineYear, 'FY2026');
   assert.equal(model.DEFAULT_SCENARIO.targetYear, 'FY2030');
   assert.equal(model.DEFAULT_SCENARIO.marketBasedResidualMixFactor, 0.79);
-  assert.equal(model.DEFAULT_SCENARIO.certificateType, 'RE Certificate');
+  assert.equal(model.DEFAULT_SCENARIO.certificateType, 'Renewable Energy Certificate');
   assert.equal(model.DEFAULT_SCENARIO.gridEmissionFactor, undefined);
 });
 
-test('current and post-transition market-based Scope 2 apply their respective RE certificate coverage', async () => {
+test('current and post-transition Scope 2 apply their respective certificate coverage under the market-based method', async () => {
   const { model } = await loadProject();
   const result = model.calculateScenario(model.DEFAULT_SCENARIO);
 
@@ -70,24 +70,30 @@ test('comparison contains only current and post-transition market-based cases', 
   );
 });
 
-test('project copy consistently describes a market-based RE certificate planning scenario', async () => {
+test('project copy places the Scope 2 method after the metric and expands certificates outside the overview', async () => {
   const { html } = await loadProject();
   const readme = await readFile(readmePath, 'utf8');
   const combined = `${html}\n${readme}`;
 
   assert.match(html, /Current facility electricity/);
-  assert.match(html, /Market-based residual mix factor/);
-  assert.match(html, /RE certificate premium/);
-  assert.match(html, /RE means renewable energy/i);
+  assert.match(html, /Residual mix factor \(market-based\)/);
+  assert.match(html, /Scope 1 &amp; 2 \(Market-based\)/);
+  assert.match(html, /Scope 2 change \(Market-based\)/);
+  assert.match(html, />Scope 2 \(Market-based\)</);
+  assert.match(html, /Target RE certificate coverage/);
+  assert.match(html, /Electricity \+ Renewable Energy Certificate/);
+  assert.match(html, /Current Renewable Energy Certificate coverage/);
+  assert.match(html, /Renewable Energy Certificate factor/);
   assert.match(html, /voluntarily surrendered LGCs or accredited GreenPower/i);
   assert.match(html, /Estimated annual operating cost reduction after transitioning selected ICE vehicles to BEVs/i);
   assert.match(html, /Estimated upfront cost of the fleet transition/i);
-  assert.match(html, /market-based planning scenario only/i);
+  assert.match(html, /planning scenario using the market-based method only/i);
   assert.match(html, /held constant across the current and target cases/i);
   assert.match(html, /purchased by the company and included within its Scope 2 reporting boundary/i);
   assert.match(html, /eligible, exclusively claimed, purchased and retired/i);
   assert.match(readme, /DCCEEW National Greenhouse Accounts Factors 2026, Tables 2 and 9/);
   assert.doesNotMatch(combined, /grid-based|Grid factor|Grid emission factor|before EAC|after EAC/i);
+  assert.doesNotMatch(combined, /market-based (?:Scope 2|residual mix factor)/i);
   assert.doesNotMatch(combined, /Solar REC/i);
   assert.doesNotMatch(combined, /\u2014/);
 });
@@ -104,15 +110,32 @@ test('legacy saved scenarios migrate the former grid factor into the residual mi
   const { model } = await loadProject();
   const stored = JSON.stringify({
     version: 1,
-    scenario: { gridEmissionFactor: 0.42, baselineYear: 'FY2025' },
+    scenario: { gridEmissionFactor: 0.42, baselineYear: 'FY2025', dataStatus: 'User Data' },
   });
   const parsed = model.parseStoredScenario(stored);
 
   assert.equal(parsed.marketBasedResidualMixFactor, 0.42);
   assert.equal(parsed.gridEmissionFactor, undefined);
+  assert.equal(parsed.baselineYear, 'FY2025');
 });
 
-test('current and target RE certificate coverage errors attach to their own fields', async () => {
+test('legacy FY2025 sample migrates to FY2026 while later user edits remain modifiable', async () => {
+  const { model } = await loadProject();
+  const legacySample = JSON.stringify({
+    version: 1,
+    scenario: { baselineYear: 'FY2025', targetYear: 'FY2030', dataStatus: 'Sample Data' },
+  });
+
+  const migrated = model.parseStoredScenario(legacySample);
+  assert.equal(migrated.baselineYear, 'FY2026');
+
+  const edited = { ...migrated, baselineYear: 'FY2025' };
+  const saved = JSON.parse(model.serializeScenario(edited));
+  assert.equal(saved.version, 2);
+  assert.equal(model.parseStoredScenario(JSON.stringify(saved)).baselineYear, 'FY2025');
+});
+
+test('current and target Renewable Energy Certificate coverage errors attach to their own fields', async () => {
   const { model } = await loadProject();
   const currentMessages = model.validateScenario({
     ...model.DEFAULT_SCENARIO,
