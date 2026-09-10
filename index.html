@@ -1078,18 +1078,17 @@
         </div>
         <button class="request-close" type="button" data-close-pbix-request aria-label="Close request form">×</button>
       </div>
-      <p class="request-intro">Enter your company email and I will review the request before sharing the Power BI file.</p>
+      <p class="request-intro">Enter your email address and I’ll review your request before sending the Power BI file. Personal and company email addresses are both accepted.</p>
       <form class="request-form" id="pbixRequestForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdSHNiOAYjsEya3rSv6M4NiqowcGOIuG-0f8-KWHWUOEjAE6w/formResponse" method="post" target="pbixRequestFrame">
-        <label for="pbixWorkEmail">Work email</label>
-        <input class="request-input" id="pbixWorkEmail" name="entry.308624725" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" required>
-        <p class="request-help">Public email providers such as Gmail, Hotmail, Outlook, Yahoo and iCloud are not accepted.</p>
+        <label for="pbixWorkEmail">Email address</label>
+        <input class="request-input" id="pbixWorkEmail" name="entry.308624725" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <p class="request-error" id="pbixRequestError" aria-live="polite"></p>
         <button class="button button-primary button-trigger request-submit" type="submit"><span>Submit request</span><span aria-hidden="true">→</span></button>
         <p class="request-privacy">Your email will only be used to review and respond to your PBIX file request. It will not be added to a mailing list.</p>
       </form>
       <div class="request-success" id="pbixRequestSuccess" role="status" tabindex="-1" hidden>
         <strong>Request received.</strong>
-        If approved, the PBIX access details will be sent to your work email.
+        If approved, the PBIX file will be sent to the email address you provided.
       </div>
       <iframe class="request-frame" name="pbixRequestFrame" title="PBIX request submission"></iframe>
     </div>
@@ -1172,21 +1171,7 @@
       var submit = form ? form.querySelector('button[type="submit"]') : null;
       var submitted = false;
       var lastFocused = null;
-      var freeDomains = [
-        'gmail.com', 'googlemail.com', 'gmai.com', 'gmial.com',
-        'hotmail.com', 'hotmail.co.uk', 'outlook.com', 'outlook.ph', 'live.com', 'live.co.uk', 'msn.com',
-        'yahoo.com', 'yahoo.co.uk', 'yahoo.com.au', 'ymail.com', 'rocketmail.com',
-        'icloud.com', 'me.com', 'mac.com', 'aol.com',
-        'proton.me', 'protonmail.com', 'gmx.com', 'gmx.net', 'mail.com', 'zoho.com', 'fastmail.com'
-      ];
-
       if (!dialog || !form || !frame || !input || !error || !success || !submit) return;
-
-      function domainIsBlocked(domain) {
-        return freeDomains.some(function (blocked) {
-          return domain === blocked || domain.endsWith('.' + blocked);
-        });
-      }
 
       function resetRequest() {
         submitted = false;
@@ -1224,18 +1209,10 @@
       form.addEventListener('submit', function (event) {
         var email = input.value.trim().toLowerCase();
         var validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-        var domain = validEmail ? email.split('@').pop() : '';
-
         error.textContent = '';
         if (!validEmail) {
           event.preventDefault();
-          error.textContent = 'Enter a valid company email address.';
-          input.focus();
-          return;
-        }
-        if (domainIsBlocked(domain)) {
-          event.preventDefault();
-          error.textContent = 'Please use your company email instead of a public email provider.';
+          error.textContent = 'Enter a valid email address.';
           input.focus();
           return;
         }
